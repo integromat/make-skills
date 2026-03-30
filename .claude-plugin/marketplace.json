@@ -1,0 +1,26 @@
+{
+  "name": "make-marketplace",
+  "description": "Design, build, and deploy Make.com automation scenarios using expert skills — directly from Claude Code",
+  "owner": {
+    "name": "Make",
+    "email": "support@make.com",
+    "url": "https://www.make.com"
+  },
+  "plugins": [
+    {
+      "name": "make-skills",
+      "description": "Expert skills for scenario architecture, module configuration, and MCP troubleshooting",
+      "version": "0.1.0",
+      "source": "./",
+      "author": {
+        "name": "Make",
+        "url": "https://www.make.com"
+      },
+      "category": "automation",
+      "keywords": ["make", "mcp", "automation", "scenarios", "integration", "workflow", "blueprint", "no-code"],
+      "homepage": "https://www.make.com",
+      "repository": "https://github.com/integromat/make-skills",
+      "license": "MIT"
+    }
+  ]
+}

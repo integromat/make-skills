@@ -1,0 +1,39 @@
+{
+  "if_else_module": {
+    "id": 3,
+    "module": "builtin:BasicIfElse",
+    "version": 1,
+    "parameters": {},
+    "mapper": null,
+    "metadata": { "designer": { "x": 300, "y": 0 } },
+    "branches": [
+      {
+        "merge": true,
+        "label": "If (status = active)",
+        "type": "condition",
+        "conditions": [[ { "a": "{{1.status}}", "b": "active", "o": "text:equal" } ]],
+        "flow": [
+          { "id": 4, "module": "slack:CreateMessage", "version": 4, "parameters": {}, "mapper": { "text": "Active" }, "metadata": { "designer": { "x": 600, "y": -150 } } }
+        ]
+      },
+      {
+        "merge": true,
+        "label": "Else",
+        "type": "else",
+        "flow": [
+          { "id": 5, "module": "google-sheets:addRow", "version": 2, "parameters": {}, "mapper": {}, "metadata": { "designer": { "x": 600, "y": 150 } } }
+        ]
+      }
+    ]
+  },
+  "merge_module": {
+    "id": 6,
+    "module": "builtin:BasicMerge",
+    "version": 1,
+    "parameters": {},
+    "mapper": null,
+    "metadata": { "designer": { "x": 900, "y": 0 } },
+    "outputs": [],
+    "filters": [null, null]
+  }
+}

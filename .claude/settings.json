@@ -1,0 +1,11 @@
+{
+  "enabledPlugins": {
+    "plugin-dev@claude-plugins-official": true
+  },
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:help.make.com)",
+      "WebFetch(domain:developers.make.com)"
+    ]
+  }
+}

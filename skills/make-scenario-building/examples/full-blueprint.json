@@ -1,0 +1,46 @@
+{
+  "name": "Scenario name",
+  "flow": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": {},
+      "mapper": {},
+      "metadata": { "designer": { "x": 0, "y": 0, "name": "Webhook Trigger" } }
+    },
+    {
+      "id": 2,
+      "module": "json:ParseJSON",
+      "version": 1,
+      "parameters": {},
+      "mapper": { "json": "{{1.value}}" },
+      "metadata": { "designer": { "x": 300, "y": 0, "name": "Parse Payload" } }
+    },
+    {
+      "id": 3,
+      "module": "google-sheets:addRow",
+      "version": 2,
+      "parameters": {},
+      "mapper": { "mode": "select", "values": { "0": "{{2.name}}", "1": "{{2.email}}" }, "includesHeaders": true, "insertDataOption": "INSERT_ROWS", "valueInputOption": "USER_ENTERED" },
+      "metadata": { "designer": { "x": 600, "y": 0, "name": "Add to Sheet" } }
+    }
+  ],
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": { "orphans": [] },
+    "zone": "eu2.make.com"
+  }
+}

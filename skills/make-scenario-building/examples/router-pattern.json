@@ -1,0 +1,42 @@
+{
+  "id": 5,
+  "module": "builtin:BasicRouter",
+  "version": 1,
+  "parameters": {},
+  "mapper": null,
+  "metadata": { "designer": { "x": 600, "y": 450 } },
+  "routes": [
+    {
+      "flow": [
+        {
+          "id": 7,
+          "module": "facebook-pages:CreatePost",
+          "version": 6,
+          "parameters": {},
+          "filter": {
+            "name": "Facebook posts only",
+            "conditions": [[ { "a": "{{6.`0`}}", "b": "FB", "o": "text:contain" } ]]
+          },
+          "mapper": { "message": "{{6.`1`}}" },
+          "metadata": { "designer": { "x": 900, "y": 0 } }
+        }
+      ]
+    },
+    {
+      "flow": [
+        {
+          "id": 20,
+          "module": "twitter:createATweet",
+          "version": 6,
+          "parameters": {},
+          "filter": {
+            "name": "Twitter posts only",
+            "conditions": [[ { "a": "{{6.`0`}}", "b": "T", "o": "text:contain" } ]]
+          },
+          "mapper": { "text": "{{6.`1`}}" },
+          "metadata": { "designer": { "x": 900, "y": 300 } }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,880 @@
+{
+	"name": "LOCAL AGENT",
+	"flow": [
+		{
+			"id": 1,
+			"module": "gateway:CustomWebHook",
+			"version": 1,
+			"parameters": {
+				"hook": 12421,
+				"maxResults": 1
+			},
+			"mapper": {},
+			"metadata": {
+				"designer": {
+					"x": -415,
+					"y": 0
+				},
+				"restore": {
+					"parameters": {
+						"hook": {
+							"label": "A",
+							"data": {
+								"editable": "true"
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "hook",
+						"type": "hook:gateway-webhook",
+						"label": "Webhook",
+						"required": true
+					},
+					{
+						"name": "maxResults",
+						"type": "number",
+						"label": "Maximum number of results"
+					}
+				]
+			}
+		},
+		{
+			"id": 2,
+			"module": "ai-local-agent:RunLocalAIAgent",
+			"version": 0,
+			"parameters": {
+				"makeConnectionId": 14613
+			},
+			"mapper": {
+				"defaultModel": "gpt-5.4",
+				"systemPrompt": "You're a versatile Agent",
+				"message": "{{1.message}}",
+				"files": [],
+				"threadId": "",
+				"modelConfig": {
+					"recursionLimit": 300,
+					"iterationsFromHistoryCount": "10"
+				},
+				"timeout": "",
+				"outputType": "text"
+			},
+			"metadata": {
+				"designer": {
+					"x": -115,
+					"y": 0
+				},
+				"restore": {
+					"parameters": {
+						"makeConnectionId": {
+							"label": "Maiak Token",
+							"data": {
+								"scoped": "true",
+								"connection": "openai-gpt-3"
+							}
+						}
+					},
+					"expect": {
+						"defaultModel": {
+							"mode": "chose",
+							"nested": [],
+							"label": "GPT-5.4The frontier model for broad, general-purpose work and coding, delivering higher-quality outputs for complex tasks"
+						},
+						"files": {
+							"mode": "chose"
+						},
+						"outputType": {
+							"label": "Text"
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "makeConnectionId",
+						"type": "account:ai-provider,openai-gpt-3,anthropic-claude,gemini-ai-q9zyjp,ai-agent-foundry-openai,ai-agent-foundry-non-openai,mistral-ai,cohere,groq,ai-agent-xai,amazon-bedrock,ai-agent-openai-compatible",
+						"label": "Connection",
+						"required": true
+					}
+				],
+				"expect": [
+					{
+						"name": "defaultModel",
+						"type": "select",
+						"label": "Model",
+						"required": true
+					},
+					{
+						"name": "systemPrompt",
+						"type": "text",
+						"label": "Instructions"
+					},
+					{
+						"name": "message",
+						"type": "text",
+						"label": "Input",
+						"required": true
+					},
+					{
+						"name": "files",
+						"type": "array",
+						"label": "Input files",
+						"spec": [
+							{
+								"name": "fileName",
+								"type": "filename",
+								"label": "File name",
+								"semantic": "file:name"
+							},
+							{
+								"name": "data",
+								"type": "buffer",
+								"label": "Data",
+								"semantic": "file:data"
+							}
+						]
+					},
+					{
+						"name": "threadId",
+						"type": "text",
+						"label": "Conversation ID"
+					},
+					{
+						"name": "modelConfig",
+						"type": "collection",
+						"label": "Model configuration",
+						"spec": [
+							{
+								"name": "tokenLimit",
+								"type": "hidden",
+								"label": "Max output tokens"
+							},
+							{
+								"name": "recursionLimit",
+								"type": "hidden",
+								"label": "Steps per agent call"
+							},
+							{
+								"name": "iterationsFromHistoryCount",
+								"type": "number",
+								"label": "Maximum conversation history"
+							}
+						]
+					},
+					{
+						"name": "timeout",
+						"type": "number",
+						"label": "Step timeout",
+						"validate": {
+							"min": 120,
+							"max": 600
+						}
+					},
+					{
+						"name": "outputType",
+						"type": "select",
+						"label": "Response format",
+						"required": true,
+						"validate": {
+							"enum": [
+								"text",
+								"make-schema"
+							]
+						}
+					}
+				]
+			},
+			"tools": [
+				{
+					"name": "Get current weather",
+					"description": "Returns current weather information for a specified location.",
+					"flow": [
+						{
+							"id": 3,
+							"module": "weather:ActionGetCurrentWeather",
+							"version": 1,
+							"parameters": {},
+							"mapper": {
+								"type": "name",
+								"city": "{{2.city}}"
+							},
+							"metadata": {
+								"designer": {
+									"x": 185,
+									"y": 250
+								},
+								"restore": {
+									"expect": {
+										"type": {
+											"label": "cities"
+										},
+										"city": {
+											"extra": {
+												"aiHelp": "Enter e.g. London, UK."
+											}
+										}
+									}
+								},
+								"expect": [
+									{
+										"name": "type",
+										"type": "select",
+										"label": "I want to enter a location by",
+										"required": true,
+										"validate": {
+											"enum": [
+												"name",
+												"coords"
+											]
+										}
+									},
+									{
+										"name": "city",
+										"type": "text",
+										"label": "City",
+										"required": true
+									}
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Send a Message",
+					"description": "Sends a message to a specified channel, thread, or guild member.",
+					"flow": [
+						{
+							"id": 4,
+							"module": "discord:createMessage",
+							"version": 2,
+							"parameters": {
+								"__IMTCONN__": 11867
+							},
+							"mapper": {
+								"select": "channel",
+								"content": "{{2.content}}",
+								"message_reference": {},
+								"channelId": "1224642245806788641"
+							},
+							"metadata": {
+								"designer": {
+									"x": 185,
+									"y": 450
+								},
+								"restore": {
+									"parameters": {
+										"__IMTCONN__": {
+											"label": "DomiZ's Discord (Make (team1278341651986911253))",
+											"data": {
+												"scoped": "true",
+												"connection": "discord"
+											}
+										}
+									},
+									"expect": {
+										"select": {
+											"label": "Send a Message to a Channel"
+										},
+										"tts": {
+											"mode": "chose"
+										},
+										"embeds": {
+											"mode": "chose"
+										},
+										"sticker_ids": {
+											"mode": "chose"
+										},
+										"components": {
+											"mode": "chose"
+										},
+										"files": {
+											"mode": "chose"
+										},
+										"channelId": {
+											"mode": "chose",
+											"label": "general"
+										}
+									}
+								},
+								"parameters": [
+									{
+										"name": "__IMTCONN__",
+										"type": "account:discord",
+										"label": "Connection",
+										"required": true
+									}
+								],
+								"expect": [
+									{
+										"name": "select",
+										"type": "select",
+										"label": "Choose a Method",
+										"required": true,
+										"validate": {
+											"enum": [
+												"channel",
+												"thread",
+												"user"
+											]
+										}
+									},
+									{
+										"name": "content",
+										"type": "text",
+										"label": "Message"
+									},
+									{
+										"name": "tts",
+										"type": "boolean",
+										"label": "Is TTS message"
+									},
+									{
+										"name": "embeds",
+										"type": "array",
+										"label": "Embeds",
+										"spec": [
+											{
+												"name": "title",
+												"type": "text",
+												"label": "Title"
+											},
+											{
+												"name": "type",
+												"type": "text",
+												"label": "Type"
+											},
+											{
+												"name": "description",
+												"type": "text",
+												"label": "Description"
+											},
+											{
+												"name": "url",
+												"type": "url",
+												"label": "URL"
+											},
+											{
+												"name": "timestamp",
+												"type": "date",
+												"label": "Timestamp"
+											},
+											{
+												"name": "color",
+												"type": "uinteger",
+												"label": "Color"
+											},
+											{
+												"name": "footer",
+												"spec": [
+													{
+														"name": "text",
+														"type": "text",
+														"label": "Text"
+													},
+													{
+														"name": "icon_url",
+														"type": "url",
+														"label": "Icon URL"
+													},
+													{
+														"name": "proxy_icon_url",
+														"type": "url",
+														"label": "Proxy Icon URL"
+													}
+												],
+												"type": "collection",
+												"label": "Footer"
+											},
+											{
+												"name": "image",
+												"spec": [
+													{
+														"name": "url",
+														"type": "url",
+														"label": "URL"
+													},
+													{
+														"name": "proxy_url",
+														"type": "url",
+														"label": "Proxy URL"
+													},
+													{
+														"name": "height",
+														"type": "uinteger",
+														"label": "Height"
+													},
+													{
+														"name": "width",
+														"type": "uinteger",
+														"label": "Width"
+													}
+												],
+												"type": "collection",
+												"label": "Image"
+											},
+											{
+												"name": "thumbnail",
+												"spec": [
+													{
+														"name": "url",
+														"type": "url",
+														"label": "URL"
+													},
+													{
+														"name": "proxy_url",
+														"type": "url",
+														"label": "Proxy URL"
+													},
+													{
+														"name": "height",
+														"type": "uinteger",
+														"label": "Height"
+													},
+													{
+														"name": "width",
+														"type": "uinteger",
+														"label": "Width"
+													}
+												],
+												"type": "collection",
+												"label": "Thumbnail"
+											},
+											{
+												"name": "video",
+												"spec": [
+													{
+														"name": "url",
+														"type": "url",
+														"label": "URL"
+													},
+													{
+														"name": "height",
+														"type": "uinteger",
+														"label": "Height"
+													},
+													{
+														"name": "width",
+														"type": "uinteger",
+														"label": "Width"
+													}
+												],
+												"type": "collection",
+												"label": "Video"
+											},
+											{
+												"name": "provider",
+												"spec": [
+													{
+														"name": "name",
+														"type": "text",
+														"label": "Name"
+													},
+													{
+														"name": "url",
+														"type": "url",
+														"label": "URL"
+													}
+												],
+												"type": "collection",
+												"label": "Provider"
+											},
+											{
+												"name": "author",
+												"spec": [
+													{
+														"name": "name",
+														"type": "text",
+														"label": "Name"
+													},
+													{
+														"name": "url",
+														"type": "url",
+														"label": "URL"
+													},
+													{
+														"name": "icon_url",
+														"type": "url",
+														"label": "Icon URL"
+													},
+													{
+														"name": "proxy_icon_url",
+														"type": "url",
+														"label": "Proxy Icon URL"
+													}
+												],
+												"type": "collection",
+												"label": "Author"
+											},
+											{
+												"name": "fields",
+												"spec": [
+													{
+														"name": "name",
+														"type": "text",
+														"label": "Name"
+													},
+													{
+														"name": "value",
+														"type": "text",
+														"label": "Value"
+													},
+													{
+														"name": "inline",
+														"type": "boolean",
+														"label": "Inline Flag"
+													}
+												],
+												"type": "array",
+												"label": "Fields"
+											}
+										]
+									},
+									{
+										"name": "sticker_ids",
+										"type": "array",
+										"label": "Stickers",
+										"spec": [
+											{
+												"name": "id",
+												"type": "text",
+												"label": "Sticker ID",
+												"required": true
+											}
+										]
+									},
+									{
+										"name": "components",
+										"type": "array",
+										"label": "Components",
+										"spec": [
+											{
+												"name": "type",
+												"type": "select",
+												"label": "Component Type",
+												"options": [
+													{
+														"label": "A New Row",
+														"value": 1,
+														"nested": [
+															{
+																"name": "components",
+																"spec": [
+																	{
+																		"name": "type",
+																		"type": "select",
+																		"label": "Row Component Type",
+																		"options": [
+																			{
+																				"label": "Button",
+																				"value": 2,
+																				"nested": [
+																					{
+																						"name": "style",
+																						"type": "select",
+																						"label": "Style",
+																						"options": [
+																							{
+																								"label": "Primary (blurple)",
+																								"value": 1,
+																								"nested": [
+																									{
+																										"help": "A developer-defined identifier for the button, max 100 characters.",
+																										"name": "custom_id",
+																										"type": "text",
+																										"label": "Custom ID",
+																										"required": true
+																									}
+																								]
+																							},
+																							{
+																								"label": "Secondary (grey)",
+																								"value": 2,
+																								"nested": [
+																									{
+																										"help": "A developer-defined identifier for the button, max 100 characters.",
+																										"name": "custom_id",
+																										"type": "text",
+																										"label": "Custom ID",
+																										"required": true
+																									}
+																								]
+																							},
+																							{
+																								"label": "Success (green)",
+																								"value": 3,
+																								"nested": [
+																									{
+																										"help": "A developer-defined identifier for the button, max 100 characters.",
+																										"name": "custom_id",
+																										"type": "text",
+																										"label": "Custom ID",
+																										"required": true
+																									}
+																								]
+																							},
+																							{
+																								"label": "Danger (red)",
+																								"value": 4,
+																								"nested": [
+																									{
+																										"help": "A developer-defined identifier for the button, max 100 characters.",
+																										"name": "custom_id",
+																										"type": "text",
+																										"label": "Custom ID",
+																										"required": true
+																									}
+																								]
+																							},
+																							{
+																								"label": "Link (grey)",
+																								"value": 5,
+																								"nested": [
+																									{
+																										"help": "A URL for link-style buttons.",
+																										"name": "url",
+																										"type": "url",
+																										"label": "URL",
+																										"required": true
+																									}
+																								]
+																							}
+																						],
+																						"required": true
+																					},
+																					{
+																						"help": "Text that appears on the button, max 80 characters.",
+																						"name": "label",
+																						"type": "text",
+																						"label": "Label"
+																					},
+																					{
+																						"name": "disabled",
+																						"type": "boolean",
+																						"label": "Disabled"
+																					}
+																				]
+																			},
+																			{
+																				"label": "Select Menu",
+																				"value": 3,
+																				"nested": [
+																					{
+																						"help": "A developer-defined identifier for the button, max 100 characters.",
+																						"name": "custom_id",
+																						"type": "text",
+																						"label": "Custom ID",
+																						"required": true
+																					},
+																					{
+																						"name": "options",
+																						"spec": [
+																							{
+																								"help": "The user-facing name of the option, max 100 characters.",
+																								"name": "label",
+																								"type": "text",
+																								"label": "Label",
+																								"required": true
+																							},
+																							{
+																								"help": "The dev-defined value of the option, max 100 characters.",
+																								"name": "value",
+																								"type": "text",
+																								"label": "Value",
+																								"required": true
+																							},
+																							{
+																								"help": "An additional description of the option, max 100 characters.",
+																								"name": "description",
+																								"type": "text",
+																								"label": "Description"
+																							},
+																							{
+																								"name": "default",
+																								"type": "boolean",
+																								"label": "Default"
+																							}
+																						],
+																						"type": "array",
+																						"label": "Options",
+																						"required": true,
+																						"validate": {
+																							"maxItems": 25
+																						}
+																					},
+																					{
+																						"help": "Custom placeholder text if nothing is selected, max 150 characters.",
+																						"name": "placeholder",
+																						"type": "text",
+																						"label": "Placeholder"
+																					},
+																					{
+																						"help": "The minimum number of items that must be chosen; default 1, min 0, max 2.",
+																						"name": "min_values",
+																						"type": "uinteger",
+																						"label": "Minimum values"
+																					},
+																					{
+																						"help": "The maximum number of items that must be chosen; default 1, max 25.",
+																						"name": "max_values",
+																						"type": "uinteger",
+																						"label": "Maximum values"
+																					},
+																					{
+																						"name": "disabled",
+																						"type": "boolean",
+																						"label": "Disabled"
+																					}
+																				]
+																			}
+																		],
+																		"required": true
+																	}
+																],
+																"type": "array",
+																"label": "Row Components",
+																"required": true
+															}
+														]
+													}
+												],
+												"required": true
+											}
+										]
+									},
+									{
+										"name": "files",
+										"type": "array",
+										"label": "Files",
+										"spec": [
+											{
+												"name": "filename",
+												"type": "filename",
+												"label": "File Name",
+												"required": true,
+												"semantic": "file:name"
+											},
+											{
+												"name": "data",
+												"type": "buffer",
+												"label": "Data",
+												"required": true,
+												"semantic": "file:data"
+											}
+										]
+									},
+									{
+										"name": "message_reference",
+										"type": "collection",
+										"label": "Message Reference",
+										"spec": [
+											{
+												"name": "message_id",
+												"type": "text",
+												"label": "Message ID"
+											}
+										]
+									},
+									{
+										"name": "channelId",
+										"type": "select",
+										"label": "Channel ID",
+										"required": true
+									}
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": 5,
+			"module": "gateway:WebhookRespond",
+			"version": 1,
+			"parameters": {},
+			"mapper": {
+				"status": "200",
+				"body": "{{2.response}}",
+				"headers": []
+			},
+			"metadata": {
+				"designer": {
+					"x": 185,
+					"y": 0
+				},
+				"restore": {
+					"expect": {
+						"headers": {
+							"mode": "chose"
+						}
+					}
+				},
+				"expect": [
+					{
+						"name": "status",
+						"type": "uinteger",
+						"label": "Status",
+						"validate": {
+							"min": 100
+						},
+						"required": true
+					},
+					{
+						"name": "body",
+						"type": "any",
+						"label": "Body"
+					},
+					{
+						"name": "headers",
+						"type": "array",
+						"label": "Custom headers",
+						"validate": {
+							"maxItems": 16
+						},
+						"spec": [
+							{
+								"name": "key",
+								"label": "Key",
+								"type": "text",
+								"required": true,
+								"validate": {
+									"max": 256
+								}
+							},
+							{
+								"name": "value",
+								"label": "Value",
+								"type": "text",
+								"required": true,
+								"validate": {
+									"max": 4096
+								}
+							}
+						]
+					}
+				]
+			}
+		}
+	],
+	"metadata": {
+		"instant": true,
+		"version": 1,
+		"scenario": {
+			"roundtrips": 1,
+			"maxErrors": 3,
+			"autoCommit": true,
+			"autoCommitTriggerLast": true,
+			"sequential": false,
+			"slots": null,
+			"confidential": false,
+			"dataloss": false,
+			"dlq": false,
+			"freshVariables": false
+		},
+		"designer": {
+			"orphans": []
+		},
+		"zone": "eu1.make.com",
+		"notes": []
+	}
+}
