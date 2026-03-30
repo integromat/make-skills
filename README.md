@@ -1,12 +1,16 @@
 # make-skills
 
-Claude Code plugin for [Make.com](https://www.make.com) MCP integration — run scenarios, manage automations, and get best practice guidance directly from Claude Code.
+Claude Code plugin for [Make.com](https://www.make.com) MCP integration — run scenarios, manage automations, and get
+best practice guidance directly from Claude Code.
 
 ## Features
 
-- **MCP Integration**: Make's hosted MCP server for app discovery, module configuration, connection management, and scenario lifecycle
-- **Scenario Building Skill**: End-to-end scenario design methodology — app discovery, module selection, blueprint construction, and deployment
-- **Module Configuring Skill**: 5-phase module configuration workflow — interface reading, RPC resolution, parameter filling, validation, and documentation
+- **MCP Integration**: Make's hosted MCP server for app discovery, module configuration, connection management, and
+  scenario lifecycle
+- **Scenario Building Skill**: End-to-end scenario design methodology — app discovery, module selection, blueprint
+  construction, and deployment
+- **Module Configuring Skill**: 5-phase module configuration workflow — interface reading, RPC resolution, parameter
+  filling, validation, and documentation
 - **MCP Reference Skill**: Technical reference for Make MCP server configuration, OAuth/token auth, and troubleshooting
 
 ## Prerequisites
@@ -19,10 +23,12 @@ Claude Code plugin for [Make.com](https://www.make.com) MCP integration — run 
 ### From Marketplace (Recommended)
 
 ```bash
-# 1. Add the Make marketplace
+# 1. Open the Claude
+claude
+# 2. Add the Make marketplace
 /plugin marketplace add integromat/make-skills
 
-# 2. Install the plugin
+# 3. Install the plugin
 /plugin install make-skills@make-marketplace
 ```
 
@@ -31,8 +37,9 @@ Claude Code plugin for [Make.com](https://www.make.com) MCP integration — run 
 ```bash
 # 1. Clone this repository
 git clone https://github.com/integromat/make-skills.git
-
-# 2. Add as a local plugin in Claude Code
+# 2. Open the Claude
+claude
+# 3. Add as a local plugin in Claude Code
 /plugin add /path/to/make-skills
 ```
 
@@ -40,7 +47,8 @@ git clone https://github.com/integromat/make-skills.git
 
 ### OAuth (Recommended)
 
-The plugin defaults to OAuth via `https://mcp.make.com`. On first session, you'll be prompted to authenticate through Make's OAuth consent screen where you select your organization and grant scopes.
+The plugin defaults to OAuth via `https://mcp.make.com`. On first session, you'll be prompted to authenticate through
+Make's OAuth consent screen where you select your organization and grant scopes.
 
 ### MCP Token
 
@@ -54,8 +62,10 @@ For more granular access control (team/scenario-level filtering):
 
 ### Skills (Auto-Activated)
 
-- **make-scenario-building**: Triggers when designing scenarios — covers app discovery, module selection, blueprint construction, routing, branching, error handling, and deployment
-- **make-module-configuring**: Triggers when configuring modules — covers parameter filling, connections, mapping, webhooks, data stores, IML expressions, and validation
+- **make-scenario-building**: Triggers when designing scenarios — covers app discovery, module selection, blueprint
+  construction, routing, branching, error handling, and deployment
+- **make-module-configuring**: Triggers when configuring modules — covers parameter filling, connections, mapping,
+  webhooks, data stores, IML expressions, and validation
 - **make-mcp-reference**: Triggers when discussing MCP configuration, scopes, OAuth/token auth, or troubleshooting
 
 ## Configuration
@@ -102,12 +112,12 @@ Restrict access via URL query parameters:
 
 ## Troubleshooting
 
-| Issue                      | Solution                                       |
-|----------------------------|------------------------------------------------|
-| MCP server not connecting  | Check network connectivity to Make servers      |
-| No scenarios available     | Set scenarios to active + on-demand scheduling  |
-| Permission denied          | Check token scopes (`mcp:use`)                 |
-| Timeout errors             | Use SSE transport, reduce scenario complexity   |
+| Issue                     | Solution                                       |
+|---------------------------|------------------------------------------------|
+| MCP server not connecting | Check network connectivity to Make servers     |
+| No scenarios available    | Set scenarios to active + on-demand scheduling |
+| Permission denied         | Check token scopes (`mcp:use`)                 |
+| Timeout errors            | Use SSE transport, reduce scenario complexity  |
 
 Run `claude --debug` for detailed MCP connection logs.
 
