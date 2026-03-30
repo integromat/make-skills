@@ -610,33 +610,71 @@
             .install { padding: 128px 0; }
         }
 
-        .install-methods {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        @media (min-width: 768px) {
-            .install-methods { grid-template-columns: repeat(3, 1fr); }
-        }
-
-        .install-card {
+        .install-box {
+            max-width: 640px;
+            margin: 0 auto;
             background: linear-gradient(135deg, rgba(251,212,253,0.08), rgba(150,127,151,0.08));
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 32px;
         }
 
-        .install-card h3 {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 6px;
+        .install-tabs {
+            display: flex;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 24px;
         }
 
-        .install-card .desc {
+        .install-tab {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.4);
+            font-family: 'Satoshi', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .install-tab:hover {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .install-tab.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .install-panel {
+            display: none;
+        }
+
+        .install-panel.active {
+            display: block;
+        }
+
+        .install-panel .desc {
             font-size: 14px;
             color: rgba(255, 255, 255, 0.4);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
+        }
+
+        .install-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .install-step-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.35);
+            margin-bottom: 6px;
         }
 
         .code-block {
@@ -646,7 +684,7 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 13px;
             color: rgba(255, 255, 255, 0.7);
-            overflow-x: auto;
+            overflow: hidden;
         }
 
         .code-block .code-header {
@@ -662,15 +700,11 @@
 
         .code-block .code-content {
             padding: 16px 20px;
-            white-space: pre;
+            white-space: pre-wrap;
+            word-break: break-all;
         }
 
-        .code-block .prompt {
-            color: var(--color-make-pink);
-            user-select: none;
-        }
-
-        .code-block .copy-btn {
+.code-block .copy-btn {
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 6px;
@@ -688,15 +722,9 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        .install-steps {
-            margin-top: 16px;
-        }
-
-        .install-steps li {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 8px;
-            padding-left: 4px;
+        @media (max-width: 480px) {
+            .install-box { padding: 20px; }
+            .install-tab { font-size: 12px; padding: 8px 10px; }
         }
 
         /* ── MCP Tools ── */
@@ -854,15 +882,58 @@
             font-weight: 500;
         }
 
+        /* ── Mobile Nav Toggle ── */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 4px;
+        }
+
         /* ── Responsive ── */
+
+        /* Small phones */
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 28px; }
+            .hero-stat .number { font-size: 26px; }
+            .hero-stats { gap: 16px; }
+            .hero-ctas { flex-direction: column; align-items: center; }
+            .hero-ctas .btn { width: 100%; justify-content: center; }
+            .hero-ctas .btn-primary-wrap { width: 100%; }
+            .cta-card { padding: 48px 20px; }
+            .cta-card h2 { font-size: 26px; }
+            .cta-card p { font-size: 15px; }
+            .skill-card, .feature-card { padding: 24px; }
+            .section-header h2 { font-size: 26px; }
+            .section-header { margin-bottom: 36px; }
+        }
+
         @media (max-width: 768px) {
             .hero-stats {
                 gap: 24px;
             }
 
             .platforms {
-                flex-direction: column;
-                align-items: center;
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .platform-card {
+                flex-direction: row;
+                min-width: unset;
+                padding: 16px 20px;
+                gap: 14px;
+                text-align: left;
+            }
+
+            .platform-card .platform-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 12px;
+                flex-shrink: 0;
             }
 
             footer .container {
@@ -874,11 +945,22 @@
                 display: none;
             }
 
+            .nav-toggle {
+                display: block;
+            }
+
             nav {
                 margin: 8px 12px 0;
                 padding: 8px 12px;
             }
+
+            .code-block .code-content {
+                font-size: 12px;
+                padding: 12px 14px;
+            }
+
         }
+
 
         /* ── Animations ── */
         @keyframes gradientShift {
@@ -971,6 +1053,9 @@
                 GitHub
             </a>
         </div>
+        <a href="https://github.com/integromat/make-skills" class="nav-toggle" aria-label="GitHub">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
     </div>
 </nav>
 
@@ -1212,52 +1297,75 @@
             <h2>Get Started in Seconds</h2>
             <p>Install the plugin and start building Make scenarios from Claude Code.</p>
         </div>
-        <div class="install-methods">
-            <div class="install-card">
-                <h3>Plugin Install</h3>
+        <div class="install-box">
+            <div class="install-tabs">
+                <button class="install-tab active" data-tab="plugin">Plugin Install</button>
+                <button class="install-tab" data-tab="marketplace">Marketplace</button>
+                <button class="install-tab" data-tab="manual">Manual Setup</button>
+            </div>
+            <div class="install-panel active" data-panel="plugin">
                 <div class="desc">Recommended &mdash; one command install</div>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Terminal</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <div class="install-steps">
+                    <div>
+                        <div class="install-step-label">Open Claude Code</div>
+                        <div class="code-block">
+                            <div class="code-header"><span>Terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-content">claude</div>
+                        </div>
                     </div>
-                    <div class="code-content"><span class="prompt">$</span> claude
-<span class="prompt">&gt;</span> /plugin install integromat/make-skills</div>
+                    <div>
+                        <div class="install-step-label">Install the plugin</div>
+                        <div class="code-block">
+                            <div class="code-header"><span>Terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-content">/plugin install integromat/make-skills</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="install-card">
-                <h3>Via Marketplace</h3>
-                <div class="desc">Browse and install from marketplace</div>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Terminal</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <div class="install-panel" data-panel="marketplace">
+                <div class="desc">Browse and install from the marketplace</div>
+                <div class="install-steps">
+                    <div>
+                        <div class="install-step-label">Open Claude Code</div>
+                        <div class="code-block">
+                            <div class="code-header"><span>Terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-content">claude</div>
+                        </div>
                     </div>
-                    <div class="code-content"><span class="prompt">$</span> claude
-<span class="prompt">&gt;</span> /plugin marketplace add integromat/make-skills
-<span class="prompt">&gt;</span> /plugin install</div>
+                    <div>
+                        <div class="install-step-label">Add the marketplace source</div>
+                        <div class="code-block">
+                            <div class="code-header"><span>Terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-content">/plugin marketplace add integromat/make-skills</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="install-step-label">Install the plugin</div>
+                        <div class="code-block">
+                            <div class="code-header"><span>Terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-content">/plugin install</div>
+                        </div>
+                    </div>
                 </div>
-                <ol class="install-steps">
-                    <li>Add the marketplace source</li>
-                    <li>Browse and select "make-skills"</li>
-                </ol>
             </div>
-            <div class="install-card">
-                <h3>Manual Setup</h3>
-                <div class="desc">Clone and configure manually</div>
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Terminal</span>
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <div class="install-panel" data-panel="manual">
+                <div class="desc">Clone the repo and add as a local plugin</div>
+                <div class="install-steps">
+                    <div>
+                        <div class="install-step-label">Clone the repository</div>
+                        <div class="code-block">
+                            <div class="code-header"><span>Terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-content">git clone https://github.com/integromat/make-skills.git</div>
+                        </div>
                     </div>
-                    <div class="code-content"><span class="prompt">$</span> git clone https://github.com/integromat/make-skills.git
-<span class="prompt">$</span> claude plugin add /path/to/make-skills</div>
+                    <div>
+                        <div class="install-step-label">Add as a local plugin</div>
+                        <div class="code-block">
+                            <div class="code-header"><span>Terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-content">claude plugin add /path/to/make-skills</div>
+                        </div>
+                    </div>
                 </div>
-                <ol class="install-steps">
-                    <li>Clone the repository</li>
-                    <li>Add as a local plugin</li>
-                    <li>Skills activate automatically on relevant tasks</li>
-                </ol>
             </div>
         </div>
     </div>
@@ -1307,7 +1415,18 @@
         });
     }, { threshold: 0.1 });
 
-    document.querySelectorAll('.skill-card, .feature-card, .tool-card, .install-card, .platform-card').forEach(el => {
+    // Install tabs
+    document.querySelectorAll('.install-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = tab.dataset.tab;
+            document.querySelectorAll('.install-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.install-panel').forEach(p => p.classList.remove('active'));
+            tab.classList.add('active');
+            document.querySelector(`.install-panel[data-panel="${target}"]`).classList.add('active');
+        });
+    });
+
+    document.querySelectorAll('.skill-card, .feature-card, .tool-card, .install-box, .platform-card').forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(20px)';
         el.style.transition = 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
