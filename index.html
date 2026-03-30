@@ -1302,7 +1302,7 @@
                 <button class="install-tab" data-tab="manual">Manual Setup</button>
             </div>
             <div class="install-panel active" data-panel="plugin">
-                <div class="desc">Recommended &mdash; one command install</div>
+                <div class="desc">Recommended &mdash; open Claude Code, then add the marketplace and install</div>
                 <div class="install-steps">
                     <div>
                         <div class="install-step-label">Open Claude Code</div>
@@ -1312,16 +1312,23 @@
                         </div>
                     </div>
                     <div>
+                        <div class="install-step-label">Add the Make marketplace</div>
+                        <div class="code-block">
+                            <div class="code-header"><span>Claude Code</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-content">/plugin marketplace add integromat/make-skills</div>
+                        </div>
+                    </div>
+                    <div>
                         <div class="install-step-label">Install the plugin</div>
                         <div class="code-block">
-                            <div class="code-header"><span>Terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-header"><span>Claude Code</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
                             <div class="code-content">/plugin install make-skills@make-marketplace</div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="install-panel" data-panel="manual">
-                <div class="desc">Clone the repo and add as a local plugin</div>
+                <div class="desc">Clone the repo, open Claude Code, and add as a local plugin</div>
                 <div class="install-steps">
                     <div>
                         <div class="install-step-label">Clone the repository</div>
@@ -1331,10 +1338,17 @@
                         </div>
                     </div>
                     <div>
-                        <div class="install-step-label">Add as a local plugin</div>
+                        <div class="install-step-label">Open Claude Code</div>
                         <div class="code-block">
                             <div class="code-header"><span>Terminal</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-                            <div class="code-content">claude plugin add /path/to/make-skills</div>
+                            <div class="code-content">claude</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="install-step-label">Add as a local plugin</div>
+                        <div class="code-block">
+                            <div class="code-header"><span>Claude Code</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                            <div class="code-content">/plugin add /path/to/make-skills</div>
                         </div>
                     </div>
                 </div>

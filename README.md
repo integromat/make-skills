@@ -16,25 +16,24 @@ Claude Code plugin for [Make.com](https://www.make.com) MCP integration — run 
 
 ## Installation
 
-### Method 1: Plugin Installation (Recommended)
+### From Marketplace (Recommended)
 
 ```bash
-# Install directly as a Claude Code plugin
-claude
+# 1. Add the Make marketplace
+/plugin marketplace add integromat/make-skills
+
+# 2. Install the plugin
 /plugin install make-skills@make-marketplace
 ```
 
-### Method 2: Manual Installation
+### Manual Installation
 
 ```bash
 # 1. Clone this repository
 git clone https://github.com/integromat/make-skills.git
 
-# 2. Add as a local plugin
-claude plugin add /path/to/make-skills
-
-# 3. Reload Claude Code
-# Skills will activate automatically
+# 2. Add as a local plugin in Claude Code
+/plugin add /path/to/make-skills
 ```
 
 ## Setup
