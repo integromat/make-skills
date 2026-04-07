@@ -726,6 +726,87 @@
             .install-tab { font-size: 12px; padding: 8px 10px; }
         }
 
+        /* ── Download Cards ── */
+        .download-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .download-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: white;
+        }
+
+        .download-card:hover {
+            border-color: rgba(130, 0, 250, 0.4);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .download-card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .download-card-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .download-card-info span {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .download-card .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            font-family: 'Satoshi', sans-serif;
+            color: white;
+            background: linear-gradient(90deg, #5D00B2, #8200FA);
+            white-space: nowrap;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .download-card:hover .btn-download {
+            transform: scale(1.03);
+            box-shadow: 0 0 28px -6px rgba(176, 45, 233, 0.75);
+        }
+
+        .download-divider {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            text-align: center;
+            margin: 4px 0;
+        }
+
+        @media (max-width: 480px) {
+            .download-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .download-card .btn-download {
+                align-self: stretch;
+                justify-content: center;
+            }
+        }
+
         /* ── MCP Tools ── */
         .tools {
             padding: 80px 0;
@@ -1294,12 +1375,13 @@
     <div class="container">
         <div class="section-header">
             <h2>Get Started in Seconds</h2>
-            <p>Install the plugin and start building Make scenarios from Claude Code.</p>
+            <p>Install the plugin in Claude Code, or download individual skills for Claude Desktop and Claude.ai.</p>
         </div>
         <div class="install-box">
             <div class="install-tabs">
                 <button class="install-tab active" data-tab="plugin">Plugin Install</button>
                 <button class="install-tab" data-tab="manual">Manual Setup</button>
+                <button class="install-tab" data-tab="download">Downloads</button>
             </div>
             <div class="install-panel active" data-panel="plugin">
                 <div class="desc">Recommended &mdash; open Claude Code, then add the marketplace and install</div>
@@ -1351,6 +1433,52 @@
                             <div class="code-content">/plugin add /path/to/make-skills</div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="install-panel" data-panel="download">
+                <div class="desc">Download individual skills for Claude Desktop or Claude.ai</div>
+                <div class="download-grid">
+                    <a class="download-card" href="https://github.com/integromat/make-skills/raw/main/dist/make-scenario-building-v0.1.0.zip">
+                        <div class="download-card-info">
+                            <h4>Scenario Building</h4>
+                            <span>Architecture &amp; Design &mdash; 18 reference files</span>
+                        </div>
+                        <span class="btn-download">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Download
+                        </span>
+                    </a>
+                    <a class="download-card" href="https://github.com/integromat/make-skills/raw/main/dist/make-module-configuring-v0.1.0.zip">
+                        <div class="download-card-info">
+                            <h4>Module Configuring</h4>
+                            <span>Parameters &amp; Data Flow &mdash; 11 reference files</span>
+                        </div>
+                        <span class="btn-download">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Download
+                        </span>
+                    </a>
+                    <a class="download-card" href="https://github.com/integromat/make-skills/raw/main/dist/make-mcp-reference-v0.1.0.zip">
+                        <div class="download-card-info">
+                            <h4>MCP Reference</h4>
+                            <span>Connection &amp; Troubleshooting &mdash; 1 reference file</span>
+                        </div>
+                        <span class="btn-download">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Download
+                        </span>
+                    </a>
+                    <div class="download-divider">or</div>
+                    <a class="download-card" href="https://github.com/integromat/make-skills/raw/main/dist/make-skills-v0.1.0.zip">
+                        <div class="download-card-info">
+                            <h4>Complete Bundle</h4>
+                            <span>All 3 skills + MCP config &mdash; for Claude Code</span>
+                        </div>
+                        <span class="btn-download">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Download All
+                        </span>
+                    </a>
                 </div>
             </div>
         </div>

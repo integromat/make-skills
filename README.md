@@ -39,6 +39,23 @@ claude
 /plugin add /path/to/make-skills
 ```
 
+### Download Individual Skills (Claude Desktop / Claude.ai)
+
+Download individual skills as zip files and add them to Claude Desktop or Claude.ai projects:
+
+| Skill | Description | Download |
+|-------|-------------|----------|
+| Scenario Building | Scenario design, blueprint construction, routing, error handling | [Download](https://github.com/integromat/make-skills/releases/latest/download/make-scenario-building-v0.1.0.zip) |
+| Module Configuring | Module parameters, connections, mapping, webhooks, IML | [Download](https://github.com/integromat/make-skills/releases/latest/download/make-module-configuring-v0.1.0.zip) |
+| MCP Reference | MCP server configuration, OAuth/token auth, troubleshooting | [Download](https://github.com/integromat/make-skills/releases/latest/download/make-mcp-reference-v0.1.0.zip) |
+
+**How to use:**
+1. Download the zip for the skill(s) you need
+2. Extract the zip file
+3. In Claude Desktop or Claude.ai, add the extracted folder as project knowledge
+
+Or download the [complete bundle](https://github.com/integromat/make-skills/releases/latest/download/make-skills-v0.1.0.zip) with all 3 skills + MCP config.
+
 ## Setup
 
 ### OAuth (Recommended)
