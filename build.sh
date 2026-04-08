@@ -7,6 +7,13 @@ REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 DIST_DIR="$REPO_ROOT/dist"
 VERSION=$(grep '"version"' "$REPO_ROOT/.claude-plugin/plugin.json" | head -1 | sed 's/.*: *"\([^"]*\)".*/\1/')
 
+# Cleanup temp dirs on exit/error/interrupt
+_CLEANUP_DIRS=()
+cleanup() {
+  for d in "${_CLEANUP_DIRS[@]}"; do rm -rf "$d" 2>/dev/null; done
+}
+trap cleanup EXIT
+
 SKILLS=(
     "make-scenario-building"
     "make-module-configuring"
@@ -27,15 +34,16 @@ echo "Building individual skill zips..."
 for skill in "${SKILLS[@]}"; do
     echo "  - $skill"
     TMPDIR=$(mktemp -d)
+    _CLEANUP_DIRS+=("$TMPDIR")
     cp -r "$REPO_ROOT/skills/$skill" "$TMPDIR/$skill"
     (cd "$TMPDIR" && zip -rq "$DIST_DIR/${skill}-v${VERSION}.zip" "$skill/" -x "*.DS_Store")
-    rm -rf "$TMPDIR"
 done
 
 # Build complete bundle (for Claude Code)
 echo "Building complete bundle..."
 
 TMPDIR=$(mktemp -d)
+_CLEANUP_DIRS+=("$TMPDIR")
 BUNDLE="$TMPDIR/make-skills"
 mkdir -p "$BUNDLE"
 cp -r "$REPO_ROOT/.claude-plugin" "$BUNDLE/.claude-plugin"
@@ -45,7 +53,6 @@ cp "$REPO_ROOT/README.md" "$BUNDLE/README.md"
 cp "$REPO_ROOT/LICENSE" "$BUNDLE/LICENSE"
 cp "$REPO_ROOT/CLAUDE.md" "$BUNDLE/CLAUDE.md"
 (cd "$TMPDIR" && zip -rq "$DIST_DIR/make-skills-v${VERSION}.zip" "make-skills/" -x "*.DS_Store")
-rm -rf "$TMPDIR"
 
 # Results
 echo ""
