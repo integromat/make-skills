@@ -33,7 +33,7 @@ echo "Building individual skill zips..."
 
 for skill in "${SKILLS[@]}"; do
     echo "  - $skill"
-    TMPDIR=$(mktemp -d)
+    TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/make-skills.XXXXXX")
     _CLEANUP_DIRS+=("$TMPDIR")
     cp -r "$REPO_ROOT/skills/$skill" "$TMPDIR/$skill"
     (cd "$TMPDIR" && zip -rq "$DIST_DIR/${skill}-v${VERSION}.zip" "$skill/" -x "*.DS_Store")
@@ -42,7 +42,7 @@ done
 # Build complete bundle (for Claude Code)
 echo "Building complete bundle..."
 
-TMPDIR=$(mktemp -d)
+TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/make-skills.XXXXXX")
 _CLEANUP_DIRS+=("$TMPDIR")
 BUNDLE="$TMPDIR/make-skills"
 mkdir -p "$BUNDLE"
