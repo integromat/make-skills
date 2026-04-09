@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 # Build script for make-skills distribution packages
 # Creates zip files for Claude Desktop/Claude.ai (individual skills) and Claude Code (bundle)
+#
+# Artifact strategy:
+#   dist/<name>.zip          — stable aliases, committed to main for raw downloads
+#   dist/<name>-v<ver>.zip   — versioned, gitignored, attached to GitHub Releases
+#
+# After building, publish versioned artifacts to a release:
+#   gh release create v${VERSION} dist/*-v${VERSION}.zip
 
 set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
@@ -37,6 +44,8 @@ for skill in "${SKILLS[@]}"; do
     _CLEANUP_DIRS+=("$TMPDIR")
     cp -r "$REPO_ROOT/skills/$skill" "$TMPDIR/$skill"
     (cd "$TMPDIR" && zip -rq "$DIST_DIR/${skill}-v${VERSION}.zip" "$skill/" -x "*.DS_Store")
+    # Stable alias (version-free) so docs don't 404 after a bump
+    cp "$DIST_DIR/${skill}-v${VERSION}.zip" "$DIST_DIR/${skill}.zip"
 done
 
 # Build complete bundle (for Claude Code)
@@ -53,6 +62,8 @@ cp "$REPO_ROOT/README.md" "$BUNDLE/README.md"
 cp "$REPO_ROOT/LICENSE" "$BUNDLE/LICENSE"
 cp "$REPO_ROOT/CLAUDE.md" "$BUNDLE/CLAUDE.md"
 (cd "$TMPDIR" && zip -rq "$DIST_DIR/make-skills-v${VERSION}.zip" "make-skills/" -x "*.DS_Store")
+# Stable alias
+cp "$DIST_DIR/make-skills-v${VERSION}.zip" "$DIST_DIR/make-skills.zip"
 
 # Results
 echo ""
@@ -62,8 +73,10 @@ echo "Individual skills (Claude Desktop / Claude.ai):"
 for skill in "${SKILLS[@]}"; do
     SIZE=$(du -h "$DIST_DIR/${skill}-v${VERSION}.zip" | cut -f1)
     echo "  ${skill}-v${VERSION}.zip  ${SIZE}"
+    echo "  ${skill}.zip  (stable alias)"
 done
 echo ""
 echo "Complete bundle (Claude Code):"
 SIZE=$(du -h "$DIST_DIR/make-skills-v${VERSION}.zip" | cut -f1)
 echo "  make-skills-v${VERSION}.zip  ${SIZE}"
+echo "  make-skills.zip  (stable alias)"

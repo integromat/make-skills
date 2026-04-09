@@ -1,2 +1,7 @@
 .idea/
 .claude/settings.local.json
+
+# Versioned build artifacts — only stable aliases (e.g. make-skills.zip) are
+# committed for raw.githubusercontent.com downloads. Versioned ZIPs belong in
+# GitHub Releases, not in the repo history.
+dist/*-v*.zip
