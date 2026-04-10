@@ -44,19 +44,17 @@ The `flow` array contains modules executed in sequence. Each module can have nes
 - **Module version**: Always specify the correct `version` matching the app version from `app-modules_list`.
 - **Flow IDs**: Assign sequential integer IDs starting from 1. Each module in the flow needs a unique ID.
 - **Designer metadata**: Include `metadata.designer` with `x` and `y` coordinates (increment x by 300 per module for horizontal layout).
-- **Aggregator `fepiModule`**: When using `builtin:BasicAggregator`, the `fepiModule` property (which links the aggregator to its source iterator/feeder module) must be a **top-level property on the module object**, NOT inside `parameters`. Example:
+- **Aggregator `feeder` parameter**: When using `builtin:BasicAggregator` or `util:TextAggregator`, the `feeder` property (which links the aggregator to its source iterator/feeder module) goes **inside `parameters`**, not as a top-level module property. The value is the `id` of the source module that feeds bundles into this aggregator. Example:
   ```json
   {
     "id": 3,
     "module": "builtin:BasicAggregator",
     "version": 1,
-    "fepiModule": 2,
-    "parameters": {},
+    "parameters": { "feeder": 2 },
     "mapper": {"properties": {}},
     "metadata": {"designer": {"x": 600, "y": 0}}
   }
   ```
-  The value of `fepiModule` is the `id` of the iterator/feeder module (e.g., `builtin:BasicFeeder`) that feeds data into this aggregator. Placing `fepiModule` inside `parameters` will cause a runtime `InvalidConfigurationError` ("linked feeder '0' was not found").
 
 ### Parameters vs Mapper
 
@@ -226,25 +224,50 @@ For processing arrays item-by-item, use a Feeder → processing → Aggregator p
   "mapper": { "array": "{{split(1.`1`; space)}}" } }
 ```
 
-After processing, collect results with `fepiModule` as a **top-level property** (see Key Rules above):
+After processing, collect results with `feeder` inside `parameters` (see Key Rules above):
 
 ```json
 { "id": 16, "module": "builtin:BasicAggregator", "version": 1,
-  "fepiModule": 15,
-  "parameters": {},
+  "parameters": { "feeder": 15 },
   "mapper": { "properties": { "email": "{{15.value}}" } } }
 ```
 
-The `fepiModule` value is the feeder module's ID. Placing it inside `parameters` causes a runtime error.
+The `feeder` value is the source module's ID. It must be inside `parameters` — placing it as a top-level module property is ignored by the runtime.
 
-Text aggregation uses `util:TextAggregator` — same `fepiModule` pattern:
+Text aggregation uses `util:TextAggregator` — same `feeder` pattern:
 
 ```json
 { "id": 10, "module": "util:TextAggregator", "version": 1,
-  "fepiModule": 8,
-  "parameters": { "rowSeparator": "\n" },
+  "parameters": { "feeder": 8, "rowSeparator": "\n" },
   "mapper": { "value": "{{8.description}}" } }
 ```
+
+### Aggregator Metadata
+
+Aggregators benefit from `metadata.restore.extra` which tells the Make UI which source module feeds them. Without it the aggregator works at runtime but the designer won't display the source module label correctly.
+
+```json
+{
+  "metadata": {
+    "expect": [{"name": "value", "type": "text", "label": "Text"}],
+    "restore": {
+      "extra": {
+        "feeder": {
+          "label": "Search Events - Search Events [1]"
+        }
+      },
+      "parameters": {
+        "rowSeparator": { "label": "New row" }
+      }
+    },
+    "designer": { "x": 600, "y": 0, "name": "Text Aggregator" }
+  }
+}
+```
+
+- **`restore.extra.feeder.label`** — Human-readable label for the source module (displayed in the aggregator's "Source Module" dropdown in the designer).
+- **`restore.parameters`** — Labels for parameter values (e.g., row separator display name).
+- **`expect`** — Declares the aggregator's input fields. For `util:TextAggregator`, this is typically `[{"name": "value", "type": "text", "label": "Text"}]`.
 
 ## Global Scenario Metadata
 
@@ -457,7 +480,7 @@ want to prevent formula evaluation.
 
 After constructing a blueprint, follow this sequence to deploy and run it:
 
-1. **Validate the blueprint** — call `validate_blueprint_schema` to catch structural errors before submission.
+1. **Validate the blueprint** — call `validate_blueprint_schema` to catch structural errors before submission. Note: this validator checks the static blueprint schema but may reject valid module-specific properties (e.g., aggregator `metadata.expect` or `metadata.restore` fields) that the runtime accepts. If validation fails on metadata or module-specific fields that you know are correct from working examples, proceed with `scenarios_create` — the runtime is the authoritative validator.
 
 2. **Ensure `metadata` is present** — `scenarios_create` **requires** a top-level `metadata` object. Add the default metadata block (see [Global Scenario Metadata](#blueprint-structure) above for the full structure). At minimum include:
 ```json
@@ -487,6 +510,7 @@ After constructing a blueprint, follow this sequence to deploy and run it:
 5. **Configure scheduling** — call `scenario_scheduling_update` with the appropriate scheduling object:
    - **Webhook / instant trigger** (first module is `gateway:CustomWebHook` or any module with `listener: true`): use `{"type": "immediately"}`. **Do not use `"indefinitely"`** — it causes activation to fail with "Invalid interval."
    - **Polling / scheduled trigger**: use `{"type": "indefinitely", "interval": <seconds>}` (minimum 900 for most accounts).
+   - **One-time scheduled run**: use `{"type": "once", "date": "<ISO 8601 datetime>"}`. The `date` field requires **full ISO 8601 datetime** format — e.g., `"2026-04-11T09:00:00.000Z"`. A date-only string like `"2026-04-11"` fails with "should match format date-time".
    - **On-demand / manual**: omit scheduling or use `{"type": "on-demand"}`.
 
 6. **Activate the scenario** — newly created scenarios are **inactive** by default. Call `scenarios_activate` before attempting to run. Running an inactive scenario will fail.

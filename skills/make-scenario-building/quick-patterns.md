@@ -58,7 +58,7 @@ Goal: Send an email to a specific recipient via Gmail.
 ```
 1. connections_list              → Find existing Google connection (accountName: "google")
    - Verify scopes include Gmail send permission
-2. app-module_get                → google-email:ActionSendEmail (instructions format)
+2. app-module_get                → google-email:sendAnEmail (instructions format)
 3. Construct blueprint JSON      → Build blueprint with mapper (to, subject, body) (see blueprint-construction.md)
 4. validate_blueprint_schema → scenarios_create → scenarios_activate → scenarios_run
 ```
@@ -132,6 +132,69 @@ mapper: {
 - `model: "medium"` for Make AI Provider — `RpcGetModels` fails via MCP; use tier names directly.
 - `valueInputOption: "USER_ENTERED"` in updateRow mapper — mandatory for correct value formatting.
 - Columns without headers get `"undefined"` as their key in the `values` object.
+
+## Google Calendar → Aggregated Email Summary
+
+Goal: Search today's calendar events, aggregate them into a text summary, and email it.
+
+```
+1. connections_list              → Find existing Google connection (accountName: "google")
+   - Must cover both Calendar and Gmail scopes
+2. app-module_get                → google-calendar:searchEvents (outputFormat: "instructions")
+3. rpc_execute                   → listCalendars RPC (resolve calendar ID)
+4. app-module_get                → util:TextAggregator (outputFormat: "instructions")
+5. app-module_get                → google-email:sendAnEmail (outputFormat: "instructions")
+6. Construct blueprint JSON      → Three modules chained:
+   - google-calendar:searchEvents (parameters: connection, calendarId, timeMin/timeMax)
+   - util:TextAggregator (parameters.feeder: <searchEvents module ID>, parameters.rowSeparator: "\n")
+   - google-email:sendAnEmail (mapper: to, subject, content referencing aggregated text)
+   ⚠ feeder goes inside parameters, not as a top-level module property
+   ⚠ Include metadata.restore.extra.feeder with source module label for UI display
+7. validate_blueprint_schema → scenarios_create → scenarios_activate → scenarios_run
+```
+
+**Key configuration values:**
+
+```javascript
+// Module 1: google-calendar:searchEvents
+parameters: {
+  __IMTCONN__: <google_connection_id>,
+  calendarId: "<calendar_id>",    // from rpc_execute listCalendars
+  timeMin: "{{formatDate(now; \"YYYY-MM-DD\")}}T00:00:00Z",
+  timeMax: "{{formatDate(now; \"YYYY-MM-DD\")}}T23:59:59Z"
+}
+
+// Module 2: util:TextAggregator
+parameters: {
+  feeder: 1,           // ID of searchEvents module
+  rowSeparator: "\n"
+}
+mapper: {
+  value: "{{1.summary}} ({{1.start}} - {{1.end}})"
+}
+metadata: {
+  expect: [{ name: "value", type: "text", label: "Text" }],
+  restore: {
+    extra: { feeder: { label: "Search Events - Search Events [1]" } },
+    parameters: { rowSeparator: { label: "New row" } }
+  }
+}
+
+// Module 3: google-email:sendAnEmail
+parameters: {
+  __IMTCONN__: <google_connection_id>
+}
+mapper: {
+  to: "recipient@example.com",
+  subject: "Today's Calendar Summary",
+  content: "{{2.text}}"   // aggregated text output from TextAggregator
+}
+```
+
+**Gotchas:**
+- `feeder: 1` must be inside `parameters`, not a top-level property on the module object.
+- `timeMin`/`timeMax` use IML expressions to scope to today's events.
+- The TextAggregator outputs its result as `{{2.text}}` (where 2 is the aggregator's module ID).
 
 ## Common Tail Sequence
 
