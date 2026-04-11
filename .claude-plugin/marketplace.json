@@ -10,14 +10,23 @@
     {
       "name": "make-skills",
       "description": "Expert skills for scenario architecture, module configuration, and MCP troubleshooting",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "source": "./",
       "author": {
         "name": "Make",
         "url": "https://www.make.com"
       },
       "category": "automation",
-      "keywords": ["make", "mcp", "automation", "scenarios", "integration", "workflow", "blueprint", "no-code"],
+      "keywords": [
+        "make",
+        "mcp",
+        "automation",
+        "scenarios",
+        "integration",
+        "workflow",
+        "blueprint",
+        "no-code"
+      ],
       "homepage": "https://www.make.com",
       "repository": "https://github.com/integromat/make-skills",
       "license": "MIT"
