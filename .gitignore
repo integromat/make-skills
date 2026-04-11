@@ -1,5 +1,6 @@
 .idea/
 .claude/settings.local.json
+node_modules/
 
 # Versioned build artifacts — only stable aliases (e.g. make-skills.zip) are
 # committed for raw.githubusercontent.com downloads. Versioned ZIPs belong in
