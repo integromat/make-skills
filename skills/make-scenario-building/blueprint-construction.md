@@ -333,7 +333,7 @@ Look up existing connections via `connections_list` and place the ID in `paramet
 
 Without a valid connection parameter, the scenario will be marked `isinvalid: true` and cannot be activated.
 
-The `metadata.restore` and `metadata.parameters` arrays are set by Make.com — do not populate them when constructing blueprints. They store UI state for the designer.
+The `metadata.parameters` arrays are set by Make.com and store UI state for the designer. Populate `metadata.restore` only for aggregators (see [Aggregator Metadata](#aggregator-metadata) above).
 
 ## Configuring Modules via RPC
 
