@@ -253,7 +253,7 @@ Aggregators benefit from `metadata.restore.extra` which tells the Make UI which 
     "restore": {
       "extra": {
         "feeder": {
-          "label": "Search Events - Search Events [1]"
+          "label": "<Source Module Name> [<source module ID>]"
         }
       },
       "parameters": {
@@ -265,7 +265,7 @@ Aggregators benefit from `metadata.restore.extra` which tells the Make UI which 
 }
 ```
 
-- **`restore.extra.feeder.label`** — Human-readable label for the source module (displayed in the aggregator's "Source Module" dropdown in the designer).
+- **`restore.extra.feeder.label`** — Human-readable label for the source module (displayed in the aggregator's "Source Module" dropdown in the designer). Format: `"<Module Name> - <Module Name> [<module ID>]"` — e.g., `"Search Events - Search Events [1]"`.
 - **`restore.parameters`** — Labels for parameter values (e.g., row separator display name).
 - **`expect`** — Declares the aggregator's input fields. For `util:TextAggregator`, this is typically `[{"name": "value", "type": "text", "label": "Text"}]`.
 

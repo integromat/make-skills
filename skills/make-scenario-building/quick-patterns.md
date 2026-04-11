@@ -175,7 +175,7 @@ mapper: {
 metadata: {
   expect: [{ name: "value", type: "text", label: "Text" }],
   restore: {
-    extra: { feeder: { label: "Search Events - Search Events [1]" } },
+    extra: { feeder: { label: "Search Events - Search Events [1]" } },  // match actual source module name and ID
     parameters: { rowSeparator: { label: "New row" } }
   }
 }

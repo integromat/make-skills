@@ -4,7 +4,7 @@
   "private": true,
   "description": "Claude Code plugin for Make.com MCP integration",
   "scripts": {
-    "release": "commit-and-tag-version"
+    "release": "commit-and-tag-version && bash build.sh"
   },
   "devDependencies": {
     "commit-and-tag-version": "12.7.1"
