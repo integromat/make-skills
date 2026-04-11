@@ -1,6 +1,6 @@
 {
   "name": "make-skills",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Design, build, and deploy Make.com automation scenarios using expert skills — directly from Claude Code",
   "author": {
     "name": "Make",
@@ -10,7 +10,16 @@
   "homepage": "https://www.make.com",
   "repository": "https://github.com/integromat/make-skills",
   "license": "MIT",
-  "keywords": ["make", "mcp", "automation", "scenarios", "integration", "workflow", "blueprint", "no-code"],
+  "keywords": [
+    "make",
+    "mcp",
+    "automation",
+    "scenarios",
+    "integration",
+    "workflow",
+    "blueprint",
+    "no-code"
+  ],
   "allowedTools": [
     "WebFetch(domain:help.make.com)",
     "WebFetch(domain:developers.make.com)"
