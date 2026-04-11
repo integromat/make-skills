@@ -253,7 +253,7 @@ Aggregators benefit from `metadata.restore.extra` which tells the Make UI which 
     "restore": {
       "extra": {
         "feeder": {
-          "label": "<Source Module Name> [<source module ID>]"
+          "label": "<Module Name> - <Module Name> [<module ID>]"
         }
       },
       "parameters": {
