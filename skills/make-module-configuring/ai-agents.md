@@ -13,6 +13,7 @@ Beyond the mapper fields below, AI agents support:
 
 - **Context/Knowledge:** Upload external knowledge files (TXT, PDF, DOCX, CSV, MD, JSON) to enhance the agent. Limits: 20MB per file, 50 files per team (250 Enterprise), 100 files per org (500 Enterprise), 20 files per agent. Files are chunked, vectorized, and stored in Make's RAG vector database.
 - **MCP Integration:** Agents can connect to MCP servers for additional tools via a dedicated MCP section in configuration.
+- **Output files:** Agents can generate output files in PDF, DOCX, TXT, and CSV formats when `outputType` is configured appropriately.
 
 These are configured in the Make UI, not via blueprint mapper fields.
 
@@ -23,7 +24,7 @@ These are configured in the Make UI, not via blueprint mapper fields.
 | `defaultModel` | select | LLM model to use (e.g., `"gpt-5.4"`). Resolve options via RPC. |
 | `systemPrompt` | text | Agent instructions — role, goals, constraints, step-by-step behavior. |
 | `message` | text | Input to the agent (typically mapped from upstream module output). Required. |
-| `files` | array | Input files — each with `fileName` (filename) and `data` (buffer). |
+| `files` | array | Input files — each with `fileName` (filename) and `data` (buffer). Supported input formats: JPG, PNG, GIF, PDF. |
 | `threadId` | text | Conversation ID for multi-turn interactions. |
 | `modelConfig` | collection | Model settings: `tokenLimit`, `recursionLimit` (steps per call), `iterationsFromHistoryCount` (max conversation history). |
 | `timeout` | number | Step timeout in seconds (120–600). |
@@ -233,11 +234,21 @@ Use `app_modules_list` with `usage: "tool"` to find modules compatible as agent 
 - **`restore.expect.<field>.mode: "chose"`** marks optional collection/array fields that were explicitly shown but left empty.
 - **`restore.expect.<field>.label`** stores the human-readable label for select/dropdown fields.
 - **Tool discovery**: pass `usage: "tool"` to `app_modules_list` to filter for tool-compatible modules.
+- **AI provider is locked at creation.** Cannot be changed after the agent is created — must create a new agent to switch providers.
+- **Deleting an agent breaks dependent modules.** All `Run an agent` modules referencing the deleted agent will fail. Check active scenarios before deleting.
 
 ## Official Documentation
 
-- [AI Agents Configuration](https://help.make.com/ai-agents-configuration)
+- [Make AI Agents (New)](https://help.make.com/make-ai-agents-new)
 - [Introduction to AI Agents](https://help.make.com/introduction-to-make-ai-agents-new)
+- [Create Your First AI Agent](https://help.make.com/create-your-first-ai-agent)
+- [Sales Outreach AI Agent Use Case](https://help.make.com/sales-outreach-ai-agent-use-case)
+- [Create AI Agents for Different Triggers](https://help.make.com/create-ai-agents-for-different-triggers)
+- [Knowledge](https://help.make.com/knowledge)
+- [Make AI Agents (New) App](https://help.make.com/make-ai-agents-new-app)
+- [Make AI Agents (New) Best Practices](https://help.make.com/make-ai-agents-new-best-practices)
+
+
 
 ## Full Blueprint Example
 

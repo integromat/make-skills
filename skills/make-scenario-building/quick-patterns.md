@@ -56,8 +56,9 @@ Goal: Add a new record to an Airtable base.
 Goal: Send an email to a specific recipient via Gmail.
 
 ```
-1. connections_list              → Find existing Google connection (accountName: "google")
-   - Verify scopes include Gmail send permission
+1. connections_list              → Find existing Google Email connection (accountName: "google-email")
+   - google-email is a SEPARATE connection type from "google" (Sheets/Calendar/Drive)
+   - If missing: credential_requests_create for google-email → user completes OAuth → credential_requests_get
 2. app-module_get                → google-email:sendAnEmail (instructions format)
 3. Construct blueprint JSON      → Build blueprint with mapper (to, subject, body) (see blueprint-construction.md)
 4. validate_blueprint_schema → scenarios_create → scenarios_activate → scenarios_run
@@ -138,8 +139,9 @@ mapper: {
 Goal: Search today's calendar events, aggregate them into a text summary, and email it.
 
 ```
-1. connections_list              → Find existing Google connection (accountName: "google")
-   - Must cover both Calendar and Gmail scopes
+1. connections_list              → Find existing Google connection (accountName: "google") for Calendar
+   connections_list              → Find existing Google Email connection (accountName: "google-email") for Gmail
+   - Calendar and Gmail require SEPARATE connections — google-email is a different connection type than google
 2. app-module_get                → google-calendar:searchEvents (outputFormat: "instructions")
 3. rpc_execute                   → listCalendars RPC (resolve calendar ID)
 4. app-module_get                → util:TextAggregator (outputFormat: "instructions")
@@ -182,7 +184,7 @@ metadata: {
 
 // Module 3: google-email:sendAnEmail
 parameters: {
-  __IMTCONN__: <google_connection_id>
+  __IMTCONN__: <google_email_connection_id>
 }
 mapper: {
   to: "recipient@example.com",

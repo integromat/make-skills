@@ -114,14 +114,23 @@ If `RpcGetModels` succeeds, prefer the returned list. If it fails, pick from the
 - **Cost and latency.** AI agent modules call an LLM and potentially multiple tools. They are slower and more expensive than deterministic modules.
 - **Knowledge vs Input.** Knowledge is persistent reference material (uploaded files). Input is per-execution data from the incoming bundle. Don't confuse the two. Text file input consumes significant memory; knowledge files are preferable for large documents.
 - **Live data needs tools.** An agent without tools only has training data. If the task requires real-time or user-specific data, tools are mandatory — not optional.
-- **Knowledge file formats.** Supported formats for knowledge upload: JSON, TXT, CSV, PDF. Token consumption varies by file size during vector conversion.
+- **Knowledge file formats.** Supported formats for knowledge upload: TXT, PDF, DOCX, CSV, MD, JSON. Token consumption varies by file size during vector conversion.
 - **Conversation memory.** Leaving Conversation ID blank creates a new agent identity with each run — the agent has no memory of previous interactions.
+- **AI provider is locked at creation.** Once an agent is created with a provider (OpenAI, Anthropic, Gemini, Make AI Provider), it cannot be changed. To switch providers, create a new agent.
+- **Agent deletion is permanent.** Deleting an agent breaks all `Run an agent` modules that reference it. Verify no active scenarios depend on the agent before deleting.
+- **Agents are team-shared.** Like connections, agents are visible to all team members. For a private agent, use a team where you're the only member.
 
 ## Official Documentation
 
+- [Make AI Agents (New)](https://help.make.com/make-ai-agents-new)
 - [Introduction to AI Agents](https://help.make.com/introduction-to-make-ai-agents-new)
-- [Tools for AI Agents](https://help.make.com/tools-for-ai-agents)
 - [Create Your First AI Agent](https://help.make.com/create-your-first-ai-agent)
+- [Sales Outreach AI Agent Use Case](https://help.make.com/sales-outreach-ai-agent-use-case)
+- [Create AI Agents for Different Triggers](https://help.make.com/create-ai-agents-for-different-triggers)
+- [Knowledge](https://help.make.com/knowledge)
+- [Make AI Agents (New) App](https://help.make.com/make-ai-agents-new-app)
+- [Make AI Agents (New) Best Practices](https://help.make.com/make-ai-agents-new-best-practices)
+
 
 See also: [Routing](./routing.md) and [Branching](./branching.md) for deterministic alternatives.
 

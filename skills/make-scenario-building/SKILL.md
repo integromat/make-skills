@@ -151,21 +151,24 @@ Once the user confirms the module composition from Phase 1, proceed through thes
 
 **CRITICAL — STOP and ask before proceeding.** This is an interactive checkpoint. For EVERY app that needs a connection — even if only one matching connection exists — list the options and ask the user which connection to use. Do NOT auto-select a connection. Do NOT call any module-specific RPCs (`rpc_execute` for spreadsheet lists, channel lists, folder lists, etc.) until the user has explicitly confirmed a connection for every app. This is a hard gate: no confirmation, no RPCs.
 
-1. **Identify required connections.** From the Scenario Plan, list each distinct app that requires a connection. Builtin modules (`builtin:BasicRouter`, `builtin:BasicFeeder`, `json:ParseJSON`, etc.) do NOT need connections. AI agent modules (`ai-local-agent:RunLocalAIAgent`) are NOT builtin — they require an AI provider connection via `makeConnectionId`.
+1. **Extract connection requirements.** Before checking connections, call `extract_blueprint_components` with the unconfigured blueprint (all modules placed, parameters empty). This returns the authoritative list of: which modules need connections, the connection type for each, and the required OAuth scopes. Use this output — not manual inspection of the Scenario Plan — as the definitive checklist. Builtin modules (`builtin:BasicRouter`, `builtin:BasicFeeder`, `json:ParseJSON`, etc.) do NOT need connections. AI agent modules (`ai-local-agent:RunLocalAIAgent`) are NOT builtin — they require an AI provider connection via `makeConnectionId`.
 
-2. **Check existing connections.** Call `connections_list` with the target `teamId`. List all connections without a type filter first, then match by `accountName` in the results — the `type` filter matches `accountName`, NOT the Make app name (e.g., Google Sheets uses `"google"`, Slack uses `"slack2"` or `"slack3"`).
+2. **Check existing connections (with scope verification).** Call `connections_list` with the target `teamId`. List all connections without a type filter first, then match by `accountName` in the results — the `type` filter matches `accountName`, NOT the Make app name (e.g., Google Sheets uses `"google"`, Gmail uses `"google-email"`, Slack uses `"slack2"` or `"slack3"`).
+
+   **Scope verification (CRITICAL for OAuth connections):** For each matching connection, compare its scopes against the required scopes from `extract_blueprint_components`. A connection that authenticates successfully but lacks a required scope will cause 403/permission errors at runtime. If a matching connection exists but its scopes are insufficient, do NOT attempt to use it — either expand its scopes (see `make-module-configuring` skill, connections reference, Step 3a) or create a new connection with the correct scopes.
 
 3. **Ask the user to pick.** For each app, present a numbered list and WAIT for the user's reply:
-   - **If matching connections exist** (even just one), list ALL of them with name, ID, and metadata (email, workspace), and always include "Create a new connection" as the last option:
+   - **If matching connections exist** (even just one), list ALL of them with name, ID, metadata (email, workspace), and **scope status** (sufficient / insufficient). Always include "Create a new connection" as the last option:
      ```
      I found these existing Google connections:
-     1. "Google - Marketing" (ID: 12345, email: marketing@acme.com)
-     2. Create a new connection
+     1. "Google - Marketing" (ID: 12345, email: marketing@acme.com) — scopes: sufficient
+     2. "Google - Personal" (ID: 12346, email: me@gmail.com) — scopes: insufficient (missing Gmail send)
+     3. Create a new connection
 
      Which one should I use for Google Sheets?
      ```
-     **Even if there is only one match, still ask.** The user may have multiple accounts or prefer a fresh connection.
-   - **If no matching connection exists**, inform the user and create a credential request via `credential_requests_create`.
+     **Even if there is only one match, still ask.** Connections with insufficient scopes should be listed but flagged — offer scope expansion or new connection creation for those.
+   - **If no matching connection exists**, inform the user and create a credential request via `credential_requests_create`, including the required scopes from `extract_blueprint_components`.
 
 4. **Confirm all connections are ready.** Do NOT proceed to Step 2 until every required connection has a user-confirmed connection ID.
 
@@ -291,6 +294,31 @@ Only applies to select-mode. Map-mode accepts the raw ID.
 ### Webhook Scenarios: Scheduling Type
 
 When the first module is a webhook (`gateway:CustomWebHook` or any instant trigger), always use `{"type": "immediately"}` for scheduling. Using `"indefinitely"` causes scenario activation to fail with "Invalid interval." See Step 4 above.
+
+### Gmail / Google Email: `accountName` Is `"google-email"`, Not `"google"`
+
+The `google-email` app (Gmail) uses a **different** connection type than Google Sheets, Calendar, and Drive. When filtering `connections_list`:
+- Google Sheets / Calendar / Drive: `accountName: "google"`
+- Gmail (`google-email`): `accountName: "google-email"`
+
+A generic `"google"` OAuth connection will NOT work for Gmail modules (`google-email:sendAnEmail`, `google-email:TriggerNewEmail`). It lacks the required Gmail scopes and uses a different connection type entirely. Always verify via `extract_blueprint_components` that you have the correct connection type — do not assume all Google apps share one connection.
+
+### IML Date Boundaries: No `endOfDay()` / `startOfDay()` Functions
+
+IML does not have `endOfDay()`, `startOfDay()`, `beginningOfDay()`, or similar boundary functions. Attempting to use them produces an "Unknown function" error. To construct day boundaries, use `formatDate` to extract the date portion and concatenate a literal time:
+
+```
+Start of day: {{formatDate(now; "YYYY-MM-DD")}}T00:00:00Z
+End of day:   {{formatDate(now; "YYYY-MM-DD")}}T23:59:59Z
+```
+
+This is the one valid use of date + literal time concatenation. The general rule "never concatenate separate date and time strings" (see [IML Expressions](../make-module-configuring/iml-expressions.md)) applies to full ISO 8601 datetimes where both parts are dynamic — it does not prohibit combining a `formatDate` date-only result with a fixed literal time component.
+
+### Make AI Tools (`ai-tools:Ask`): Model Is Required, No Default
+
+The `model` parameter in `ai-tools:Ask` (and other Make AI Toolkit modules) is **required** — there is no default value. Omitting it causes a 400 error at runtime. When using Make's AI Provider (`ai-provider` connection), use tier names: `"low"`, `"medium"`, or `"high"`. Do not use provider-specific model IDs (e.g., `"gpt-4o-mini"`) with the Make AI Provider — they are not valid tier names and will fail.
+
+**No Make AI Provider connection?** If the user has no `ai-provider` connection and cannot create one, check `connections_list` for alternative AI provider connections (`openai-gpt-3`, `anthropic-claude`, `gemini-ai-*`) and use the corresponding app-specific module instead of `ai-tools:Ask`. These modules accept provider-specific model IDs. See [Blueprint Construction — AI Tools](./blueprint-construction.md) for details.
 
 ## Official Documentation
 

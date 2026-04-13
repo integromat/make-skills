@@ -141,7 +141,7 @@ IML uses **semicolons** (`;`) to separate function arguments, not commas:
 
 Values outside valid ranges adjust adjacent units (e.g., setting seconds to 70 adds a minute).
 
-**ISO 8601 datetime:** Use a single `formatDate()` call with format `"YYYY-MM-DDTHH:mm:ssZ"`. The `T` is a literal separator within the format string, `Z` outputs the timezone offset. Never concatenate separate date and time strings.
+**ISO 8601 datetime:** Use a single `formatDate()` call with format `"YYYY-MM-DDTHH:mm:ssZ"`. The `T` is a literal separator within the format string, `Z` outputs the timezone offset. Never concatenate separate dynamic date and time expressions into a full datetime. (Exception: combining a date-only `formatDate` result with a fixed literal time like `T00:00:00Z` for day boundaries is valid — see Common Errors.)
 
 ### Math Functions
 
@@ -227,6 +227,7 @@ Values outside valid ranges adjust adjacent units (e.g., setting seconds to 70 a
 - **Mapping arrays to single-value fields.** If a field expects a single value but receives an array, use `first()`, `last()`, or index the specific item.
 - **JSON in text fields.** To put a JSON object into a text field, use `{{toString(1.json)}}`.
 - **DateTime concatenation.** Never concatenate date and time parts with `&`, `+`, or literal `T` outside a format string. Use a single `{{formatDate(date; "YYYY-MM-DDTHH:mm:ssZ")}}`.
+- **Non-existent date boundary functions.** IML does not have `endOfDay()`, `startOfDay()`, `beginningOfDay()`, or similar boundary functions. These produce "Unknown function" errors. To get day boundaries, use `formatDate` to extract the date portion and append a literal time: start of day `{{formatDate(now; "YYYY-MM-DD")}}T00:00:00Z`, end of day `{{formatDate(now; "YYYY-MM-DD")}}T23:59:59Z`. This is the one valid case of combining a `formatDate` result with literal text — the "DateTime concatenation" rule above applies to building full datetimes from separate dynamic parts.
 - **Google Sheets column references.** Use 0-based numeric indices wrapped in backticks:
   `{{1.\`0\`}}` (column A), `{{1.\`1\`}}` (column B), `{{1.\`2\`}}` (column C).
   This is the format the Make UI generates — do not use 1-based indices, bare numbers, or header names.
