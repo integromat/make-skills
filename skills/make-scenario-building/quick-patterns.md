@@ -139,9 +139,9 @@ mapper: {
 Goal: Search today's calendar events, aggregate them into a text summary, and email it.
 
 ```
-1. connections_list              → Find existing Google connection (accountName: "google") for Calendar
-   connections_list              → Find existing Google Email connection (accountName: "google-email") for Gmail
-   - Calendar and Gmail require SEPARATE connections — google-email is a different connection type than google
+1a. connections_list             → Find existing Google connection (accountName: "google") for Calendar
+1b. connections_list             → Find existing Google Email connection (accountName: "google-email") for Gmail
+    - Calendar and Gmail require SEPARATE connections — google-email is a different connection type than google
 2. app-module_get                → google-calendar:searchEvents (outputFormat: "instructions")
 3. rpc_execute                   → listCalendars RPC (resolve calendar ID)
 4. app-module_get                → util:TextAggregator (outputFormat: "instructions")

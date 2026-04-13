@@ -13,7 +13,7 @@ Beyond the mapper fields below, AI agents support:
 
 - **Context/Knowledge:** Upload external knowledge files (TXT, PDF, DOCX, CSV, MD, JSON) to enhance the agent. Limits: 20MB per file, 50 files per team (250 Enterprise), 100 files per org (500 Enterprise), 20 files per agent. Files are chunked, vectorized, and stored in Make's RAG vector database.
 - **MCP Integration:** Agents can connect to MCP servers for additional tools via a dedicated MCP section in configuration.
-- **Output files:** Agents can generate output files in PDF, DOCX, TXT, and CSV formats when `outputType` is configured appropriately.
+- **Output files:** Agents can generate output files in PDF, DOCX, TXT, and CSV formats.
 
 These are configured in the Make UI, not via blueprint mapper fields.
 

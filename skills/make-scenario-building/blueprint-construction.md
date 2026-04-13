@@ -424,7 +424,7 @@ Always provide either `end` OR `duration`, never neither. If using `end`, comput
 |--------------------|-----------------------------------------------------------------------------|
 | `ai-tools:Ask`     | Make AI Toolkit — Simple Text Prompt (connection field: `makeConnectionId`) |
 
-> **Note:** `ai-tools:Ask` uses `makeConnectionId` instead of `__IMTCONN__` for its connection parameter. The connection type is `ai-provider` and model values are abstract sizes like `"large"`.
+> **Note:** `ai-tools:Ask` uses `makeConnectionId` instead of `__IMTCONN__` for its connection parameter. The connection type is `ai-provider` and model values are abstract tier names (`"low"`, `"medium"`, `"high"`).
 
 ### Make AI Tools: Model Parameter
 

@@ -162,7 +162,7 @@ Once the user confirms the module composition from Phase 1, proceed through thes
      ```
      I found these existing Google connections:
      1. "Google - Marketing" (ID: 12345, email: marketing@acme.com) — scopes: sufficient
-     2. "Google - Personal" (ID: 12346, email: me@gmail.com) — scopes: insufficient (missing Gmail send)
+     2. "Google - Personal" (ID: 12346, email: me@gmail.com) — scopes: insufficient (missing Google Drive file access)
      3. Create a new connection
 
      Which one should I use for Google Sheets?
