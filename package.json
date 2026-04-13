@@ -1,10 +1,43 @@
 {
   "name": "make-skills",
   "version": "0.1.1",
-  "private": true,
-  "description": "Claude Code plugin for Make.com MCP integration",
+  "description": "Expert skills for designing, building, and deploying Make.com automation scenarios — for Claude Code, Cursor, GitHub Copilot, and other AI agents",
+  "license": "MIT",
+  "author": {
+    "name": "Make",
+    "email": "support@make.com",
+    "url": "https://www.make.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/integromat/make-skills.git"
+  },
+  "homepage": "https://www.make.com",
+  "keywords": [
+    "agent-skills",
+    "skills",
+    "make",
+    "mcp",
+    "automation",
+    "scenarios",
+    "integration",
+    "workflow",
+    "blueprint",
+    "no-code",
+    "claude-code",
+    "cursor",
+    "github-copilot",
+    "ai-agents"
+  ],
   "scripts": {
     "release": "commit-and-tag-version && bash build.sh"
+  },
+  "agents": {
+    "skills": [
+      { "name": "make-scenario-building", "path": "./skills/make-scenario-building" },
+      { "name": "make-module-configuring", "path": "./skills/make-module-configuring" },
+      { "name": "make-mcp-reference", "path": "./skills/make-mcp-reference" }
+    ]
   },
   "devDependencies": {
     "commit-and-tag-version": "12.7.1"

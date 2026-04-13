@@ -1,6 +1,13 @@
 ---
 name: make-scenario-building
 description: This skill should be used when designing Make scenarios, choosing which modules to use, composing module flows, setting up routing/branching/filtering/iterations/aggregations, building blueprints, deploying scenarios, handling errors, configuring scheduling and triggers, or discussing scenario architecture. Covers WHICH modules to use and WHY — complementary to make-module-configuring which covers HOW to configure each module.
+license: MIT
+compatibility: Requires Make.com account with active scenarios. Works with any agent that supports MCP (Claude Code, Cursor, GitHub Copilot, etc.).
+metadata:
+  author: Make
+  version: "0.1.1"
+  homepage: https://www.make.com
+  repository: https://github.com/integromat/make-skills
 ---
 
 # Make Scenario Building

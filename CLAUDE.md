@@ -4,9 +4,9 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-**make-skills** is a Claude Code plugin for Make.com MCP integration. It lets users run Make scenarios, manage automations, and get best-practice guidance directly from Claude Code. Published by Make under MIT license.
+**make-skills** provides expert skills for designing, building, and deploying Make.com automation scenarios. Distributed as both a Claude Code plugin and as Open Agent Skills (compatible with 40+ AI agents via `npx skills add integromat/make-skills`). Published by Make under MIT license.
 
-The plugin connects to the remote Make MCP server:
+The skills connect to the remote Make MCP server:
 
 - **`make`** — Make.com's hosted MCP server at `https://mcp.make.com`. Provides tools for app discovery, module configuration, connections, webhooks, data stores, and scenario lifecycle. Authenticated via OAuth (default) or MCP token.
 
@@ -126,10 +126,16 @@ Construct blueprint JSON -> `validate_blueprint_schema` -> `scenarios_create`
 3. Skill descriptions must use third person ("This skill should be used when...")
 4. Skill body should avoid second person ("you should/need/must/can")
 5. Target 500-5000 words
+6. Add optional Open Agent Skills frontmatter: `license`, `compatibility`, `metadata` (with `author`, `version`, `homepage`, `repository`)
 
 ### Modifying MCP configuration
 
 Edit `.mcp.json`. The `make` server uses HTTP transport to Make's hosted endpoint at `https://mcp.make.com`.
+
+### Releasing a new version
+
+1. Run `npm run release` — bumps version in `package.json`, `plugin.json`, `marketplace.json`, and all `skills/*/SKILL.md` frontmatter, then runs `build.sh`
+2. Publish versioned artifacts: `gh release create v${VERSION} dist/*-v${VERSION}.zip`
 
 ## Key Conventions
 
