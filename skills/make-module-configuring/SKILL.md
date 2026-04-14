@@ -2,7 +2,7 @@
 name: make-module-configuring
 description: This skill should be used when configuring Make module parameters, assigning connections, mapping data between modules, setting up webhooks or data stores in modules, working with IML expressions, handling keys, or defining data structures for module inputs/outputs. Covers the practical HOW of module configuration — complementary to make-scenario-building which covers WHICH modules to use and WHY.
 license: MIT
-compatibility: Requires Make.com account with active scenarios. Works with any agent that supports MCP (Claude Code, Cursor, GitHub Copilot, etc.).
+compatibility: Requires a Make.com account with permissions to create scenarios. Works with any agent that supports MCP (Claude Code, Cursor, GitHub Copilot, etc.).
 metadata:
   author: Make
   version: "0.1.1"
