@@ -1,6 +1,6 @@
 {
   "name": "make-skills",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Design, build, and deploy Make.com automation scenarios using expert skills — directly from Claude Code",
   "author": {
     "name": "Make",
