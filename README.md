@@ -89,7 +89,7 @@ On first use, you'll authenticate through Make's OAuth consent screen.
 For granular access control (team/scenario-level filtering):
 
 1. Generate a token in Make: Profile → API access → Add token
-2. Select the `mcp:use` scope
+2. Select the `mcp:use` scope plus any additional scopes for resources you want to access (e.g., `scenarios:read`, `scenarios:write`, `connections:read`)
 3. Configure:
 
 ```json
