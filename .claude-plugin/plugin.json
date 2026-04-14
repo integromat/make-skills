@@ -1,6 +1,6 @@
 {
   "name": "make-skills",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Expert skills for designing, building, and deploying Make.com automation scenarios — for Claude Code and other AI agents",
   "author": {
     "name": "Make",
