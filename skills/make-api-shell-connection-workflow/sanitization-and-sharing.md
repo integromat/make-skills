@@ -64,7 +64,7 @@ Search for and remove or replace:
 - personal names
 - email addresses
 - numeric IDs copied from private environments
-- `we.make.com`
+- workspace-specific hosts; use `https://us1.make.com` as the public example base URL
 - `providerMakeUserId`
 - absolute home-directory paths copied from a personal machine
 - phrases such as `verified live`, `working example`, or `for debugging` if they imply private validation or tenant-specific state
