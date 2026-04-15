@@ -1,0 +1,59 @@
+{
+  "name": "Generic API Shell",
+  "flow": [
+    {
+      "id": 2,
+      "module": "scenario-service:StartSubscenario",
+      "version": 2,
+      "parameters": {},
+      "mapper": {},
+      "metadata": {
+        "designer": { "x": 0, "y": 0 },
+        "restore": {},
+        "interface": [
+          { "name": "path", "type": "text", "required": false, "multiline": false },
+          { "name": "body", "type": "any", "required": false },
+          { "name": "header", "type": "any", "required": false },
+          { "name": "method", "type": "text", "required": false, "multiline": false }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "module": "APP_NAME:API_CALL_MODULE_NAME",
+      "version": 1,
+      "parameters": {},
+      "filter": null,
+      "mapper": {
+        "url": "{{2.path}}",
+        "method": "{{2.method}}",
+        "headers": "{{2.header}}",
+        "body": "{{2.body}}"
+      },
+      "metadata": {
+        "designer": { "x": 300, "y": 0 },
+        "restore": {
+          "expectUserSelection": true,
+          "notes": "Replace module name, version, and connection metadata with values discovered from the active workspace."
+        }
+      }
+    },
+    {
+      "id": 4,
+      "module": "scenario-service:ReturnData",
+      "version": 1,
+      "parameters": {},
+      "mapper": {
+        "data": "{{3.body}}"
+      },
+      "metadata": {
+        "designer": { "x": 600, "y": 0 },
+        "restore": {}
+      }
+    }
+  ],
+  "metadata": {
+    "version": 1,
+    "notes": "Template only. Replace placeholders with discovered app and connection data before deployment."
+  }
+}
