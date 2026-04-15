@@ -5,9 +5,9 @@ license: MIT
 compatibility: Requires a Make.com account with API access and permissions to create scenarios or credential requests. Works best in environments that can call Make APIs or Make MCP tools.
 metadata:
   author: Hermes Agent
-  version: "0.2.0"
+  version: "0.2.1"
   homepage: https://www.make.com
-  repository: https://github.com/integromat/make-skills
+  repository: https://github.com/MAKESEB/make-skills
 ---
 
 # Make API Shell + Connection Workflow
@@ -19,6 +19,8 @@ Use this skill for one specific workflow family:
 - patch the shell with the selected connection once authorization is complete
 
 This skill is primarily about provisioning and shell construction. Treat business retrieval as a second phase that starts only after the connection is ready and the shell or native retrieval path has been validated against current workspace metadata.
+
+The generic shell described here is an API transport wrapper, not business logic. It should behave like a reusable API endpoint for any SaaS app that Make can front, including email, CRM, ticketing, support, marketing, or task systems.
 
 ## Quick routing
 
@@ -49,7 +51,9 @@ Read the file that matches the current task:
    - output normalization
 8. Do not assume the generic three-module blueprint is automatically activatable for every app. Before activation, compare the middle module metadata with a real current blueprint or module export for the same app and version in the active workspace.
 9. Prefer provider-native search/list/get modules for business retrieval when they match the user request. Use the generic API-call shell when native retrieval modules are missing, insufficient, or the endpoint must stay open-ended.
-10. Never lock in a `ReturnData` mapper until at least one real execution bundle from the chosen retrieval module has been inspected.
+10. For the generic API shell contract that uses `scenario-service:ReturnData` with ExpectDataAny, the final mapper must return the app module response body as `data: {{3.body}}`.
+11. Never replace that shell-contract default with `{{3}}` or `{{3.data}}` just because the full bundle looks tempting. The shell is meant to return the API response body, not the entire Make module bundle.
+12. Still inspect a real execution bundle for validation, but use that to confirm that `body` contains the intended payload or error object — not to redefine the generic shell contract.
 
 ## Standard shell shape
 
@@ -65,6 +69,38 @@ Expose these shell inputs through StartSubscenario:
 - `body`
 
 Use the discovered middle module as the only app-specific part of the shell.
+
+## Generic shell contract
+
+This shell is a generic API endpoint wrapper.
+
+It receives:
+- `path`
+- `method`
+- `header`
+- `body`
+
+It forwards those values into the app-specific Make API-call module.
+
+It returns exactly one thing:
+- the response body from the app-specific Make API-call module
+
+Therefore the shell contract is:
+
+```json
+{
+  "data": "{{3.body}}"
+}
+```
+
+That contract is generic across SaaS providers. It applies whether the middle module fronts Gmail, Outlook, HubSpot, Jira, or another provider-specific Make API-call module.
+
+The shell should not try to return:
+- the whole Make bundle `{{3}}`
+- a guessed nested field such as `{{3.data}}`
+- transport metadata mixed together with the body
+
+The shell is transport only. Business interpretation happens later.
 
 ## Two-phase operating model
 
@@ -90,6 +126,10 @@ Only after Phase A succeeds:
 
 Do not treat a successful credential request as proof that the retrieval stage is already solved.
 
+Important:
+- if you are still using the generic three-module API shell, keep the shell contract fixed as `data: {{3.body}}`
+- choose other mappings only when you are no longer describing the generic shell contract, but a retrieval-specific scenario or downstream normalization layer
+
 ## Retrieval strategy ladder
 
 Prefer this order unless current metadata shows otherwise:
@@ -104,11 +144,13 @@ Examples of provider-native retrieval families include:
 
 Use the generic API-call shell when the user truly needs arbitrary endpoint access or when native modules cannot express the needed operation cleanly.
 
+That does not change the generic shell contract itself. The shell still returns `{{3.body}}`; only the later interpretation of that body changes.
+
 ## Response behavior
 
 When using this skill:
 - first summarize the discovered app, version, exact API-call module name, and both connection type layers
-- explicitly state which phase is active: provisioning or retrieval
+- explicitly state which phase you are in: provisioning or retrieval
 - when retrieval begins, state the chosen retrieval strategy and why it won over the alternatives
 - explicitly label any assumptions
 - keep write-operation prompts brief and concrete

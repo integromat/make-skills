@@ -15,6 +15,8 @@ The middle module is the only app-specific part.
 
 This goal is about shell provisioning, not about proving the final business retrieval output. Retrieval strategy and output normalization come after the shell or native module path is connection-ready.
 
+The shell described here is generic for any SaaS provider that exposes an app-specific Make API-call module. It is a reusable API transport scenario, not a business-specific scenario.
+
 ## Source of truth
 
 Use current Make metadata as the source of truth.
@@ -64,9 +66,11 @@ Typical mapper:
 }
 ```
 
-Depending on the package, `{{3}}` or `{{3.data}}` may be more useful, but `{{3.body}}` is a reasonable default starting point for many API-call modules.
+For the generic API shell contract, `{{3.body}}` is not just a heuristic. It is the intended transport contract.
 
-That mapper is only a starting hypothesis. Validate it against a real execution bundle before treating it as final.
+Do not replace it with `{{3}}` or `{{3.data}}` inside this generic shell pattern.
+
+Use bundle inspection only to confirm that `body` contains the expected payload or error object. Do not use bundle inspection to redefine the generic shell contract.
 
 ## Activation readiness rule
 
@@ -203,7 +207,15 @@ Keep these separate:
 - Shell output contract: a transport shape for passing data through `ReturnData`
 - Retrieval output contract: the user-facing payload for messages, records, issues, or tickets
 
-The shell may activate successfully while still returning an unusable payload for the business question. That is a retrieval/output-normalization problem, not a connection-provisioning success.
+For this generic shell pattern, the shell output contract is fixed:
+
+```json
+{
+  "data": "{{3.body}}"
+}
+```
+
+The shell may activate successfully while still returning an unusable payload for the business question. That is a retrieval/output-normalization problem, not a shell-contract problem.
 
 ## Safety gate for write operations
 

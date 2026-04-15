@@ -37,19 +37,40 @@ Do not assume the API-call shell used during provisioning is also the best retri
 
 ## Output-mapping rule
 
-Do not finalize `ReturnData` until a real execution bundle has been seen.
+Do not mix the generic shell contract with retrieval-specific normalization.
 
-Common starting patterns:
-- `{{3.body}}` for many raw API-call modules that return a body object
-- `{{3}}` when the module returns the useful payload as the whole bundle
-- a specific property such as `{{3.data}}`, `{{3.messages}}`, or another discovered field only after current evidence shows that field exists
+### A. Generic API shell contract
 
-Signals that the mapping is wrong:
-- `data: null`
-- a bare number where structured data is expected
-- only transport metadata and no business payload
+For the three-module generic API transport shell:
 
-When this happens, inspect the run output and correct the mapping before calling the retrieval complete.
+```json
+{
+  "data": "{{3.body}}"
+}
+```
+
+That is the contract. It should stay stable across providers.
+
+Do not switch that generic contract to:
+- `{{3}}`
+- `{{3.data}}`
+- another guessed nested field
+
+### B. Retrieval-specific normalization
+
+Only after the body has been returned through the generic shell may you decide how to interpret the business payload:
+- messages
+- records
+- issues
+- tickets
+- errors
+
+If `data: null`, a bare number, or another unusable shape appears, first ask:
+1. did the generic shell still return `{{3.body}}`?
+2. is the provider-native module a better retrieval path than the generic API shell?
+3. is the downstream interpreter reading the body correctly?
+
+Do not redefine the generic shell contract to compensate for a retrieval problem.
 
 ## Raw API vs native retrieval modules
 

@@ -54,6 +54,6 @@
   ],
   "metadata": {
     "version": 1,
-    "notes": "Template only. Replace placeholders with discovered app and connection data before deployment. This file is a provisioning starter, not proof that the scenario is activatable or that retrieval output mapping is correct. Validate middle-module metadata and ReturnData mapping against a real execution bundle."
+    "notes": "Template only. Replace placeholders with discovered app and connection data before deployment. This file is a provisioning starter, not proof that the scenario is activatable. For the generic shell contract, keep ReturnData mapped to {{3.body}} so ExpectDataAny receives the raw response body; validate runs to confirm body contains the intended payload or error object."
   }
 }
