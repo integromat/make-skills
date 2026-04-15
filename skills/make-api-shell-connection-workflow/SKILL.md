@@ -54,6 +54,7 @@ Read the file that matches the current task:
 10. For the generic API shell contract that uses `scenario-service:ReturnData` with ExpectDataAny, the final mapper must return the app module response body as `data: {{3.body}}`.
 11. Never replace that shell-contract default with `{{3}}` or `{{3.data}}` just because the full bundle looks tempting. The shell is meant to return the API response body, not the entire Make module bundle.
 12. Still inspect a real execution bundle for validation, but use that to confirm that `body` contains the intended payload or error object — not to redefine the generic shell contract.
+13. If the Module 2 request method is `PUT`, `PATCH`, or `DELETE`, warn explicitly before execution. Treat those methods as mutating live SaaS operations, not passive retrieval.
 
 ## Standard shell shape
 
@@ -154,6 +155,7 @@ When using this skill:
 - when retrieval begins, state the chosen retrieval strategy and why it won over the alternatives
 - explicitly label any assumptions
 - keep write-operation prompts brief and concrete
+- if Module 2 is about to run a `PUT`, `PATCH`, or `DELETE`, stop and warn before execution
 - if activation fails or `ReturnData` looks wrong, stop calling the flow complete and report the exact failing phase
 - if sharing publicly, rewrite examples with placeholders and neutral labels before finalizing
 
