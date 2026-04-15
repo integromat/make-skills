@@ -2,6 +2,8 @@
 
 This file covers how to discover the correct Make app and module, distinguish connection type layers, and build the reusable shell blueprint.
 
+It does not guarantee that the first generic shell draft is directly activatable. Treat the generic blueprint as a starting template that must be reconciled with current app-specific metadata.
+
 ## Goal
 
 Build one reusable scenario pattern for many apps:
@@ -10,6 +12,8 @@ Build one reusable scenario pattern for many apps:
 - `scenario-service:ReturnData`
 
 The middle module is the only app-specific part.
+
+This goal is about shell provisioning, not about proving the final business retrieval output. Retrieval strategy and output normalization come after the shell or native module path is connection-ready.
 
 ## Source of truth
 
@@ -61,6 +65,25 @@ Typical mapper:
 ```
 
 Depending on the package, `{{3}}` or `{{3.data}}` may be more useful, but `{{3.body}}` is a reasonable default starting point for many API-call modules.
+
+That mapper is only a starting hypothesis. Validate it against a real execution bundle before treating it as final.
+
+## Activation readiness rule
+
+Do not assume a minimal middle-module block is valid just because the slug and mapper are correct.
+
+Before activation, compare the generated middle module with current evidence from the same app and version in the active workspace, such as:
+- a current scenario blueprint that already uses the module
+- current module metadata from Make
+- a current exported module block from the same app/version
+
+Specifically verify whether the module requires app-specific metadata structures such as:
+- `expect`
+- `metadata.restore.expect`
+- connection restore blocks
+- parameter restore hints
+
+If activation returns a generic validation error such as `Scenario contains errors`, inspect the live blueprint and reconcile the metadata structure before retrying.
 
 ## Important discovery rule
 
@@ -167,10 +190,20 @@ Document both values explicitly before building or patching the shell.
 2. Discover the exact app name, version, and API-call module slug.
 3. Determine both connection type layers.
 4. Generate the three-module shell blueprint.
-5. Create the scenario.
-6. Create or resolve the credential request.
-7. Patch the scenario with the selected connection after authorization.
-8. Activate and run the scenario.
+5. Reconcile the middle-module metadata against a real current module blueprint for the same app/version.
+6. Create the scenario.
+7. Create or resolve the credential request.
+8. Patch the scenario with the selected connection after authorization.
+9. Activate and run the scenario.
+
+## Shell output vs. retrieval output
+
+Keep these separate:
+
+- Shell output contract: a transport shape for passing data through `ReturnData`
+- Retrieval output contract: the user-facing payload for messages, records, issues, or tickets
+
+The shell may activate successfully while still returning an unusable payload for the business question. That is a retrieval/output-normalization problem, not a connection-provisioning success.
 
 ## Safety gate for write operations
 

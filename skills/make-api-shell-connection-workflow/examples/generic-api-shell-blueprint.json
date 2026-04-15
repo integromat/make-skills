@@ -34,7 +34,7 @@
         "designer": { "x": 300, "y": 0 },
         "restore": {
           "expectUserSelection": true,
-          "notes": "Replace module name, version, and connection metadata with values discovered from the active workspace."
+          "notes": "Replace module name, version, and connection metadata with values discovered from the active workspace. Reconcile any app-specific expect or restore structures against a real current blueprint before activation."
         }
       }
     },
@@ -54,6 +54,6 @@
   ],
   "metadata": {
     "version": 1,
-    "notes": "Template only. Replace placeholders with discovered app and connection data before deployment."
+    "notes": "Template only. Replace placeholders with discovered app and connection data before deployment. This file is a provisioning starter, not proof that the scenario is activatable or that retrieval output mapping is correct. Validate middle-module metadata and ReturnData mapping against a real execution bundle."
   }
 }

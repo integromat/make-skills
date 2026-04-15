@@ -19,6 +19,11 @@ Prefer the most current supported path first, then fall back only when needed.
    - `POST /api/v2/credential-requests/actions/create-by-credentials`
 3. Use older legacy request paths only when the workspace clearly still depends on them.
 
+Important branching rule:
+- if the workspace returns a policy or permission denial such as `403 Permission denied` or a message indicating credential requests are not enabled for the target user/workspace, stop and report a workspace feature restriction
+- do not keep retrying equivalent credential-request endpoints when the failure is clearly policy-based rather than endpoint-shape-based
+- only fall back to another endpoint when the evidence suggests API-version mismatch, route availability, or request-shape incompatibility
+
 ## Recommended V2 request style
 
 Why this is preferable:
@@ -74,6 +79,8 @@ Confirm:
 - credential state
 - resulting credential or connection identifier
 
+Also confirm whether the resulting connection is usable in the target scenario or module family. Authorization success alone does not prove that retrieval execution is correctly configured.
+
 ## Patch the scenario after authorization
 
 Once the chosen connection exists:
@@ -91,6 +98,11 @@ Always record these values first:
 - exact connection field or restore path to update
 - selected connection ID
 - both connection type layers for the app
+
+If the request was created for a different recipient than the current token owner, also record:
+- intended recipient identity
+- recipient Make user ID if known
+- any workspace or feature limitations discovered during request creation
 
 ## Safe user-facing write prompt
 
