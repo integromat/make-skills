@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: make-skills
+  annotations:
+    github.com/project-slug: integromat/make-skills
+spec:
+  type: library
+  lifecycle: experimental
+  owner: group:default/charon
+  partOfCoreProduct: false
