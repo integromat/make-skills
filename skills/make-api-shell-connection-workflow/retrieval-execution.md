@@ -50,7 +50,52 @@ This is the default execution contract for the shell across providers.
 
 The concrete `path` changes by provider, but the scenario-run payload shape stays the same.
 
+Important deployment precondition:
+- do not assume the `StartSubscenario` module metadata alone made this callable
+- explicitly set the scenario-level input interface first
+- verify `/api/v2/scenarios/{scenarioId}/interface` before the first run
+
+The keys under `data` must match the deployed interface exactly. For reusable shells, the standard execution path is:
+1. `PATCH /api/v2/scenarios/{scenarioId}/interface`
+2. `GET /api/v2/scenarios/{scenarioId}/interface`
+3. `POST /api/v2/scenarios/{scenarioId}/run`
+
+Use `responsive: true` for validation runs and for normal interactive retrieval whenever the response size is still manageable.
+
 Default retrieval should use `GET`. Treat `PUT`, `PATCH`, and `DELETE` as write/destructive methods and require explicit user confirmation before running them.
+
+## Large payloads, timeouts, and extraction path
+
+Two separate limits matter here:
+- Make scenario execution limits and provider API limits during the run
+- post-run inspection limits when reading full execution detail
+
+Practical guidance:
+1. Start with the narrowest possible list/search call.
+2. Prefer `responsive: true` so the shell returns the business payload directly when feasible.
+3. Read the returned payload from `outputs.data` first instead of forcing an execution-detail round trip.
+4. Add provider-side narrowing such as `limit`, `maxResults`, `pageSize`, `fields`, `updatedSince`, or a search query before trying to inspect giant payloads.
+5. Split list/search from detail enrichment instead of fetching everything in one run.
+
+Do not treat a timeout or a heavy `executions_get-detail` response as evidence that the shell contract is wrong. First narrow the retrieval and reduce payload size.
+
+## Rate limiting and write safety
+
+Even when `scenarios_run` itself is exempt from an organization's general request-rate bucket, provider APIs behind Module 2 still enforce their own limits.
+
+Generic operating rules:
+- rate-limit write methods more aggressively than reads
+- use backoff and replay for 429-style provider errors
+- keep batch sizes modest on detail-enrichment loops
+- separate read-heavy and write-heavy workloads when the provider module behaves differently
+
+Confirmed example to remember, but not to universalize: Google Calendar has been observed around the order of a few hundred requests per minute per user in some environments, which is high enough for bursts but still easy to exceed with naive fan-out. Treat provider documentation and live error responses as the actual source of truth.
+
+If a provider module shows empty-body serialization issues on `GET` or `DELETE`, split the shell design:
+- read/delete shell without a Module 2 `body` mapper
+- write shell with a Module 2 `body` mapper
+
+That split is about request-shape compatibility and rate safety, not about changing `ReturnData`.
 
 ## Common retrieval pattern for SaaS data
 

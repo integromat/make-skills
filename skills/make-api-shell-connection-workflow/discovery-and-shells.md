@@ -56,6 +56,11 @@ Expose these inputs:
 - `header`
 - `body`
 
+Important:
+- treat this as module-level intent, not as proof that the scenario-level interface is deployed
+- after creating or updating the scenario, explicitly set `/api/v2/scenarios/{scenarioId}/interface`
+- verify the deployed interface before the first `/run` call
+
 ### Module 2: app-specific API-call module
 Examples only:
 - Gmail: `google-email:makeAnApiCall`
@@ -73,6 +78,19 @@ Typical mapper:
 ```
 
 Default retrieval should use `GET`. Treat `PUT`, `PATCH`, and `DELETE` as write/destructive methods and require explicit user confirmation before running them.
+
+### Body-mapper compatibility rule
+
+The generic shell exposes `body`, but some provider modules do not behave well when `body` is present and empty on read-style calls.
+
+Use this decision rule:
+- default shell template: include the `body` mapper
+- if the provider module serializes empty/null bodies badly on `GET` or `DELETE`, remove the Module 2 `body` mapper for the read shell
+- keep or reintroduce the `body` mapper for write shells that need request payloads
+
+This is a provider-module compatibility choice, not a reason to change the generic shell output contract.
+
+Confirmed example to remember, but not to universalize: `google-calendar:makeApiCall` v5 has been observed to work better when a read/delete shell omits the `body` mapper entirely.
 
 ### Module 3: ReturnData
 Use:
@@ -147,8 +165,26 @@ Run scenario:
 Inspect interface:
 - `GET /api/v2/scenarios/{scenarioId}/interface`
 
+Set interface:
+- `PATCH /api/v2/scenarios/{scenarioId}/interface`
+
 Inspect blueprint:
 - `GET /api/v2/scenarios/{scenarioId}/blueprint`
+
+For on-demand API shells, do not stop after scenario create or update. Explicitly patch the scenario-level interface, then verify it:
+
+```json
+{
+  "input": [
+    { "name": "path", "type": "text", "required": false, "label": "Path" },
+    { "name": "method", "type": "text", "required": false, "label": "Method" },
+    { "name": "header", "type": "any", "required": false, "label": "Header" },
+    { "name": "body", "type": "any", "required": false, "label": "Body" }
+  ]
+}
+```
+
+Reason: `StartSubscenario.metadata.interface` documents the shell shape, but it does not reliably deploy the scenario-level run interface by itself. Treat `PATCH /interface` as mandatory for reusable on-demand shells.
 
 ## Base URL and zone
 
@@ -262,6 +298,23 @@ Document both values explicitly before building or patching the shell.
 
 Before creating any credential request, check whether the workspace already has a usable connection for the app.
 
+Do not stop at “same vendor”. Check structural compatibility:
+- same app family and connection family required by the discovered module
+- same target account identity when available
+- same or broader scope set than the requested operation needs
+- no evidence that the connection is expired, revoked, or otherwise invalid
+
+If the tooling exposes detailed connection metadata, inspect it before testing reuse. Useful evidence includes:
+- connection type
+- account or accountName
+- scope list or scope count
+- last validation or health indicators when available
+
+Common examples:
+- Gmail-style module: `google-email:makeAnApiCall` usually expects `account:google-email`; do not assume a generic `google` connection is interchangeable
+- Google workspace app modules such as Calendar/Sheets/Drive often use `account:google`; do not assume a Gmail-specific connection is interchangeable
+- Microsoft mail modules commonly use `account:azure`
+
 For the REST API, filter `/api/v2/connections` with `type` or `type[]`:
 
 ```bash
@@ -289,10 +342,13 @@ Look for a scenario that has all of the following:
 
 Prefer reusing a shell when:
 - the module slug and app version still match current metadata
+- the shell is still bound to the same app family and connection family
 - the scenario interface still exposes `path`, `method`, `header`, and `body`
 - the shell is already linked to a suitable connection or can be patched safely
 
 Do not reuse a shell for a newly created connection. When the connection is new, create a new shell dedicated to that connection.
+
+Do not treat “same SaaS vendor” as enough for shell reuse. A Gmail shell, a Google Calendar shell, and a Google Sheets shell may all live under Google but still require different Make apps, different module slugs, and different connection families.
 
 Only create a new shell when:
 - no matching shell exists
@@ -321,7 +377,9 @@ Record these values before deciding to reuse or create:
 9. Reconcile the middle-module metadata against a real current module blueprint for the same app/version.
 10. Create the scenario when required by the shell-reuse rule.
 11. Patch the selected existing connection only when reusing an existing shell.
-12. Activate and run the scenario.
+12. Explicitly set the scenario-level interface.
+13. Verify the interface.
+14. Activate and run the scenario.
 
 ## Shell output vs. retrieval output
 

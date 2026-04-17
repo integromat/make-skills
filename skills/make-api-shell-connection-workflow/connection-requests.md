@@ -46,6 +46,14 @@ curl -sS \
 
 For REST calls, prefer the `type` filter. Do not rely on `accountName=...` query parameters to filter the response.
 
+Do not treat a type match alone as enough to reuse the connection. Also confirm:
+- the connection family matches the discovered module's expected connection family
+- the account identity matches the requested mailbox, tenant, workspace, or user
+- the scope set is sufficient for the intended API path and method
+- the connection is not known to be expired, revoked, or otherwise invalid
+
+If Make MCP or another supported surface exposes connection detail, inspect it before reuse. Useful checks include the visible account label and scope count.
+
 ## Recipient and account-identity gate
 
 Before creating a new credential request, resolve two separate questions:
@@ -76,6 +84,8 @@ Reason:
 - it avoids silently repointing an existing reusable scenario from one account to another
 - it generalizes across email, CRM, ticketing, and other SaaS providers
 
+It also prevents a different class of mismatch: same vendor suite, wrong connection family. Example: a provider's mail app and calendar app may both authenticate through the same vendor, while the discovered Make modules still require different app bindings or different connection families.
+
 ## Recommended V2 request style
 
 Why this is preferable:
@@ -100,6 +110,8 @@ Example body with placeholders:
 }
 ```
 
+Use this path when the workspace can infer the needed connection family from the discovered app/module context and you do not need to force an explicit connection type.
+
 ## Fallback create-by-credentials style
 
 Use this when the workspace requires an explicit connection type.
@@ -120,6 +132,13 @@ Example body with placeholders:
   ]
 }
 ```
+
+This fallback is often the safer generic choice when you already know the exact connection family and scope requirement and want the request to encode them directly.
+
+Practical rule:
+- prefer the V2 request style first
+- if the workspace does not infer the right connection family, or if the request needs an explicit scope declaration, fall back to `create-by-credentials`
+- for Google-family apps in particular, verify whether the discovered module expects a Gmail-specific family such as `google-email` or a broader Google family such as `google`
 
 ## Inspect authorization state
 

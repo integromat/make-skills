@@ -1,11 +1,11 @@
 ---
 name: make-api-shell-connection-workflow
-description: Build or reuse a reusable Make API-call shell by discovering the correct app-specific Make an API Call module, resolving or requesting the right connection, running the scenario, and using that shell as the only retrieval transport for email, CRM, tickets, and similar SaaS systems.
+description: Build or reuse a reusable Make API-call shell by discovering the correct app-specific Make an API Call module, resolving or requesting the right connection, explicitly setting the scenario interface, running the scenario, and using that shell as the retrieval transport for email, CRM, tickets, and similar SaaS systems.
 license: MIT
 compatibility: Requires a Make.com account with API access and permissions to create scenarios or credential requests. Works best in environments that can call Make APIs or Make MCP tools.
 metadata:
   author: Make
-  version: "0.2.4"
+  version: "0.3.0"
   homepage: https://www.make.com
   repository: https://github.com/MAKESEB/make-skills
 ---
@@ -80,7 +80,7 @@ If one of those items is missing and cannot be discovered safely, stop and ask o
 5. Do not route business retrieval to native Make search/list/get modules. For this workflow family, always retrieve through the Make app's API-call shell.
 6. Ask for confirmation before writing into an existing live scenario or replacing a connection mapping.
 7. Keep public examples sanitized. Do not include real names, user IDs, team IDs, organization IDs, tenant-specific hosts, or claims that a single private workspace proves a universal rule.
-8. Use a clean base URL variable in examples. For public examples, prefer `https://us1.make.com` and do not mention `we.make.com`. Keep placeholders generic unless the current user explicitly provides the Make zone. Zones can be eu1, eu2, us1, us2 or we. If the user wants to give a custom zone or BaseURL accept it. 
+8. Use a clean base URL variable in examples. For public examples, prefer `https://us1.make.com` and do not mention `we.make.com`. Keep placeholders generic unless the current user explicitly provides the Make zone. Zones can be `eu1`, `eu2`, `us1`, `us2`, or `we`. If the user wants to give a custom zone or `BASE_URL`, accept it.
 9. Separate four phases explicitly:
    - provider and app resolution
    - connection provisioning
@@ -95,6 +95,30 @@ If one of those items is missing and cannot be discovered safely, stop and ask o
 16. Do not ask the user to paste raw OAuth secrets, API keys, or passwords into chat. Use a credential request whenever a new connection must be created.
 17. If the user request is ambiguous, resolve the concrete provider and account first; if it is already explicit, do not ask again.
 18. If the Module 2 request method is `PUT`, `PATCH`, or `DELETE`, warn explicitly before execution. Treat those methods as mutating live SaaS operations, not passive retrieval.
+19. Do not assume `StartSubscenario.metadata.interface` is enough for scenario runs. After creating or updating an on-demand shell, explicitly set the scenario-level interface with `/api/v2/scenarios/{scenarioId}/interface` and verify it before the first run.
+20. Treat `/api/v2/scenarios/{scenarioId}/run` as the standard execution path for this shell family. Pass the business payload under `data` with keys that match the scenario interface exactly, and prefer `responsive: true` for validation runs.
+21. Shell reuse is app-specific, not just provider-family-specific. A shell built around one app module should not be repointed to another app module just because both belong to the same vendor suite.
+
+## App binding and connection-family matrix
+
+The shell pattern is generic, but each actual shell is bound to one discovered Make app module.
+
+Do not treat “Google” or “Microsoft” as a single interchangeable connection family. In Make, app families often split by product surface.
+
+Common examples:
+
+| Business surface | Example API-call module | Scenario/module connection parameter type | Common connection listing or request type |
+|---|---|---|---|
+| Gmail | `google-email:makeAnApiCall` | `account:google-email` | `google-email` or workspace-specific variants such as `google-restricted` |
+| Google Calendar / Sheets / Drive style apps | app-specific Google module discovered from metadata | commonly `account:google` | commonly `google` |
+| Outlook / Microsoft mail | `microsoft-email:makeApiCall` | `account:azure` | `azure` |
+
+Rules that follow from this:
+- Reuse a shell only when the discovered app, module slug, version, and connection family still match.
+- Reuse a connection only when the account identity and scopes still fit the requested operation.
+- If a new connection is authorized for a different account or connection family, create a new shell for it instead of silently repointing an old shell.
+
+When in doubt, inspect the exact app metadata and existing connection detail instead of inferring compatibility from the vendor name.
 
 ## Standard shell shape
 
@@ -176,6 +200,45 @@ Important:
 - keep the shell contract fixed as `data: {{3.body}}`
 - do not switch to native retrieval/search/list modules as a fallback or optimization
 - if authorization fails because an existing connection is expired or invalid, do not try to re-auth that connection in place; go through the credential-request path and then create a new shell for the new connection
+
+### Interface-and-run rule
+
+For on-demand shells, treat interface provisioning as a separate deployment step:
+1. create or update the scenario blueprint
+2. explicitly set `/api/v2/scenarios/{scenarioId}/interface`
+3. verify the interface shape before the first run
+4. only then call `/api/v2/scenarios/{scenarioId}/run`
+
+Use a run payload shaped like:
+
+```json
+{
+  "data": {
+    "path": "...",
+    "method": "GET",
+    "header": [],
+    "body": null
+  },
+  "responsive": true
+}
+```
+
+The key names under `data` must match the scenario interface exactly. If the interface was never explicitly set, `run` can reject the call even when the `StartSubscenario` module itself contains interface metadata.
+
+### Body-handling compatibility rule
+
+Keep the generic shell contract stable, but do not assume every provider module tolerates an empty or null body the same way.
+
+Observed-safe pattern:
+- write-capable shells can expose and map `body`
+- read-heavy shells may need to omit the Module 2 `body` mapper entirely when the provider module serializes empty payloads badly on `GET` or `DELETE`
+
+If a provider-specific Make API-call module fails only when `body` is present-but-empty, prefer one of these patterns:
+- a read shell without a `body` mapper
+- a write shell with a `body` mapper
+- two separate shells when the provider behavior differs between read and write paths
+
+Do not change `ReturnData` for this. This is a Module 2 request-shape compatibility issue, not a shell-output-contract issue.
 
 ## Response behavior
 
