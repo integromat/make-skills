@@ -6,34 +6,102 @@ Provisioning success is not the same thing as retrieval success. Treat retrieval
 
 ## Goal
 
-Given a connection-ready Make app or shell:
-- choose the best retrieval path
-- run a narrow validation request
+Given a connection-ready Make API-call shell:
+- configure the right API path pattern for the business request
+- run a narrow validation request through the shell
 - inspect the real output bundle
 - normalize the result for Hermes or the user-facing caller
 
-## Retrieval strategy ladder
+## Retrieval transport rule
 
-Prefer this order unless current metadata proves a different path is required:
-1. provider-native search or list modules for the first retrieval step
-2. provider-native get/detail modules for follow-up enrichment
-3. generic API-call shell only when native retrieval modules are missing, insufficient, or too restrictive for the endpoint the user needs
+For this workflow family, the Make API-call shell is always the retrieval transport.
 
-Examples of native retrieval families:
-- email providers: search/list messages, then get message detail
-- CRM providers: search/list records, then get record detail
-- issue trackers: search/list issues, then get issue detail
+Do not switch to provider-native Make search/list/get modules for the first retrieval step or for follow-up enrichment.
 
-Do not assume the API-call shell used during provisioning is also the best retrieval path.
+If the business request needs multiple steps, perform all of them through repeated runs of the API-call shell.
 
 ## Execution workflow
 
 1. Confirm the provider and the exact Make app version again.
-2. Choose the retrieval module family that best matches the business request.
-3. Run the narrowest possible validation call first.
-4. Inspect the real output bundle from that run.
-5. Map `scenario-service:ReturnData` from the observed bundle shape, not from guesswork.
-6. Re-run and verify the final payload.
+2. Resolve the business target precisely: mailbox, inbox, account, pipeline, board, queue, or project.
+3. Choose the API endpoint pattern that best matches the business request.
+4. Run the narrowest possible validation call first through the shell.
+5. Inspect the real output bundle from that run.
+6. Keep `scenario-service:ReturnData` fixed to the generic shell contract and adjust only downstream normalization.
+7. Re-run and verify the final payload.
+
+## Generic shell run contract
+
+When using the generic three-module shell, run it with a payload shaped like this:
+
+```json
+{
+  "data": {
+    "path": "...",
+    "method": "GET",
+    "header": [],
+    "body": null
+  },
+  "responsive": true
+}
+```
+
+This is the default execution contract for the shell across providers.
+
+The concrete `path` changes by provider, but the scenario-run payload shape stays the same.
+
+Default retrieval should use `GET`. Treat `PUT`, `PATCH`, and `DELETE` as write/destructive methods and require explicit user confirmation before running them.
+
+## Common retrieval pattern for SaaS data
+
+For most business retrieval tasks, use this pattern through the API-call shell:
+
+1. Run a narrow list/search call first.
+2. Collect stable identifiers from that first result.
+3. Run follow-up detail calls only for the shortlisted records.
+4. Normalize the detail payload into a user-facing summary.
+
+This keeps the first execution cheap, proves that the shell works, and avoids over-fetching.
+
+### Email pattern
+
+Use:
+1. list or search messages/threads with a narrow filter
+2. fetch message detail only for the returned IDs or thread IDs
+3. normalize sender, subject, date, labels, snippet, and whether a reply seems needed
+
+### CRM pattern
+
+Use:
+1. search or list records with a narrow filter such as owner, stage, or updated-after
+2. fetch detail only for the returned record IDs
+3. normalize owner, company/contact, stage, last activity, next action, and urgency
+
+### Ticketing pattern
+
+Use:
+1. search or list issues or tickets with a narrow filter such as assignee, state, queue, or updated-after
+2. fetch detail only for the shortlisted IDs
+3. normalize requester, status, SLA or priority, latest comment, and next action
+
+## Suggested normalization contract
+
+For user-facing summaries, normalize the provider payload into a stable business shape whenever practical:
+
+```json
+{
+  "id": "provider-specific-id",
+  "title": "subject or record title",
+  "actor": "sender, requester, owner, or customer",
+  "status": "state or stage",
+  "updatedAt": "timestamp",
+  "summary": "snippet or compact summary",
+  "recommendedAction": "reply | inspect | ignore",
+  "reason": "why that action is recommended"
+}
+```
+
+The shell still returns raw `body`. This normalization happens after retrieval, not inside the shell contract.
 
 ## Output-mapping rule
 
@@ -67,22 +135,13 @@ Only after the body has been returned through the generic shell may you decide h
 
 If `data: null`, a bare number, or another unusable shape appears, first ask:
 1. did the generic shell still return `{{3.body}}`?
-2. is the provider-native module a better retrieval path than the generic API shell?
+2. did the API path, method, headers, or body match the provider requirement?
 3. is the downstream interpreter reading the body correctly?
+
+If the failure is actually an authorization failure from an expired or invalid connection, stop retrieval debugging and go back to the credential-request path instead of trying to re-auth the old connection in place.
 
 Do not redefine the generic shell contract to compensate for a retrieval problem.
 
-## Raw API vs native retrieval modules
-
-Use raw API shell calls when:
-- the endpoint is custom or unsupported by native modules
-- the request shape must remain open-ended
-- native modules cannot express the needed filters or payload shape cleanly
-
-Use native search/get modules when:
-- the user wants normal business retrieval such as emails, leads, contacts, tickets, or issues
-- the provider already exposes modules that handle the search semantics cleanly
-- predictable bundles are needed for follow-up mapping or enrichment
 
 ## Failure interpretation
 
@@ -92,4 +151,4 @@ Keep failure diagnosis phase-specific:
 - empty or unusable payload from a successful run: retrieval or output-normalization problem
 
 If activation fails with a generic validation error, go back to shell metadata.
-If the run succeeds but the payload is wrong, stay in Make and fix the retrieval strategy or `ReturnData` mapping before considering fallback.
+If the run succeeds but the payload is wrong, stay in Make and fix the API-call plan or downstream normalization before considering fallback.

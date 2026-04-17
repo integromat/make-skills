@@ -13,6 +13,7 @@ Authorization: Token YOUR_API_KEY
 
 Prefer the most current supported path first, then fall back only when needed.
 
+0. Before creating anything, list existing connections for the target app in the active team and reuse one if it already satisfies the workflow.
 1. Try:
    - `POST /api/v2/credential-requests/requests/v2`
 2. If that path is unavailable for the workspace or feature set, try:
@@ -23,6 +24,57 @@ Important branching rule:
 - if the workspace returns a policy or permission denial such as `403 Permission denied` or a message indicating credential requests are not enabled for the target user/workspace, stop and report a workspace feature restriction
 - do not keep retrying equivalent credential-request endpoints when the failure is clearly policy-based rather than endpoint-shape-based
 - only fall back to another endpoint when the evidence suggests API-version mismatch, route availability, or request-shape incompatibility
+- if authorization fails because an existing connection is expired, revoked, or otherwise invalid, do not try to re-auth that connection in place; use the credential-request path to create a fresh connection
+
+## Preflight: reuse before create
+
+Before opening a new credential request, verify all of the following:
+- correct zone
+- correct organization and team
+- the provider has already been proven in the Make app catalog for this organization/team
+- existing connections for the target app in that team
+- whether one of those connections is already suitable for the requested account and scope
+
+REST example:
+```bash
+curl -sS \
+  -H "authorization: Token $API_KEY" \
+  -H 'accept: application/json' \
+  -H 'user-agent: Mozilla/5.0' \
+  "${BASE_URL}/api/v2/connections?teamId=${TEAM_ID}&type[]=azure"
+```
+
+For REST calls, prefer the `type` filter. Do not rely on `accountName=...` query parameters to filter the response.
+
+## Recipient and account-identity gate
+
+Before creating a new credential request, resolve two separate questions:
+
+1. Who should complete the authorization flow?
+2. Which provider account should the resulting connection point at?
+
+Do not assume the current Make token owner is automatically the right credential-request recipient if the task is for another human or shared account.
+
+Do not assume the first matching connection is correct when multiple connections exist for the same app. Compare at least:
+- connection type
+- account metadata such as email, domain, tenant, or UID when available
+- scenario usage if the shell is expected to reuse a known existing scenario
+- scope fit for the requested operation
+
+If the intended recipient or target account identity is unclear, stop and ask for that exact missing item before creating a new request.
+
+## New-connection rule
+
+If a new credential request results in a newly authorized connection, create a new shell for that new connection.
+
+The same rule applies when an old connection exists but its authorization is expired or invalid.
+
+Do not automatically patch a pre-existing shell to point at the newly created connection unless the user explicitly wants that exact shell replaced.
+
+Reason:
+- it keeps shell ownership and account identity clear
+- it avoids silently repointing an existing reusable scenario from one account to another
+- it generalizes across email, CRM, ticketing, and other SaaS providers
 
 ## Recommended V2 request style
 
@@ -89,6 +141,8 @@ Once the chosen connection exists:
 3. update the scenario
 4. activate it if needed
 5. run a verification execution
+
+If a reusable shell scenario already exists, prefer patching that shell only when reusing an existing suitable connection. If the connection is newly created, create a new shell for that new connection.
 
 ## What to record before patching
 

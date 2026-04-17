@@ -13,7 +13,7 @@ Build one reusable scenario pattern for many apps:
 
 The middle module is the only app-specific part.
 
-This goal is about shell provisioning, not about proving the final business retrieval output. Retrieval strategy and output normalization come after the shell or native module path is connection-ready.
+This goal is about shell provisioning, not about proving the final business retrieval output. Retrieval strategy and output normalization come after the shell is connection-ready.
 
 The shell described here is generic for any SaaS provider that exposes an app-specific Make API-call module. It is a reusable API transport scenario, not a business-specific scenario.
 
@@ -26,6 +26,23 @@ Preferred evidence sources:
 3. current connection listing behavior in the active workspace
 
 Local notes, old blueprints, and example apps are only hints.
+
+## Provider-to-app resolution
+
+When the user asks for business data such as emails, CRM records, or tickets, do not start with shell creation.
+
+Resolve the app in this order:
+1. explicit user statement about the provider or system
+2. existing Make artifacts that unambiguously prove the provider and account
+3. Make app-catalog lookup for the provider candidate
+4. if still ambiguous, ask only for the missing provider or account identity
+
+Examples:
+- `Get my emails from user@example.com on Gmail` already gives both the provider and the account target
+- `Get my emails from today` does not; resolve provider and account first
+- `Get my open leads` requires provider resolution such as HubSpot vs Salesforce before any shell work
+
+Do not invent a provider from the business object alone.
 
 ## Standard shell contract
 
@@ -54,6 +71,8 @@ Typical mapper:
   "body": "{{2.body}}"
 }
 ```
+
+Default retrieval should use `GET`. Treat `PUT`, `PATCH`, and `DELETE` as write/destructive methods and require explicit user confirmation before running them.
 
 ### Module 3: ReturnData
 Use:
@@ -110,6 +129,8 @@ List apps:
 Get one app in detail:
 - `GET /api/v2/imt/apps/{appName}/{version}`
 
+Use the app-catalog endpoint to prove that the provider exists in Make for the active organization/team context before provisioning a shell.
+
 ### Scenario APIs
 Create scenario:
 - `POST /api/v2/scenarios?confirmed=true`
@@ -131,7 +152,22 @@ Inspect blueprint:
 
 ## Base URL and zone
 
-Ask the user which Make zone or base URL applies if it is not already known from the environment.
+Do not treat a successful user-scoped endpoint as proof that the workspace zone is correct.
+
+Observed practical behavior:
+- `GET /api/v2/users/me` can return `200` on multiple zones
+- `GET /api/v2/imt/apps/...` can also return `200` on multiple zones
+- team-scoped endpoints such as `GET /api/v2/connections?teamId=...` can still fail with `403 Permission denied` on the wrong zone
+
+Therefore resolve the zone before team-scoped work.
+
+Preferred order:
+1. infer the probable zone from the user's dashboard URL if provided
+2. list organizations on that zone
+3. list teams for the matching organization
+4. confirm with a team-scoped read such as `GET /api/v2/connections?teamId=TEAM_ID`
+
+Ask the user which Make zone or base URL applies only if it is still not recoverable from the environment or their provided links.
 For generic examples, define:
 
 ```bash
@@ -139,6 +175,40 @@ BASE_URL="https://us1.make.com"
 ```
 
 Then use that variable consistently in examples. Replace it with the actual zone only when the user provides or confirms it.
+
+### Resolve organizations and teams
+
+List organizations first:
+
+```bash
+curl -sS \
+  -H "authorization: Token $API_KEY" \
+  -H 'accept: application/json' \
+  -H 'user-agent: Mozilla/5.0' \
+  "${BASE_URL}/api/v2/organizations"
+```
+
+Then list teams for the organization that owns the target workspace:
+
+```bash
+curl -sS \
+  -H "authorization: Token $API_KEY" \
+  -H 'accept: application/json' \
+  -H 'user-agent: Mozilla/5.0' \
+  "${BASE_URL}/api/v2/teams?organizationId=${ORG_ID}"
+```
+
+Finally confirm the zone with a team-scoped call:
+
+```bash
+curl -sS \
+  -H "authorization: Token $API_KEY" \
+  -H 'accept: application/json' \
+  -H 'user-agent: Mozilla/5.0' \
+  "${BASE_URL}/api/v2/connections?teamId=${TEAM_ID}"
+```
+
+If that final call returns `403 Permission denied`, treat the zone as wrong or the team as inaccessible and stop guessing.
 
 ## Discover the app and module
 
@@ -188,17 +258,70 @@ Examples:
 
 Document both values explicitly before building or patching the shell.
 
+## Existing-connection preflight
+
+Before creating any credential request, check whether the workspace already has a usable connection for the app.
+
+For the REST API, filter `/api/v2/connections` with `type` or `type[]`:
+
+```bash
+curl -sS \
+  -H "authorization: Token $API_KEY" \
+  -H 'accept: application/json' \
+  -H 'user-agent: Mozilla/5.0' \
+  "${BASE_URL}/api/v2/connections?teamId=${TEAM_ID}&type[]=google-email"
+```
+
+Notes:
+- `type=google-email` and `type[]=google-email` are both accepted by the REST endpoint
+- do not assume `accountName=google-email` will filter correctly in REST just because Make MCP tooling uses `accountName` terminology
+- only create a credential request when no suitable existing connection is available for the target app and scope
+
+## Existing-shell preflight
+
+Before creating a new shell scenario, check whether the active team already has one that matches the generic shell contract.
+
+Look for a scenario that has all of the following:
+- `scenario-service:StartSubscenario`
+- the exact app-specific API-call module for the resolved app and version
+- `scenario-service:ReturnData`
+- on-demand execution or another explicit reusable shell shape
+
+Prefer reusing a shell when:
+- the module slug and app version still match current metadata
+- the scenario interface still exposes `path`, `method`, `header`, and `body`
+- the shell is already linked to a suitable connection or can be patched safely
+
+Do not reuse a shell for a newly created connection. When the connection is new, create a new shell dedicated to that connection.
+
+Only create a new shell when:
+- no matching shell exists
+- the existing shell uses the wrong app, wrong module slug, or wrong contract
+- the existing shell cannot be patched safely without breaking a live flow
+- a new connection has just been created for a new account or authorization context
+- the old connection exists but authorization failed because it is expired or invalid
+
+Record these values before deciding to reuse or create:
+- scenario ID
+- scenario name
+- app name and version
+- middle-module slug
+- whether the current `ReturnData` mapper still returns `{{3.body}}`
+
 ## Practical workflow
 
 1. Identify the target app.
-2. Discover the exact app name, version, and API-call module slug.
-3. Determine both connection type layers.
-4. Generate the three-module shell blueprint.
-5. Reconcile the middle-module metadata against a real current module blueprint for the same app/version.
-6. Create the scenario.
-7. Create or resolve the credential request.
-8. Patch the scenario with the selected connection after authorization.
-9. Activate and run the scenario.
+2. Prove that the target provider exists in the Make app catalog for the active organization/team.
+3. Discover the exact app name, version, and API-call module slug.
+4. Determine both connection type layers.
+5. Check whether a suitable connection already exists.
+6. Check whether a matching shell scenario already exists for that existing connection.
+7. Create or resolve the credential request only if a suitable connection does not already exist.
+8. Generate the three-module shell blueprint when no reusable shell exists or when a new connection has just been created.
+9. Reconcile the middle-module metadata against a real current module blueprint for the same app/version.
+10. Create the scenario when required by the shell-reuse rule.
+11. Patch the selected existing connection only when reusing an existing shell.
+12. Activate and run the scenario.
 
 ## Shell output vs. retrieval output
 
