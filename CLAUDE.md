@@ -4,11 +4,14 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-**make-skills** provides expert skills for designing, building, and deploying Make.com automation scenarios. Distributed as both a Claude Code plugin and as Open Agent Skills (compatible with 40+ AI agents via `npx skills add integromat/make-skills`). Published by Make under MIT license.
+**make-skills** provides expert skills for designing, building, and deploying Make.com automation scenarios. Skills work with two interchangeable interfaces — the Make CLI (preferred when the agent has shell access) and the Make MCP server (required for shell-less environments like Claude Desktop and claude.ai). Distributed as both a Claude Code plugin and as Open Agent Skills (compatible with 40+ AI agents via `npx skills add integromat/make-skills`). Published by Make under MIT license.
 
-The skills connect to the remote Make MCP server:
+The skills connect to Make via one of:
 
-- **`make`** — Make.com's hosted MCP server at `https://mcp.make.com`. Provides tools for app discovery, module configuration, connections, webhooks, data stores, and scenario lifecycle. Authenticated via OAuth (default) or MCP token.
+- **Make CLI (`@makehq/cli`)** — a local binary installed via Homebrew, npm, or binary release. Authenticated once via `make-cli login`; credentials stored at `~/.config/make-cli/config.json`. Invoked by the agent through Bash.
+- **Make MCP server (`https://mcp.make.com`)** — Make's hosted MCP service. Authenticated via OAuth (default) or MCP token. Used when the agent has no shell access or when the CLI is not installed.
+
+The CLI is built from the same `MakeMCPTools` SDK definition as the MCP server, so every MCP tool has a matching `make-cli` subcommand. There is no capability gap between the two interfaces.
 
 ## Repository Structure
 
@@ -18,9 +21,13 @@ The skills connect to the remote Make MCP server:
   marketplace.json         # Marketplace metadata
 .mcp.json                  # MCP server configuration (remote Make server)
 skills/
-  make-mcp-reference/      # MCP config & troubleshooting (1 reference file)
+  make-interface-reference/ # CLI & MCP config + troubleshooting (3 reference files)
     SKILL.md
-    references/transport-details.md
+    references/
+      cli-install-and-auth.md
+      mcp-install-and-auth.md
+      tool-invocation-mapping.md
+      transport-details.md
   make-module-configuring/  # Module configuration workflow (11 reference files)
     SKILL.md
     general-principles.md, connections.md, mapping.md, webhooks.md,
@@ -41,13 +48,13 @@ Three auto-activated skills guide scenario building end-to-end. They divide resp
 
 - **make-scenario-building** decides WHICH modules to use and WHY (scenario architecture)
 - **make-module-configuring** handles HOW to configure each module (parameters, connections, mapping)
-- **make-mcp-reference** covers MCP infrastructure (connection methods, scopes, troubleshooting)
+- **make-interface-reference** covers both interfaces — CLI and MCP infrastructure (install, auth, connection methods, scopes, troubleshooting)
 
-### make-mcp-reference
+### make-interface-reference
 
-MCP server configuration, OAuth vs token auth, scopes, troubleshooting connection issues. Activated when users ask about MCP setup, tokens, OAuth, or connection errors.
+Reference for both interfaces: Make CLI install/auth, Make MCP server OAuth/token auth, scopes, tool-invocation mapping, and troubleshooting. Activated when users ask about CLI install, `make-cli`, MCP setup, tokens, OAuth, connection errors, or which interface to use.
 
-Reference: `references/transport-details.md`
+References: `cli-install-and-auth.md`, `mcp-install-and-auth.md`, `tool-invocation-mapping.md`, `transport-details.md`
 
 ### make-module-configuring
 
@@ -132,10 +139,26 @@ Construct blueprint JSON -> `validate_blueprint_schema` -> `scenarios_create`
 
 Edit `.mcp.json`. The `make` server uses HTTP transport to Make's hosted endpoint at `https://mcp.make.com`.
 
+### Build variants
+
+`build.sh` produces MCP-only ZIPs in `dist/` by running `scripts/strip-variants.sh` on a copy of `skills/` before zipping. The source tree (`skills/`) is the full CLI+MCP variant, consumed directly by plugin install and `npx skills add`.
+
+Marker pairs in SKILL.md files:
+
+- `<!-- variant:cli-start -->...<!-- variant:cli-end -->` — CLI-specific content. Visible in source; stripped from ZIPs.
+- `<!-- variant:mcp-only-start -->...<!-- variant:mcp-only-end -->` — short fallback text (kept in both variants; only the marker lines are removed by the stripper).
+
+File-level: `references/cli-*.md` files are deleted when building ZIPs. MCP-related reference files are always kept.
+
+The stripper fails the build if any SKILL.md has unbalanced variant markers. Run `bash scripts/test-strip-variants.sh` to verify the stripper itself.
+
+When adding CLI-only content, wrap it in `variant:cli-*` markers. Prefer keeping `variant:mcp-only-*` blocks short (a sentence or two) since they are visible to plugin/npx consumers alongside CLI content.
+
 ### Releasing a new version
 
-1. Run `npm run release` — bumps version in `package.json`, `plugin.json`, `marketplace.json`, and all `skills/*/SKILL.md` frontmatter, then runs `build.sh`
-2. Publish versioned artifacts: `gh release create v${VERSION} dist/*-v${VERSION}.zip`
+1. Run `bash scripts/test-strip-variants.sh` — sanity-check the stripper is working.
+2. Run `npm run release` — bumps version in `package.json`, `plugin.json`, `marketplace.json`, and all `skills/*/SKILL.md` frontmatter, then runs `build.sh` (which strips CLI content before zipping).
+3. Publish versioned artifacts: `gh release create v${VERSION} dist/*-v${VERSION}.zip`
 
 ## Key Conventions
 
