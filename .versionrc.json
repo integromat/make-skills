@@ -6,7 +6,7 @@
     { "filename": ".claude-plugin/marketplace.json", "updater": "scripts/marketplace-version.js" },
     { "filename": "skills/make-scenario-building/SKILL.md", "updater": "scripts/skill-version.js" },
     { "filename": "skills/make-module-configuring/SKILL.md", "updater": "scripts/skill-version.js" },
-    { "filename": "skills/make-mcp-reference/SKILL.md", "updater": "scripts/skill-version.js" }
+    { "filename": "skills/make-interface-reference/SKILL.md", "updater": "scripts/skill-version.js" }
   ],
   "packageFiles": [
     { "filename": "package.json", "type": "json" }

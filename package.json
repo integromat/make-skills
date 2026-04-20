@@ -43,8 +43,8 @@
         "path": "./skills/make-module-configuring"
       },
       {
-        "name": "make-mcp-reference",
-        "path": "./skills/make-mcp-reference"
+        "name": "make-interface-reference",
+        "path": "./skills/make-interface-reference"
       }
     ]
   },

@@ -24,7 +24,7 @@ trap cleanup EXIT
 SKILLS=(
     "make-scenario-building"
     "make-module-configuring"
-    "make-mcp-reference"
+    "make-interface-reference"
 )
 
 echo "Building make-skills distribution packages v${VERSION}..."
