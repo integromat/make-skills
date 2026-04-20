@@ -334,4 +334,4 @@ The `model` parameter in `ai-tools:Ask` (and other Make AI Toolkit modules) is *
 ## Related Skills
 
 - **make-module-configuring** — HOW to configure each module: parameters, connections, mapping, webhooks, data stores, IML expressions, validation
-- **make-mcp-reference** — MCP server configuration, scopes, access control, and troubleshooting
+- **make-interface-reference** — MCP server configuration, scopes, access control, and troubleshooting

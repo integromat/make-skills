@@ -54,4 +54,4 @@ These apply to every module configuration. Violating any of them is the most com
 ## Related Skills
 
 - **make-scenario-building** — Which modules to use and how to compose them into flows (routing, branching, filtering, iterations, aggregations, error handling)
-- **make-mcp-reference** — MCP server configuration, scopes, access control
+- **make-interface-reference** — MCP server configuration, scopes, access control
