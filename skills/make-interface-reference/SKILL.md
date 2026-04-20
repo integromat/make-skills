@@ -1,172 +1,94 @@
 ---
-name: make-mcp-reference
-description: This skill should be used when the user asks about "Make MCP server", "Make MCP tools", "MCP token", "Make OAuth", "scenario as tool", "MCP scopes", "Make API access", "connect Make to Claude", "scenario not appearing", "MCP timeout", "MCP connection refused", or discusses configuring, troubleshooting, or understanding the Make.com MCP server integration. Provides technical reference for connection methods, scopes, access control, and troubleshooting.
+name: make-interface-reference
+description: This skill should be used when the user asks about "Make CLI", "make-cli", "Make MCP server", "Make MCP tools", "MCP token", "Make OAuth", "scenario as tool", "MCP scopes", "Make API access", "connect Make to Claude", "scenario not appearing", "MCP timeout", "MCP connection refused", or discusses configuring, troubleshooting, or understanding how an AI agent connects to Make via the Make CLI or the Make MCP server. Provides technical reference for both interfaces, including install, authentication, scopes, access control, invocation syntax, and troubleshooting.
 license: MIT
-compatibility: Requires a Make.com account with permissions to create scenarios. Works with any agent that supports MCP (Claude Code, Cursor, GitHub Copilot, etc.).
+compatibility: Requires a Make.com account with permissions to create scenarios. Works with any agent that supports either shell access (for the Make CLI) or MCP tool calling.
 metadata:
   author: Make
-  version: "0.1.3"
+  version: "0.2.0"
   homepage: https://www.make.com
   repository: https://github.com/integromat/make-skills
 ---
 
-# Make MCP Server Reference
+# Make Interface Reference
 
-Technical reference for the Make.com MCP server — enables AI clients to execute scenarios and manage Make accounts.
+AI agents interact with Make through one of two interfaces:
 
-## Connection Methods
+- **Make CLI** (`@makehq/cli`) — a local binary the agent invokes through shell (Bash). Preferred when the agent has shell access.
+- **Make MCP server** (`https://mcp.make.com`) — a hosted MCP service the agent calls via native tool invocation. Required when the agent has no shell access (Claude Desktop, claude.ai).
 
-### OAuth (Default)
+Both expose the same tool set. The CLI is generated from the same `MakeMCPTools` SDK definition that backs the MCP server, so every MCP tool has a matching CLI subcommand.
 
-Connect via OAuth consent flow. Select organization and scopes during authentication.
+## Choosing an interface (detection order)
 
-**Endpoint:** `https://mcp.make.com`
+Run this check once at the start of any Make-related task and remember the result for the session. Do not re-detect per tool call.
 
-**URL variants:**
-| Transport | URL |
-|-----------|-----|
-| Stateless Streamable HTTP (default) | `https://mcp.make.com` |
-| Streamable HTTP | `https://mcp.make.com/stream` |
-| SSE | `https://mcp.make.com/sse` |
+<!-- variant:cli-start -->
+1. **Check for the CLI.** Run `command -v make-cli` (Bash).
+   - Found? Run `make-cli whoami` to verify authentication.
+     - Success → use the **CLI path** for this session.
+     - Authentication failure → tell the user: "The Make CLI is installed but not authenticated. Run `make-cli login` to authenticate, or I can fall back to the MCP server if it is configured."
+   - Not found → go to step 2.
+2. **Check for the MCP server.** Is the `make` MCP server connected? Attempt a lightweight tool call (e.g. `apps_recommend`) to verify.
+   - Yes → use the **MCP path**.
+   - No → go to step 3.
+3. **Neither available.** Tell the user: "I need either the Make CLI or the Make MCP server. Easiest: install the CLI with `brew install integromat/tap/make-cli` (or `npm install -g @makehq/cli`) then run `make-cli login`. Alternative: configure the Make MCP server at `https://mcp.make.com`."
+<!-- variant:cli-end -->
 
-For clients without SSE support, a legacy transport using the Cloudflare `mcp-remote` proxy wrapper is available: `npx -y mcp-remote https://mcp.make.com/sse`.
+<!-- variant:mcp-only-start -->
+This environment uses the Make MCP server. Configure it at `https://mcp.make.com` (see below).
+<!-- variant:mcp-only-end -->
 
-**Configuration for Claude Code:**
-```json
-{
-  "mcpServers": {
-    "make": {
-      "type": "http",
-      "url": "https://mcp.make.com"
-    }
-  }
-}
+<!-- variant:cli-start -->
+## Make CLI
+
+Install, authenticate, and invoke: see **[cli-install-and-auth.md](./references/cli-install-and-auth.md)**.
+
+Invocation shape:
+
+```
+make-cli <category> <action> --flag=value --output=json
 ```
 
-**Access control:** Restrict to specific organizations during OAuth consent. Teams plan or higher enables team-level restrictions.
+- Always pass `--output=json` when the agent parses the response programmatically.
+- For the full category/action list, run `make-cli --help` and `make-cli <category> --help`.
+- After `make-cli login`, subsequent calls need no credential flags.
 
-### MCP Token
+For the MCP-tool ↔ CLI-command mapping used by the building skills, see **[tool-invocation-mapping.md](./references/tool-invocation-mapping.md)**.
+<!-- variant:cli-end -->
 
-Generate a token in Make profile → API access tab → Add token.
+## Make MCP server
 
-**Endpoint:** `https://<MAKE_ZONE>/mcp/u/<MCP_TOKEN>/stateless`
+Install, authenticate, scopes, access control, transports, timeouts, configuring scenarios as MCP tools: see **[mcp-install-and-auth.md](./references/mcp-install-and-auth.md)**.
 
-**URL variants:**
-| Transport | URL |
-|-----------|-----|
-| Stateless Streamable HTTP | `https://<ZONE>/mcp/u/<TOKEN>/stateless` |
-| Streamable HTTP | `https://<ZONE>/mcp/u/<TOKEN>/stream` |
-| SSE | `https://<ZONE>/mcp/u/<TOKEN>/sse` |
-| Header Auth | `https://<ZONE>/mcp/stateless` + `Authorization: Bearer <TOKEN>` |
-
-**Configuration for Claude Code:**
-```json
-{
-  "mcpServers": {
-    "make": {
-      "type": "http",
-      "url": "https://<MAKE_ZONE>/mcp/u/<MCP_TOKEN>"
-    }
-  }
-}
-```
-
-Replace `<MAKE_ZONE>` with the organization's hosting zone (e.g., `eu1.make.com`, `eu2.make.com`, `us1.make.com`).
-
-**Security:** Treat MCP tokens as secrets. Never commit them to version control.
-
-## Scopes
-
-### Scenario Run Scopes
-
-Allow AI clients to view and run active, on-demand scenarios.
-
-- **OAuth scope:** "Run your scenarios"
-- **Token scope:** `mcp:use`
-- **Available on:** All plans
-
-### Management Scopes
-
-Allow AI clients to view and modify account contents (scenarios, connections, webhooks, data stores, teams).
-
-- **Available on:** Paid plans only
-- Enable granular control over Make account management
-
-## Configuring Scenarios as MCP Tools
-
-For a scenario to appear as an MCP tool:
-
-1. Set scenario to **active** status
-2. Set scheduling to **on-demand**
-3. Select the appropriate scope (`mcp:use` for tokens, "Run your scenarios" for OAuth)
-4. Configure **scenario inputs** — these become tool parameters
-5. Configure **scenario outputs** — these become tool return values
-6. Add a detailed **scenario description** — strongly recommended to help AI understand the tool's purpose and improve discoverability
-
-**Input/output best practices:**
-- Write clear, descriptive names (AI agents rely on these)
-- Add detailed descriptions explaining expected data
-- Use specific data types over `Any`
-- Keep execution time under timeout limits
-
-## Access Control (Token Auth)
-
-Restrict which scenarios are available via URL query parameters:
-
-**Organization level:**
-```
-?organizationId=<id>
-```
-
-**Team level:**
-```
-?teamId=<id>
-```
-
-**Scenario level (single):**
-```
-?scenarioId=<id>
-```
-
-**Multiple scenarios:**
-```
-?scenarioId[]=<id1>&scenarioId[]=<id2>
-```
-
-Levels are mutually exclusive — cannot combine organization, team, and scenario filters.
-
-## Timeouts
-
-| Tool Type | OAuth | Token (Stateless) | Token (SSE/Stream) |
-|-----------|-------|--------------------|--------------------|
-| Scenario Run | 25s | 40s | 40s |
-| Management | 30s | 60s | 320s |
-
-When a scenario run exceeds the timeout, the response includes an `executionId`. The scenario continues running in Make for up to 40 minutes. Use `executions_get` with that ID to poll for results.
-
-## Advanced Configuration
-
-### Tool Name Length
-
-Customize maximum tool name length with query parameter:
-```
-?maxToolNameLength=<32-160>
-```
-Default: 56 characters.
+Transport comparison and URL construction: see **[transport-details.md](./references/transport-details.md)**.
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| Scenario not appearing as tool | Verify: active status, on-demand scheduling, correct scope |
-| Timeout errors | Switch from `https://mcp.make.com` to a zone-specific `https://<MAKE_ZONE>/mcp/<TRANSPORT>` URL for longer timeouts. Alternatively, reduce scenario complexity or use SSE transport |
-| Permission denied | Check token scopes and access control parameters |
-| Connection refused | Verify zone URL and token validity |
-| Stale tool list | Reconnect MCP client to refresh available tools |
+| No scenarios appearing as tools | Verify scenario is active, scheduled on-demand, and the authenticated user/token has the required scope. |
+| Permission denied | For MCP token auth: check token scopes (`mcp:use` plus any management scopes). For OAuth: re-consent with the needed scopes. |
+| MCP connection refused / timeout | Verify zone URL; for long-running management tools, switch to `https://<MAKE_ZONE>/mcp/<TRANSPORT>` URLs that support longer timeouts; consider SSE. |
+| Stale MCP tool list | Reconnect the MCP client to refresh available tools. |
+<!-- variant:cli-start -->
+| `make-cli: command not found` | Install via `brew install integromat/tap/make-cli` or `npm install -g @makehq/cli`. |
+| `make-cli whoami` returns "not logged in" | Run `make-cli login` to authenticate interactively. |
+| CLI call returns `401 Unauthorized` | Saved credentials are invalid or expired. Run `make-cli logout` then `make-cli login`, or override via `MAKE_API_KEY` / `MAKE_ZONE`. |
+| CLI call hangs or times out | Check network to the zone URL; add `--zone <correct-zone>` if the saved zone is wrong. |
+<!-- variant:cli-end -->
 
 ## Resources
 
-- **`references/transport-details.md`** — Detailed transport comparison, URL construction, and zone list
-- **[Make MCP Server docs](https://developers.make.com/mcp-server)** — Official documentation
-- **make-scenario-building** skill — Scenario construction: routing, filtering, iterations, aggregations, error handling, blueprint construction
-- **make-module-configuring** skill — Module configuration: parameters, connections, mapping, webhooks, data stores
+<!-- variant:cli-start -->
+- **[cli-install-and-auth.md](./references/cli-install-and-auth.md)** — Make CLI install and authentication.
+- **[tool-invocation-mapping.md](./references/tool-invocation-mapping.md)** — MCP tool ↔ CLI subcommand mapping.
+<!-- variant:cli-end -->
+- **[mcp-install-and-auth.md](./references/mcp-install-and-auth.md)** — Make MCP server connection methods, scopes, access control.
+- **[transport-details.md](./references/transport-details.md)** — Transport comparison, URL construction, zone list.
+- **[Make MCP Server docs](https://developers.make.com/mcp-server)** — Official documentation.
+
+## Related skills
+
+- **make-scenario-building** — Scenario design: app discovery, module selection, routing, error handling, deployment.
+- **make-module-configuring** — Module configuration: parameters, connections, mapping, webhooks, data stores, validation.
