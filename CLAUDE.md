@@ -21,7 +21,7 @@ The CLI is built from the same `MakeMCPTools` SDK definition as the MCP server, 
   marketplace.json         # Marketplace metadata
 .mcp.json                  # MCP server configuration (remote Make server)
 skills/
-  make-interface-reference/ # CLI & MCP config + troubleshooting (3 reference files)
+  make-interface-reference/ # CLI & MCP config + troubleshooting (4 reference files)
     SKILL.md
     references/
       cli-install-and-auth.md

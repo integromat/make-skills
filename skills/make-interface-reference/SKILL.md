@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires a Make.com account with permissions to create scenarios. Works with any agent that supports either shell access (for the Make CLI) or MCP tool calling.
 metadata:
   author: Make
-  version: "0.2.0"
+  version: "0.1.3"
   homepage: https://www.make.com
   repository: https://github.com/integromat/make-skills
 ---
