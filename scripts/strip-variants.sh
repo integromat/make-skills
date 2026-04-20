@@ -24,21 +24,42 @@ if [ ! -d "$SRC" ]; then
   exit 2
 fi
 
+if [ -z "$DEST" ] || [ "$DEST" = "/" ]; then
+  echo "Error: refusing to use empty path or / as destination" >&2
+  exit 2
+fi
+
+SRC_ABS="$(cd "$SRC" && pwd -P)"
+if [ -e "$DEST" ]; then
+  DEST_ABS="$(cd "$DEST" && pwd -P)"
+  if [ "$DEST_ABS" = "/" ] || [ "$DEST_ABS" = "$SRC_ABS" ]; then
+    echo "Error: destination must not resolve to / or the source directory" >&2
+    exit 2
+  fi
+fi
+
 rm -rf "$DEST"
 mkdir -p "$DEST"
 cp -r "$SRC/." "$DEST/"
 
-# Check marker balance across all SKILL.md files.
+# Check marker balance across all SKILL.md files. Fails fast on an end marker
+# without a matching start so we catch malformed ordering, not just net counts.
 check_balance() {
   local file="$1"
   awk '
-    /<!-- variant:cli-start -->/  { cli++ }
-    /<!-- variant:cli-end -->/    { cli-- }
-    /<!-- variant:mcp-only-start -->/ { mcp++ }
-    /<!-- variant:mcp-only-end -->/   { mcp-- }
+    /<!-- variant:cli-start -->/      { cli++; next }
+    /<!-- variant:cli-end -->/ {
+      if (cli == 0) { print "unexpected variant:cli-end at line " NR; exit 1 }
+      cli--; next
+    }
+    /<!-- variant:mcp-only-start -->/ { mcp++; next }
+    /<!-- variant:mcp-only-end -->/ {
+      if (mcp == 0) { print "unexpected variant:mcp-only-end at line " NR; exit 1 }
+      mcp--; next
+    }
     END {
-      if (cli != 0) { print "unbalanced variant:cli markers (net " cli ")"; exit 1 }
-      if (mcp != 0) { print "unbalanced variant:mcp-only markers (net " mcp ")"; exit 1 }
+      if (cli != 0) { print "unbalanced variant:cli markers: EOF reached with " cli " open block(s)"; exit 1 }
+      if (mcp != 0) { print "unbalanced variant:mcp-only markers: EOF reached with " mcp " open block(s)"; exit 1 }
     }
   ' "$file"
 }

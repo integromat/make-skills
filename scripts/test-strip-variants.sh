@@ -51,10 +51,14 @@ pass "balanced input stripped correctly"
 # Test 2: unbalanced input
 OUTDIR2=$(mktemp -d)
 trap 'rm -rf "$OUTDIR" "$OUTDIR2"' EXIT
-if bash "$STRIPPER" "$FIXTURES/unbalanced-input" "$OUTDIR2" 2>/dev/null; then
+ERR_OUTPUT=""
+if ERR_OUTPUT=$(bash "$STRIPPER" "$FIXTURES/unbalanced-input" "$OUTDIR2" 2>&1); then
   fail "stripper did not fail on unbalanced markers"
 fi
-pass "unbalanced input correctly rejected"
+if ! printf '%s\n' "$ERR_OUTPUT" | grep -q 'unbalanced variant:\|unexpected variant:'; then
+  fail "stripper did not emit the expected variant-marker error (got: $ERR_OUTPUT)"
+fi
+pass "unbalanced input correctly rejected with clear error"
 
 echo ""
 echo "All strip-variants tests passed."
