@@ -34,16 +34,23 @@ echo ""
 rm -rf "$DIST_DIR"
 mkdir -p "$DIST_DIR"
 
+# Strip CLI content from a copy of skills/ for MCP-only ZIPs
+echo "Stripping CLI content for MCP-only ZIPs..."
+STRIP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/make-skills.XXXXXX")
+_CLEANUP_DIRS+=("$STRIP_DIR")
+bash "$REPO_ROOT/scripts/strip-variants.sh" "$REPO_ROOT/skills" "$STRIP_DIR/skills"
+echo ""
+
 # Build individual skill zips (for Claude Desktop / Claude.ai)
 # Structure: skill-name/ at zip root
 echo "Building individual skill zips..."
 
 for skill in "${SKILLS[@]}"; do
     echo "  - $skill"
-    TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/make-skills.XXXXXX")
-    _CLEANUP_DIRS+=("$TMPDIR")
-    cp -r "$REPO_ROOT/skills/$skill" "$TMPDIR/$skill"
-    (cd "$TMPDIR" && zip -rq "$DIST_DIR/${skill}-v${VERSION}.zip" "$skill/" -x "*.DS_Store")
+    TMPDIR_PKG=$(mktemp -d "${TMPDIR:-/tmp}/make-skills.XXXXXX")
+    _CLEANUP_DIRS+=("$TMPDIR_PKG")
+    cp -r "$STRIP_DIR/skills/$skill" "$TMPDIR_PKG/$skill"
+    (cd "$TMPDIR_PKG" && zip -rq "$DIST_DIR/${skill}-v${VERSION}.zip" "$skill/" -x "*.DS_Store")
     # Stable alias (version-free) so docs don't 404 after a bump
     cp "$DIST_DIR/${skill}-v${VERSION}.zip" "$DIST_DIR/${skill}.zip"
 done
@@ -51,17 +58,17 @@ done
 # Build complete bundle (for Claude Code)
 echo "Building complete bundle..."
 
-TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/make-skills.XXXXXX")
-_CLEANUP_DIRS+=("$TMPDIR")
-BUNDLE="$TMPDIR/make-skills"
+TMPDIR_BUNDLE=$(mktemp -d "${TMPDIR:-/tmp}/make-skills.XXXXXX")
+_CLEANUP_DIRS+=("$TMPDIR_BUNDLE")
+BUNDLE="$TMPDIR_BUNDLE/make-skills"
 mkdir -p "$BUNDLE"
 cp -r "$REPO_ROOT/.claude-plugin" "$BUNDLE/.claude-plugin"
-cp -r "$REPO_ROOT/skills" "$BUNDLE/skills"
+cp -r "$STRIP_DIR/skills" "$BUNDLE/skills"
 cp "$REPO_ROOT/.mcp.json" "$BUNDLE/.mcp.json"
 cp "$REPO_ROOT/README.md" "$BUNDLE/README.md"
 cp "$REPO_ROOT/LICENSE" "$BUNDLE/LICENSE"
 cp "$REPO_ROOT/CLAUDE.md" "$BUNDLE/CLAUDE.md"
-(cd "$TMPDIR" && zip -rq "$DIST_DIR/make-skills-v${VERSION}.zip" "make-skills/" -x "*.DS_Store")
+(cd "$TMPDIR_BUNDLE" && zip -rq "$DIST_DIR/make-skills-v${VERSION}.zip" "make-skills/" -x "*.DS_Store")
 # Stable alias
 cp "$DIST_DIR/make-skills-v${VERSION}.zip" "$DIST_DIR/make-skills.zip"
 
