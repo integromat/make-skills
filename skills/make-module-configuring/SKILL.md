@@ -14,6 +14,23 @@ metadata:
 
 This skill covers configuring individual modules within a Make scenario. Once a scenario's module composition is decided (see **make-scenario-building**), each module must be configured: connections assigned, parameters filled, data mapped from upstream modules, and special components (webhooks, data stores, keys) wired up.
 
+## Interface: CLI or MCP
+
+Before invoking any tool in this skill, determine which interface to use.
+
+<!-- variant:cli-start -->
+1. **CLI (preferred).** Run `command -v make-cli` (Bash). If found, run `make-cli whoami` to verify authentication. If both succeed, invoke tools via:
+   `make-cli <category> <action> --flag=value --output=json`.
+2. **MCP (fallback).** If no CLI, check whether the `make` MCP server is connected and call tools natively.
+3. **Neither available.** Ask the user to install the Make CLI (`brew install integromat/tap/make-cli` or `npm install -g @makehq/cli`, then `make-cli login`) or to configure the Make MCP server (`https://mcp.make.com`).
+
+All tool names used below (`app-module_get`, `rpc_execute`, `validate_module_configuration`, `connections_list`, `credential_requests_create`, etc.) exist in both interfaces. See **make-interface-reference** for the full MCP↔CLI mapping and invocation syntax.
+<!-- variant:cli-end -->
+
+<!-- variant:mcp-only-start -->
+This skill uses the Make MCP server. Tool names referenced below (`app-module_get`, `rpc_execute`, `validate_module_configuration`, `connections_list`, `credential_requests_create`, etc.) are MCP tools. See **make-interface-reference** for connection setup.
+<!-- variant:mcp-only-end -->
+
 ## Quick Routing
 
 Read the reference file that matches the current task:
