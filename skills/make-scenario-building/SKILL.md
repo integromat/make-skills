@@ -14,6 +14,22 @@ metadata:
 
 This skill guides building a scenario in Make. A scenario is an automated workflow composed of modules connected together. Before building anything, Phase 1 below MUST be completed.
 
+## Interface: CLI or MCP
+
+Before invoking any tool in this skill, determine which interface to use.
+
+<!-- variant:cli-start -->
+1. **CLI (preferred).** Run `command -v make-cli` (Bash). If found, run `make-cli whoami` to verify authentication. If both succeed, invoke tools via:
+   `make-cli <category> <action> --flag=value --output=json`.
+2. **MCP (fallback).** If no CLI, check whether the `make` MCP server is connected and call tools natively.
+3. **Neither available.** Ask the user to install the Make CLI (`brew install integromat/tap/make-cli` or `npm install -g @makehq/cli`, then `make-cli login`) or to configure the Make MCP server (`https://mcp.make.com`).
+
+All tool names used below (`apps_recommend`, `app-module_get`, `rpc_execute`, `validate_module_configuration`, `extract_blueprint_components`, etc.) exist in both interfaces. See **make-interface-reference** for the full MCP↔CLI mapping and invocation syntax.
+<!-- variant:cli-end -->
+
+<!-- variant:mcp-only-start -->
+This skill uses the Make MCP server. Tool names referenced below (`apps_recommend`, `app-module_get`, `rpc_execute`, `validate_module_configuration`, `extract_blueprint_components`, etc.) are MCP tools. See **make-interface-reference** for connection setup.
+<!-- variant:mcp-only-end -->
 
 ## Phase 1: Understand the Business Need & Identify Modules
 
