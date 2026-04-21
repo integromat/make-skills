@@ -1,6 +1,6 @@
 ---
 name: make-interface-reference
-description: This skill should be used when the user asks about "Make CLI", "make-cli", "Make MCP server", "Make MCP tools", "MCP token", "Make OAuth", "scenario as tool", "MCP scopes", "Make API access", "connect Make to Claude", "scenario not appearing", "MCP timeout", "MCP connection refused", or discusses configuring, troubleshooting, or understanding how an AI agent connects to Make via the Make CLI or the Make MCP server. Provides technical reference for both interfaces, including install, authentication, scopes, access control, invocation syntax, and troubleshooting.
+description: This skill should be used when the user asks about "Make CLI", "make-cli", "Make MCP server", "MCP token", "Make OAuth", "scenario as tool", "MCP scopes", "MCP timeout", or "MCP connection refused", or discusses configuring, troubleshooting, or choosing how an AI agent connects to Make via the Make CLI or the Make MCP server. Provides install, authentication, scopes, access control, invocation syntax, and troubleshooting for both interfaces.
 license: MIT
 compatibility: Requires a Make.com account with permissions to create scenarios. Works with any agent that supports either shell access (for the Make CLI) or MCP tool calling.
 metadata:

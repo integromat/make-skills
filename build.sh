@@ -91,7 +91,7 @@ for skill in "${SKILLS[@]}"; do
 done
 SIZE=$(du -h "$DIST_DIR/make-mcp-reference-v${VERSION}.zip" | cut -f1)
 echo "  make-mcp-reference-v${VERSION}.zip  ${SIZE}  (deprecated alias)"
-echo "  make-mcp-reference.zip  (deprecated stable alias)"
+echo "  make-mcp-reference.zip  (deprecated alias, stable)"
 echo ""
 echo "Complete bundle (MCP-only, for manual Claude Code install without make-cli):"
 SIZE=$(du -h "$DIST_DIR/make-skills-v${VERSION}.zip" | cut -f1)

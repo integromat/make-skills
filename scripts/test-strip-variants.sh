@@ -43,6 +43,10 @@ fi
 if [ -f "$OUTDIR/skills/example/references/cli-intro.md" ]; then
   fail "cli-intro.md was not deleted"
 fi
+# cli-*.md outside references/ must also be deleted (basename-match, not path-match)
+if [ -f "$OUTDIR/skills/example/examples/cli-extra.md" ]; then
+  fail "examples/cli-extra.md was not deleted (basename match broken)"
+fi
 # non-cli reference must survive
 if [ ! -f "$OUTDIR/skills/example/references/mcp-intro.md" ]; then
   fail "mcp-intro.md was incorrectly deleted"

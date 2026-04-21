@@ -121,7 +121,8 @@ while IFS= read -r -d '' f; do
   ' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
 done < <(find "$DEST" -name 'SKILL.md' -print0)
 
-# Delete cli-*.md reference files.
-find "$DEST" -type f -path '*/references/cli-*.md' -delete
+# Delete any cli-*.md file anywhere inside a skill tree, not just under references/,
+# so CLI-only docs in sibling subdirs (examples/, guides/, …) don't leak into ZIPs.
+find "$DEST" -type f -name 'cli-*.md' -delete
 
 echo "Stripped CLI content from $DEST"
