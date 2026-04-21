@@ -39,7 +39,7 @@ For clients without SSE support, a legacy transport using the Cloudflare `mcp-re
 
 Generate a token in Make profile → API access tab → Add token.
 
-**Endpoint:** `https://<MAKE_ZONE>/mcp/u/<MCP_TOKEN>/stateless`
+**Endpoint:** `https://<MAKE_ZONE>/mcp/u/<MCP_TOKEN>` (suffix-less URL defaults to stateless; `/stateless` is the explicit form)
 
 **URL variants:**
 
