@@ -19,7 +19,7 @@ npm install -g @makehq/cli
 Or run without installing:
 
 ```bash
-npx @makehq/cli scenarios list --team-id=123
+npx --yes @makehq/cli scenarios list --team-id=123
 ```
 
 ### Binary releases

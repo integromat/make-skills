@@ -12,6 +12,7 @@ metadata:
 
 # Make Interface Reference
 
+<!-- variant:cli-start -->
 AI agents interact with Make through one of two interfaces:
 
 - **Make CLI** (`@makehq/cli`) — a local binary the agent invokes through shell (Bash). Preferred when the agent has shell access.
@@ -23,7 +24,6 @@ Both expose the same tool set. The CLI is generated from the same `MakeMCPTools`
 
 Run this check once at the start of any Make-related task and remember the result for the session. Do not re-detect per tool call.
 
-<!-- variant:cli-start -->
 1. **Check for the CLI.** Run `command -v make-cli` (Bash).
    - Found? Run `make-cli whoami` to verify authentication.
      - Success → use the **CLI path** for this session.
@@ -36,7 +36,7 @@ Run this check once at the start of any Make-related task and remember the resul
 <!-- variant:cli-end -->
 
 <!-- variant:mcp-only-start -->
-This environment uses the Make MCP server. Configure it at `https://mcp.make.com` (see below).
+AI agents interact with Make through the Make MCP server (`https://mcp.make.com`), a hosted MCP service called via native tool invocation. Configure it as described below.
 <!-- variant:mcp-only-end -->
 
 <!-- variant:cli-start -->
