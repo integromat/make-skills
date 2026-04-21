@@ -60,5 +60,18 @@ if ! printf '%s\n' "$ERR_OUTPUT" | grep -q 'unbalanced variant:\|unexpected vari
 fi
 pass "unbalanced input correctly rejected with clear error"
 
+# Test 3: destination inside source directory must be rejected (even when it doesn't exist yet)
+NESTED_DEST="$FIXTURES/balanced-input/nested-out-$$"
+ERR_OUTPUT=""
+if ERR_OUTPUT=$(bash "$STRIPPER" "$FIXTURES/balanced-input" "$NESTED_DEST" 2>&1); then
+  rm -rf "$NESTED_DEST"
+  fail "stripper did not reject destination inside source directory"
+fi
+rm -rf "$NESTED_DEST"
+if ! printf '%s\n' "$ERR_OUTPUT" | grep -q 'inside the source directory'; then
+  fail "stripper did not emit expected 'inside the source directory' error (got: $ERR_OUTPUT)"
+fi
+pass "destination inside source directory correctly rejected"
+
 echo ""
 echo "All strip-variants tests passed."
