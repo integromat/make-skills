@@ -28,7 +28,7 @@ All tool names used below (`app-module_get`, `rpc_execute`, `validate_module_con
 <!-- variant:cli-end -->
 
 <!-- variant:mcp-only-start -->
-This skill uses the Make MCP server. Tool names referenced below (`app-module_get`, `rpc_execute`, `validate_module_configuration`, `connections_list`, `credential_requests_create`, etc.) are MCP tools. See **make-interface-reference** for connection setup.
+When using the Make MCP server, the tool names referenced below (`app-module_get`, `rpc_execute`, `validate_module_configuration`, `connections_list`, `credential_requests_create`, etc.) are MCP tools. See **make-interface-reference** for connection setup.
 <!-- variant:mcp-only-end -->
 
 ## Quick Routing

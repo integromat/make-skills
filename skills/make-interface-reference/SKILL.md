@@ -36,7 +36,7 @@ Run this check once at the start of any Make-related task and remember the resul
 <!-- variant:cli-end -->
 
 <!-- variant:mcp-only-start -->
-AI agents interact with Make through the Make MCP server (`https://mcp.make.com`), a hosted MCP service called via native tool invocation. Configure it as described below.
+If the Make CLI is not available in this environment, use the Make MCP server (`https://mcp.make.com`) — a hosted MCP service called via native tool invocation. Configure it as described below.
 <!-- variant:mcp-only-end -->
 
 <!-- variant:cli-start -->

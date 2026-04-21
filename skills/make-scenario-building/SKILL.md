@@ -28,7 +28,7 @@ All tool names used below (`apps_recommend`, `app-module_get`, `rpc_execute`, `v
 <!-- variant:cli-end -->
 
 <!-- variant:mcp-only-start -->
-This skill uses the Make MCP server. Tool names referenced below (`apps_recommend`, `app-module_get`, `rpc_execute`, `validate_module_configuration`, `extract_blueprint_components`, etc.) are MCP tools. See **make-interface-reference** for connection setup.
+When using the Make MCP server, the tool names referenced below (`apps_recommend`, `app-module_get`, `rpc_execute`, `validate_module_configuration`, `extract_blueprint_components`, etc.) are MCP tools. See **make-interface-reference** for connection setup.
 <!-- variant:mcp-only-end -->
 
 ## Phase 1: Understand the Business Need & Identify Modules
