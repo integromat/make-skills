@@ -55,6 +55,13 @@ for skill in "${SKILLS[@]}"; do
     cp "$DIST_DIR/${skill}-v${VERSION}.zip" "$DIST_DIR/${skill}.zip"
 done
 
+# Deprecated alias for the old skill name (make-mcp-reference → make-interface-reference).
+# Preserves the pre-rename dist/make-mcp-reference.zip URL so existing bookmarks don't 404.
+# Content is identical to make-interface-reference.zip. Remove once consumers have migrated.
+echo "  - make-mcp-reference (deprecated alias for make-interface-reference)"
+cp "$DIST_DIR/make-interface-reference-v${VERSION}.zip" "$DIST_DIR/make-mcp-reference-v${VERSION}.zip"
+cp "$DIST_DIR/make-interface-reference.zip" "$DIST_DIR/make-mcp-reference.zip"
+
 # Build complete bundle (for Claude Code)
 echo "Building complete bundle..."
 
@@ -82,6 +89,9 @@ for skill in "${SKILLS[@]}"; do
     echo "  ${skill}-v${VERSION}.zip  ${SIZE}"
     echo "  ${skill}.zip  (stable alias)"
 done
+SIZE=$(du -h "$DIST_DIR/make-mcp-reference-v${VERSION}.zip" | cut -f1)
+echo "  make-mcp-reference-v${VERSION}.zip  ${SIZE}  (deprecated alias)"
+echo "  make-mcp-reference.zip  (deprecated stable alias)"
 echo ""
 echo "Complete bundle (MCP-only, for manual Claude Code install without make-cli):"
 SIZE=$(du -h "$DIST_DIR/make-skills-v${VERSION}.zip" | cut -f1)
