@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Copy a skills tree to a destination, stripping CLI-only content:
 #   1. Remove blocks between <!-- variant:cli-start --> and <!-- variant:cli-end -->.
-#   2. Leave <!-- variant:mcp-only-start --> and <!-- variant:mcp-only-end --> markers
-#      in place but remove just the marker lines (content between is kept).
-#   3. Delete any references/cli-*.md files.
+#   2. Keep the content between <!-- variant:mcp-only-start --> and
+#      <!-- variant:mcp-only-end -->, but remove the marker lines themselves.
+#   3. Delete any cli-*.md files anywhere under the destination tree.
 #
 # Fails with a clear error if any SKILL.md has unbalanced variant markers.
 #
