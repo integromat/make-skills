@@ -62,7 +62,7 @@ echo "  - make-mcp-reference (deprecated alias for make-interface-reference)"
 cp "$DIST_DIR/make-interface-reference-v${VERSION}.zip" "$DIST_DIR/make-mcp-reference-v${VERSION}.zip"
 cp "$DIST_DIR/make-interface-reference.zip" "$DIST_DIR/make-mcp-reference.zip"
 
-# Build complete bundle (for Claude Code)
+# Build complete bundle (for Claude Desktop / Claude.ai — MCP-only, manual download)
 echo "Building complete bundle..."
 
 TMPDIR_BUNDLE=$(mktemp -d "${TMPDIR:-/tmp}/make-skills.XXXXXX")
