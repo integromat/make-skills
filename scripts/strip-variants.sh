@@ -30,13 +30,25 @@ if [ -z "$DEST" ] || [ "$DEST" = "/" ]; then
 fi
 
 SRC_ABS="$(cd "$SRC" && pwd -P)"
-if [ -e "$DEST" ]; then
-  DEST_ABS="$(cd "$DEST" && pwd -P)"
-  if [ "$DEST_ABS" = "/" ] || [ "$DEST_ABS" = "$SRC_ABS" ]; then
-    echo "Error: destination must not resolve to / or the source directory" >&2
-    exit 2
-  fi
+
+DEST_PARENT="$(dirname "$DEST")"
+if [ ! -d "$DEST_PARENT" ]; then
+  echo "Error: destination parent directory does not exist: $DEST_PARENT" >&2
+  exit 2
 fi
+DEST_ABS="$(cd "$DEST_PARENT" && pwd -P)/$(basename "$DEST")"
+
+if [ "$DEST_ABS" = "/" ] || [ "$DEST_ABS" = "$SRC_ABS" ]; then
+  echo "Error: destination must not resolve to / or the source directory" >&2
+  exit 2
+fi
+
+case "$DEST_ABS/" in
+  "$SRC_ABS"/*)
+    echo "Error: destination must not be inside the source directory: $DEST_ABS" >&2
+    exit 2
+    ;;
+esac
 
 rm -rf "$DEST"
 mkdir -p "$DEST"

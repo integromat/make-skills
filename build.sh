@@ -83,7 +83,7 @@ for skill in "${SKILLS[@]}"; do
     echo "  ${skill}.zip  (stable alias)"
 done
 echo ""
-echo "Complete bundle (Claude Code):"
+echo "Complete bundle (MCP-only, for manual Claude Code install without make-cli):"
 SIZE=$(du -h "$DIST_DIR/make-skills-v${VERSION}.zip" | cut -f1)
 echo "  make-skills-v${VERSION}.zip  ${SIZE}"
 echo "  make-skills.zip  (stable alias)"
