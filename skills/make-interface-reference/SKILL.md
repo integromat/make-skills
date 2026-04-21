@@ -54,7 +54,7 @@ make-cli <category> <action> --flag=value --output=json
 - For the full category/action list, run `make-cli --help` and `make-cli <category> --help`.
 - After `make-cli login`, subsequent calls need no credential flags.
 
-For the MCP-tool ↔ CLI-command mapping used by the building skills, see **[tool-invocation-mapping.md](./references/tool-invocation-mapping.md)**.
+For the MCP-tool ↔ CLI-command mapping used by the building skills, see **[cli-tool-invocation-mapping.md](./references/cli-tool-invocation-mapping.md)**.
 <!-- variant:cli-end -->
 
 ## Make MCP server
@@ -71,7 +71,12 @@ Transport comparison and URL construction: see **[transport-details.md](./refere
 | Permission denied | For MCP token auth: check token scopes (`mcp:use` plus any management scopes). For OAuth: re-consent with the needed scopes. |
 | MCP connection refused / timeout | Verify zone URL; for long-running management tools, switch to `https://<MAKE_ZONE>/mcp/<TRANSPORT>` URLs that support longer timeouts; consider SSE. |
 | Stale MCP tool list | Reconnect the MCP client to refresh available tools. |
+
 <!-- variant:cli-start -->
+### Make CLI issues
+
+| Issue | Solution |
+|-------|----------|
 | `make-cli: command not found` | Install via `brew install integromat/tap/make-cli` or `npm install -g @makehq/cli`. |
 | `make-cli whoami` returns "not logged in" | Run `make-cli login` to authenticate interactively. |
 | CLI call returns `401 Unauthorized` | Saved credentials are invalid or expired. Run `make-cli logout` then `make-cli login`, or override via `MAKE_API_KEY` / `MAKE_ZONE`. |
@@ -82,7 +87,7 @@ Transport comparison and URL construction: see **[transport-details.md](./refere
 
 <!-- variant:cli-start -->
 - **[cli-install-and-auth.md](./references/cli-install-and-auth.md)** — Make CLI install and authentication.
-- **[tool-invocation-mapping.md](./references/tool-invocation-mapping.md)** — MCP tool ↔ CLI subcommand mapping.
+- **[cli-tool-invocation-mapping.md](./references/cli-tool-invocation-mapping.md)** — MCP tool ↔ CLI subcommand mapping.
 <!-- variant:cli-end -->
 - **[mcp-install-and-auth.md](./references/mcp-install-and-auth.md)** — Make MCP server connection methods, scopes, access control.
 - **[transport-details.md](./references/transport-details.md)** — Transport comparison, URL construction, zone list.

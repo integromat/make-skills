@@ -26,7 +26,7 @@ skills/
     references/
       cli-install-and-auth.md
       mcp-install-and-auth.md
-      tool-invocation-mapping.md
+      cli-tool-invocation-mapping.md
       transport-details.md
   make-module-configuring/  # Module configuration workflow (11 reference files)
     SKILL.md
@@ -54,7 +54,7 @@ Three auto-activated skills guide scenario building end-to-end. They divide resp
 
 Reference for both interfaces: Make CLI install/auth, Make MCP server OAuth/token auth, scopes, tool-invocation mapping, and troubleshooting. Activated when users ask about CLI install, `make-cli`, MCP setup, tokens, OAuth, connection errors, or which interface to use.
 
-References: `cli-install-and-auth.md`, `mcp-install-and-auth.md`, `tool-invocation-mapping.md`, `transport-details.md`
+References: `cli-install-and-auth.md`, `mcp-install-and-auth.md`, `cli-tool-invocation-mapping.md`, `transport-details.md`
 
 ### make-module-configuring
 

@@ -55,7 +55,7 @@ ERR_OUTPUT=""
 if ERR_OUTPUT=$(bash "$STRIPPER" "$FIXTURES/unbalanced-input" "$OUTDIR2" 2>&1); then
   fail "stripper did not fail on unbalanced markers"
 fi
-if ! printf '%s\n' "$ERR_OUTPUT" | grep -q 'unbalanced variant:\|unexpected variant:'; then
+if ! printf '%s\n' "$ERR_OUTPUT" | grep -Eq 'unbalanced variant:|unexpected variant:'; then
   fail "stripper did not emit the expected variant-marker error (got: $ERR_OUTPUT)"
 fi
 pass "unbalanced input correctly rejected with clear error"
