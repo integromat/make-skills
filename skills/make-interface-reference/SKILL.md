@@ -69,7 +69,7 @@ Transport comparison and URL construction: see **[transport-details.md](./refere
 |-------|----------|
 | No scenarios appearing as tools | Verify scenario is active, scheduled on-demand, and the authenticated user/token has the required scope. |
 | Permission denied | For MCP token auth: check token scopes (`mcp:use` plus any management scopes). For OAuth: re-consent with the needed scopes. |
-| MCP connection refused / timeout | Verify zone URL; for long-running management tools, switch to `https://<MAKE_ZONE>/mcp/<TRANSPORT>` URLs that support longer timeouts; consider SSE. |
+| MCP connection refused / timeout | Verify the zone URL pattern matches the auth mode — token-in-path: `https://<ZONE>/mcp/u/<TOKEN>[/<TRANSPORT>]`; header auth: `https://<ZONE>/mcp[/<TRANSPORT>]` with `Authorization: Bearer <TOKEN>`. For long-running management tools, use `/sse`. Details in [mcp-install-and-auth.md](./references/mcp-install-and-auth.md). |
 | Stale MCP tool list | Reconnect the MCP client to refresh available tools. |
 
 <!-- variant:cli-start -->

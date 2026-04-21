@@ -15,8 +15,9 @@ fail() { echo "FAIL: $1" >&2; exit 1; }
 pass() { echo "PASS: $1"; }
 
 # Test 1: balanced input
-OUTDIR=$(mktemp -d)
-trap 'rm -rf "$OUTDIR"' EXIT
+TMPBASE1=$(mktemp -d)
+OUTDIR="$TMPBASE1/out"
+trap 'rm -rf "$TMPBASE1"' EXIT
 bash "$STRIPPER" "$FIXTURES/balanced-input" "$OUTDIR"
 
 # CLI block must be gone
@@ -49,8 +50,9 @@ fi
 pass "balanced input stripped correctly"
 
 # Test 2: unbalanced input
-OUTDIR2=$(mktemp -d)
-trap 'rm -rf "$OUTDIR" "$OUTDIR2"' EXIT
+TMPBASE2=$(mktemp -d)
+OUTDIR2="$TMPBASE2/out"
+trap 'rm -rf "$TMPBASE1" "$TMPBASE2"' EXIT
 ERR_OUTPUT=""
 if ERR_OUTPUT=$(bash "$STRIPPER" "$FIXTURES/unbalanced-input" "$OUTDIR2" 2>&1); then
   fail "stripper did not fail on unbalanced markers"
@@ -75,8 +77,9 @@ pass "destination inside source directory correctly rejected"
 
 # Test 4: nested CLI markers strip the full block — no content leakage between the inner
 # cli-end and the outer cli-end. Guards against the old boolean-flag logic.
-OUTDIR3=$(mktemp -d)
-trap 'rm -rf "$OUTDIR" "$OUTDIR2" "$OUTDIR3"' EXIT
+TMPBASE3=$(mktemp -d)
+OUTDIR3="$TMPBASE3/out"
+trap 'rm -rf "$TMPBASE1" "$TMPBASE2" "$TMPBASE3"' EXIT
 bash "$STRIPPER" "$FIXTURES/nested-input" "$OUTDIR3"
 
 if grep -qE 'Outer CLI|Inner CLI|LEAKS' "$OUTDIR3/skills/example/SKILL.md"; then
@@ -112,6 +115,23 @@ if ! printf '%s\n' "$ERR_OUTPUT" | grep -q 'current working directory'; then
   fail "stripper did not emit expected CWD-guard error (got: $ERR_OUTPUT)"
 fi
 pass "destination equal to CWD correctly rejected"
+
+# Test 7: existing destination must be rejected so a stray invocation can't rm -rf
+# a real directory. Covers the safety contract documented in the usage header.
+EXISTING_DEST=$(mktemp -d)
+trap 'rm -rf "$TMPBASE1" "$TMPBASE2" "$TMPBASE3" "$EXISTING_DEST"' EXIT
+ERR_OUTPUT=""
+if ERR_OUTPUT=$(bash "$STRIPPER" "$FIXTURES/balanced-input" "$EXISTING_DEST" 2>&1); then
+  fail "stripper did not reject an existing destination"
+fi
+if ! printf '%s\n' "$ERR_OUTPUT" | grep -q 'destination already exists'; then
+  fail "stripper did not emit expected 'destination already exists' error (got: $ERR_OUTPUT)"
+fi
+# Existing dest must be untouched.
+if [ ! -d "$EXISTING_DEST" ]; then
+  fail "existing destination was deleted by stripper"
+fi
+pass "existing destination correctly rejected"
 
 echo ""
 echo "All strip-variants tests passed."

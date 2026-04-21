@@ -8,6 +8,8 @@
 # Fails with a clear error if any SKILL.md has unbalanced variant markers.
 #
 # Usage: strip-variants.sh <src-dir> <dest-dir>
+#   <dest-dir> must not already exist — the script creates it. This keeps a
+#   stray invocation (e.g. `… /tmp`) from `rm -rf`ing an existing directory.
 
 set -euo pipefail
 
@@ -63,8 +65,12 @@ case "$DEST_ABS/" in
     ;;
 esac
 
-rm -rf "$DEST"
-mkdir -p "$DEST"
+if [ -e "$DEST" ]; then
+  echo "Error: destination already exists; pass a non-existent path: $DEST" >&2
+  exit 2
+fi
+
+mkdir "$DEST"
 cp -r "$SRC/." "$DEST/"
 
 # Check marker balance across all SKILL.md files. Fails fast on an end marker
