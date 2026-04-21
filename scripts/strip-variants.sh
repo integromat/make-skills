@@ -29,7 +29,15 @@ if [ -z "$DEST" ] || [ "$DEST" = "/" ]; then
   exit 2
 fi
 
+case "$DEST" in
+  "." | ".." | "./" | "../")
+    echo "Error: refusing to use '.' or '..' as destination" >&2
+    exit 2
+    ;;
+esac
+
 SRC_ABS="$(cd "$SRC" && pwd -P)"
+CWD_ABS="$(pwd -P)"
 
 DEST_PARENT="$(dirname "$DEST")"
 if [ ! -d "$DEST_PARENT" ]; then
@@ -40,6 +48,11 @@ DEST_ABS="$(cd "$DEST_PARENT" && pwd -P)/$(basename "$DEST")"
 
 if [ "$DEST_ABS" = "/" ] || [ "$DEST_ABS" = "$SRC_ABS" ]; then
   echo "Error: destination must not resolve to / or the source directory" >&2
+  exit 2
+fi
+
+if [ "$DEST_ABS" = "$CWD_ABS" ]; then
+  echo "Error: destination must not resolve to the current working directory" >&2
   exit 2
 fi
 
@@ -89,15 +102,16 @@ if [ "$errors" -ne 0 ]; then
   exit 1
 fi
 
-# Strip CLI blocks (including the marker lines themselves).
+# Strip CLI blocks (including the marker lines themselves). Uses a depth counter so
+# nested CLI markers — permitted by the balance check above — strip correctly.
 # Also strip only the mcp-only marker lines, keeping the content inside.
 while IFS= read -r -d '' f; do
   awk '
-    /<!-- variant:cli-start -->/ { in_cli = 1; next }
-    /<!-- variant:cli-end -->/   { in_cli = 0; next }
+    /<!-- variant:cli-start -->/ { cli_depth++; next }
+    /<!-- variant:cli-end -->/   { cli_depth--; next }
     /<!-- variant:mcp-only-start -->/ { next }
     /<!-- variant:mcp-only-end -->/   { next }
-    { if (!in_cli) print }
+    { if (cli_depth == 0) print }
   ' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
 done < <(find "$DEST" -name 'SKILL.md' -print0)
 

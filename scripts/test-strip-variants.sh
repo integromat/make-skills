@@ -73,5 +73,45 @@ if ! printf '%s\n' "$ERR_OUTPUT" | grep -q 'inside the source directory'; then
 fi
 pass "destination inside source directory correctly rejected"
 
+# Test 4: nested CLI markers strip the full block — no content leakage between the inner
+# cli-end and the outer cli-end. Guards against the old boolean-flag logic.
+OUTDIR3=$(mktemp -d)
+trap 'rm -rf "$OUTDIR" "$OUTDIR2" "$OUTDIR3"' EXIT
+bash "$STRIPPER" "$FIXTURES/nested-input" "$OUTDIR3"
+
+if grep -qE 'Outer CLI|Inner CLI|LEAKS' "$OUTDIR3/skills/example/SKILL.md"; then
+  fail "nested CLI block leaked content (boolean flag regression)"
+fi
+if grep -q 'variant:cli-' "$OUTDIR3/skills/example/SKILL.md"; then
+  fail "nested variant:cli markers were not removed"
+fi
+if ! grep -q 'Keep this (MCP)' "$OUTDIR3/skills/example/SKILL.md"; then
+  fail "MCP content before nested block was dropped"
+fi
+if ! grep -q 'Keep this too (MCP)' "$OUTDIR3/skills/example/SKILL.md"; then
+  fail "MCP content after nested block was dropped"
+fi
+pass "nested CLI markers stripped without leakage"
+
+# Test 5: DEST="." must be rejected before any filesystem mutation.
+ERR_OUTPUT=""
+if ERR_OUTPUT=$(bash "$STRIPPER" "$FIXTURES/balanced-input" "." 2>&1); then
+  fail "stripper did not reject DEST='.'"
+fi
+if ! printf '%s\n' "$ERR_OUTPUT" | grep -q "refusing to use '.' or '..'"; then
+  fail "stripper did not emit expected dot-dest error (got: $ERR_OUTPUT)"
+fi
+pass "DEST='.' correctly rejected"
+
+# Test 6: DEST that resolves to CWD must be rejected.
+ERR_OUTPUT=""
+if ERR_OUTPUT=$(bash "$STRIPPER" "$FIXTURES/balanced-input" "$PWD" 2>&1); then
+  fail "stripper did not reject DEST equal to CWD"
+fi
+if ! printf '%s\n' "$ERR_OUTPUT" | grep -q 'current working directory'; then
+  fail "stripper did not emit expected CWD-guard error (got: $ERR_OUTPUT)"
+fi
+pass "destination equal to CWD correctly rejected"
+
 echo ""
 echo "All strip-variants tests passed."
