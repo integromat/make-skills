@@ -31,7 +31,7 @@
     "capabilities": ["Read", "Write"],
     "websiteURL": "https://www.make.com",
     "privacyPolicyURL": "https://www.make.com/en/privacy-notice",
-    "termsOfServiceURL": "https://www.make.com/en/terms",
+    "termsOfServiceURL": "https://www.make.com/en/terms-and-conditions",
     "defaultPrompt": [
       "Build a Make scenario that sends a Slack message when a new row is added to Google Sheets.",
       "Design a Make scenario that summarizes daily emails and posts the summary to Notion.",
