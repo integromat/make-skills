@@ -1,0 +1,20 @@
+{
+  "name": "make-marketplace",
+  "interface": {
+    "displayName": "Make"
+  },
+  "plugins": [
+    {
+      "name": "make-skills",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
