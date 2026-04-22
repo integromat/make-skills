@@ -1,0 +1,44 @@
+{
+  "name": "make-skills",
+  "version": "0.1.3",
+  "description": "Expert skills for designing, building, and deploying Make.com automation scenarios",
+  "author": {
+    "name": "Make",
+    "email": "support@make.com",
+    "url": "https://www.make.com"
+  },
+  "homepage": "https://www.make.com",
+  "repository": "https://github.com/integromat/make-skills",
+  "license": "MIT",
+  "keywords": [
+    "make",
+    "mcp",
+    "automation",
+    "scenarios",
+    "integration",
+    "workflow",
+    "blueprint",
+    "no-code"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Make",
+    "shortDescription": "Build Make.com scenarios with expert skills",
+    "longDescription": "Three auto-activated skills that guide Make.com scenario design end-to-end: choosing which modules to use and why, configuring each module, and troubleshooting the Make MCP connection. Works together with the hosted Make MCP server to discover apps, configure modules, manage connections and webhooks, and deploy scenarios.",
+    "developerName": "Make",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://www.make.com",
+    "privacyPolicyURL": "https://www.make.com/en/privacy-notice",
+    "termsOfServiceURL": "https://www.make.com/en/terms",
+    "defaultPrompt": [
+      "Build a Make scenario that sends a Slack message when a new row is added to Google Sheets.",
+      "Design a Make scenario that summarizes daily emails and posts the summary to Notion.",
+      "Help me configure a Make HTTP module to call my API with OAuth."
+    ],
+    "brandColor": "#6D00CC",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png"
+  }
+}
