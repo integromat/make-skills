@@ -25,6 +25,14 @@ npx skills add integromat/make-skills
 
 Installs all three skills into your agent's skills directory. Works with Claude Code, Cursor, GitHub Copilot, Windsurf, Cline, and [40+ other agents](https://skills.sh).
 
+### Codex
+
+```bash
+codex plugin marketplace add integromat/make-skills
+```
+
+Then open the plugin directory, select the **Make** marketplace, and install `make-skills`.
+
 ### Claude Code Plugin (Marketplace)
 
 ```bash
