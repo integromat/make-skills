@@ -1,6 +1,6 @@
 # Make CLI: Install & Authenticate
 
-The Make CLI (`@makehq/cli`) exposes every Make MCP tool as a command-line subcommand. When an AI agent has shell access, invoking the CLI via Bash is the recommended interface.
+The Make CLI (`@makehq/cli`) exposes every Make MCP tool as a command-line subcommand. When an AI agent has shell access, the CLI is an alternative to the Make MCP server — it wraps the same tool set and avoids a network round-trip per call.
 
 ## Installation
 
@@ -44,7 +44,7 @@ sudo dpkg -i make-cli-linux-amd64.deb
 
 ## Authentication
 
-### Interactive login (recommended)
+### Interactive login
 
 ```bash
 make-cli login

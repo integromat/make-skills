@@ -12,31 +12,30 @@ metadata:
 
 # Make Interface Reference
 
-<!-- variant:cli-start -->
 AI agents interact with Make through one of two interfaces:
 
-- **Make CLI** (`@makehq/cli`) — a local binary the agent invokes through shell (Bash). Preferred when the agent has shell access.
-- **Make MCP server** (`https://mcp.make.com`) — a hosted MCP service the agent calls via native tool invocation. Required when the agent has no shell access (Claude Desktop, claude.ai).
+- **Make MCP server** (`https://mcp.make.com`) — a hosted MCP service the agent calls via native tool invocation. The default path; works in every supported host (Claude Desktop, claude.ai, Claude Code, Cursor, Copilot, etc.).
+- **Make CLI** (`@makehq/cli`) — a local binary the agent invokes through shell (Bash). An alternative when the agent has shell access; wraps the same tool set as the MCP server.
 
 Both expose the same tool set. The CLI is generated from the same `MakeMCPTools` SDK definition that backs the MCP server, so every MCP tool has a matching CLI subcommand.
 
-## Choosing an interface (detection order)
+## Choosing an interface
 
 Run this check once at the start of any Make-related task and remember the result for the session. Do not re-detect per tool call.
 
-1. **Check for the CLI.** Run `command -v make-cli` (Bash).
-   - Found? Run `make-cli whoami` to verify authentication.
-     - Success → use the **CLI path** for this session.
-     - Authentication failure → tell the user: "The Make CLI is installed but not authenticated. Run `make-cli login` to authenticate, or I can fall back to the MCP server if it is configured."
-   - Not found → go to step 2.
-2. **Check for the MCP server.** Is the `make` MCP server connected? Attempt a lightweight tool call (e.g. `apps_recommend`) to verify.
-   - Yes → use the **MCP path**.
-   - No → go to step 3.
-3. **Neither available.** Tell the user: "I need either the Make CLI or the Make MCP server. Easiest: install the CLI with `brew install integromat/tap/make-cli` (or `npm install -g @makehq/cli`) then run `make-cli login`. Alternative: configure the Make MCP server at `https://mcp.make.com`."
+**Check for the MCP server first.** Is the `make` MCP server connected? Attempt a lightweight tool call (e.g. `apps_recommend`) to verify. If yes, use the **MCP path** for this session.
+
+<!-- variant:cli-start -->
+**If the MCP server isn't connected and the agent has shell access, check for the CLI.** Run `command -v make-cli` (Bash).
+
+- Found? Run `make-cli whoami` to verify authentication.
+  - Success → use the **CLI path** for this session — it wraps the same tool set and avoids a network round-trip per call.
+  - Authentication failure → tell the user: "The Make CLI is installed but not authenticated. Run `make-cli login`, or I can use the MCP server instead if it is configured."
+- Not found → tell the user: "I need either the Make MCP server or the Make CLI. Easiest: configure the Make MCP server at `https://mcp.make.com`. Alternative: install the CLI with `brew install integromat/tap/make-cli` (or `npm install -g @makehq/cli`) then run `make-cli login`."
 <!-- variant:cli-end -->
 
 <!-- variant:mcp-only-start -->
-If the Make CLI is not available in this environment, use the Make MCP server (`https://mcp.make.com`) — a hosted MCP service called via native tool invocation. Configure it as described below.
+If the MCP server isn't connected, tell the user to configure it at `https://mcp.make.com` (see below).
 <!-- variant:mcp-only-end -->
 
 <!-- variant:cli-start -->

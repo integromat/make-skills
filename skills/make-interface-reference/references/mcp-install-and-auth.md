@@ -1,6 +1,6 @@
 # Make MCP Server: Install & Authenticate
 
-Technical reference for connecting an AI client to the Make MCP server.
+Technical reference for connecting an AI client to the Make MCP server. This is the default interface the skills assume — every supported AI host can call it.
 
 ## Connection Methods
 
