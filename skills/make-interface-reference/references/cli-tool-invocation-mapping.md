@@ -56,7 +56,9 @@ ORG=$(curl -sS -H "Authorization: Token $TOKEN" "https://$ZONE/api/v2/users/me" 
 | Capability                          | MCP tool                            | REST endpoint (curl)                                                            |
 |-------------------------------------|-------------------------------------|---------------------------------------------------------------------------------|
 | List modules for an app             | `app_modules_list`                  | `GET /api/v2/imt/apps/{appName}/{appVersion}?organizationId=<org>` — returns the full app manifest; enumerate `actions`, `searches`, `triggers` arrays to list modules. |
-| Get module interface / schema       | `app-module_get`                    | Same endpoint as above — each entry in `actions` / `searches` / `triggers` includes `parameters` (input schema), `interface` (output schema), `expect`, `scope`, and RPC references like `"options": "rpc://<app>@<ver>/<rpcName>"`. Filter the manifest to the module of interest. |
+| List modules with required credentials (lightweight) | `app_modules_list` (narrower variant) | `GET /api/v2/imt/apps/{appName}/{appVersion}/modules-with-credentials` — returns `{appModules:[{id, name, label, type, scope, hook}, …]}`. Cheaper than the full manifest when the agent only needs to know which modules exist and what OAuth scopes / connection type each requires (e.g. when deciding which credential request to raise). No `organizationId` required. |
+| Get module interface / schema       | `app-module_get`                    | Same endpoint as `app_modules_list` — each entry in `actions` / `searches` / `triggers` includes `parameters` (input schema), `interface` (output schema), `expect`, `scope`, and RPC references like `"options": "rpc://<app>@<ver>/<rpcName>"`. Filter the manifest to the module of interest. |
+| Batch app metadata (label, theme, version) | no MCP equivalent            | `GET /api/v2/sdk/apps/themes?names=app1,app2,…` — returns `{apps:[{name, label, theme, isCompiled}, …]}` in a single round-trip. Use when enriching a list of app names (e.g. after `apps_recommend`) without fetching each app's full manifest. |
 | Execute RPC (resolve dynamic fields)| `rpc_execute`                       | `POST /api/v2/rpcs/{appName}/{appVersion}/{rpcName}` with JSON body `{"data":{"__IMTCONN__":<connectionId>, …}}`. Response shape: `{"code":"OK","response":[{"label":"…","value":"…"}, …]}`. |
 | Get blueprint JSON schema           | `validate_blueprint_schema` (partial) | `GET /api/v2/validation-schemas/blueprint` — returns a JSON Schema at `.blueprint`. Validate any blueprint client-side with `ajv` or the JSON-Schema tool of choice. |
 
@@ -71,6 +73,16 @@ If any scenario in the user's team uses the module you want to configure, `make-
 curl -sS -H "Authorization: Token $TOKEN" \
   "https://$ZONE/api/v2/imt/apps/google-calendar/5?organizationId=$ORG" \
   | jq '.app.searches[] | select(.name=="searchEvents")'
+
+# Lightweight: list modules + their required connection type and OAuth scopes
+curl -sS -H "Authorization: Token $TOKEN" \
+  "https://$ZONE/api/v2/imt/apps/amazon-rekognition/1/modules-with-credentials" \
+  | jq '.appModules[] | {name, label, type, scope}'
+
+# Batch fetch label/theme for many apps in one call
+curl -sS -H "Authorization: Token $TOKEN" \
+  "https://$ZONE/api/v2/sdk/apps/themes?names=amazon-rekognition,ai-agent,announcekit" \
+  | jq '.apps'
 
 # Execute the listCalendars RPC to resolve a calendar picker
 curl -sS -H "Authorization: Token $TOKEN" -H "Content-Type: application/json" \
