@@ -1,14 +1,14 @@
 {
-  "name": "make-marketplace",
+  "name": "Make marketplace",
   "interface": {
     "displayName": "Make"
   },
   "plugins": [
     {
-      "name": "make-skills",
+      "name": "Make Skills",
       "source": {
         "source": "local",
-        "path": "./"
+        "path": "./../.."
       },
       "policy": {
         "installation": "AVAILABLE",
