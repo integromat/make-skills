@@ -11,7 +11,7 @@
       },
       "source": {
         "source": "local",
-        "path": "./../../plugins/make-skills-codex"
+        "path": "./plugins/make-skills-codex"
       },
       "policy": {
         "installation": "AVAILABLE",
