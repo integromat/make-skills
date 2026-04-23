@@ -25,7 +25,7 @@
   "interface": {
     "displayName": "Make",
     "shortDescription": "Build Make.com scenarios with expert skills",
-    "longDescription": "Three auto-activated skills that guide Make.com scenario design end-to-end: choosing which modules to use and why, configuring each module, and troubleshooting the Make MCP connection. Works together with the hosted Make MCP server to discover apps, configure modules, manage connections and webhooks, and deploy scenarios.",
+    "longDescription": "Three auto-activated skills that guide Make.com scenario design end-to-end: choosing which modules to use and why, configuring each module, and troubleshooting the Make MCP connection. Works together with the hosted Make MCP server to discover apps, configure modules, manage connections and webhooks, and deploy scenarios. If Codex does not register the MCP server automatically after install, run `codex mcp add make --url https://mcp.make.com` and then `codex mcp login make`.",
     "developerName": "Make",
     "category": "Productivity",
     "capabilities": ["Read", "Write"],
