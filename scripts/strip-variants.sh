@@ -5,7 +5,7 @@
 #      <!-- variant:mcp-only-end -->, but remove the marker lines themselves.
 #   3. Delete any cli-*.md files anywhere under the destination tree.
 #
-# Fails with a clear error if any SKILL.md has unbalanced variant markers.
+# Fails with a clear error if any .md file has unbalanced variant markers.
 #
 # Usage: strip-variants.sh <src-dir> <dest-dir>
 #   <dest-dir> must not already exist — the script creates it. This keeps a
@@ -101,7 +101,7 @@ while IFS= read -r -d '' f; do
     echo "Error: $f: $out" >&2
     errors=$((errors + 1))
   fi
-done < <(find "$DEST" -name 'SKILL.md' -print0)
+done < <(find "$DEST" -type f -name '*.md' -print0)
 
 if [ "$errors" -ne 0 ]; then
   echo "Aborting: $errors file(s) have unbalanced variant markers." >&2
@@ -119,7 +119,7 @@ while IFS= read -r -d '' f; do
     /<!-- variant:mcp-only-end -->/   { next }
     { if (cli_depth == 0) print }
   ' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
-done < <(find "$DEST" -name 'SKILL.md' -print0)
+done < <(find "$DEST" -type f -name '*.md' -print0)
 
 # Delete any cli-*.md file anywhere inside a skill tree, not just under references/,
 # so CLI-only docs in sibling subdirs (examples/, guides/, …) don't leak into ZIPs.

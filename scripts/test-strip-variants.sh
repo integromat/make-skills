@@ -51,6 +51,17 @@ fi
 if [ ! -f "$OUTDIR/skills/example/references/mcp-intro.md" ]; then
   fail "mcp-intro.md was incorrectly deleted"
 fi
+# CLI block inside a non-SKILL.md reference must be stripped
+if grep -q 'Non-SKILL.md CLI block' "$OUTDIR/skills/example/references/mcp-intro.md"; then
+  fail "CLI block in non-SKILL.md reference was not stripped"
+fi
+if grep -q 'variant:cli-' "$OUTDIR/skills/example/references/mcp-intro.md"; then
+  fail "variant:cli markers in non-SKILL.md reference were not removed"
+fi
+# Surrounding content of the non-SKILL.md reference must survive
+if ! grep -q 'End of file' "$OUTDIR/skills/example/references/mcp-intro.md"; then
+  fail "non-SKILL.md reference content around CLI block was incorrectly removed"
+fi
 pass "balanced input stripped correctly"
 
 # Test 2: unbalanced input
