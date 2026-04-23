@@ -41,6 +41,16 @@ The mapper is where data flows between modules. See [IML Expressions](./iml-expr
 
 Follow this sequence for every module:
 
+<!-- variant:cli-start -->
+> **CLI-only note.** The default path (MCP server) calls each of the tools below natively — nothing extra needed. If the agent is using the CLI instead, note that three of these tools — `app-module_get`, `rpc_execute`, and `validate_module_configuration` — are not wrapped by `make-cli` 1.3.1 yet. They are still available as plain REST v2 endpoints the agent can curl using the API key the CLI already stored (`~/.config/make-cli/config.json`).
+>
+> - Module interface → `GET /api/v2/imt/apps/{appName}/{appVersion}?organizationId=<org>` (the app manifest includes every module's full `parameters` + `interface` schema; filter to the module of interest client-side).
+> - RPC execution → `POST /api/v2/rpcs/{appName}/{appVersion}/{rpcName}` with `{"data":{"__IMTCONN__":<id>, …}}`.
+> - Module configuration validation → there is no REST endpoint for this specific tool; validate the assembled `{parameters, mapper}` client-side against the schema fetched above, then rely on `scenarios run --responsive` to surface any runtime errors.
+>
+> Shape-discovery shortcut: if any existing scenario in the team already uses the target module, `make-cli scenarios get --scenario-id=<id>` returns its full blueprint — cloning `flow[*].parameters` / `flow[*].mapper` from there is usually the fastest path. See `make-interface-reference/references/cli-tool-invocation-mapping.md` for the complete CLI/REST/MCP tier table and worked curl examples.
+<!-- variant:cli-end -->
+
 ### Phase 1: Read the Module Interface
 
 Call `app-module_get` with the **instructions** output format. Pass:

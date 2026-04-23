@@ -2,7 +2,7 @@
 name: make-scenario-building
 description: This skill should be used when designing Make scenarios, choosing which modules to use, composing module flows, setting up routing/branching/filtering/iterations/aggregations, building blueprints, deploying scenarios, handling errors, configuring scheduling and triggers, or discussing scenario architecture. Covers WHICH modules to use and WHY — complementary to make-module-configuring which covers HOW to configure each module.
 license: MIT
-compatibility: Requires a Make.com account with permissions to create scenarios. Works with any agent that supports MCP (Claude Code, Cursor, GitHub Copilot, etc.).
+compatibility: Requires a Make.com account with permissions to create scenarios. Works either with shell access and the Make CLI installed/authenticated, or with any agent that supports MCP and has the Make MCP server connected (Claude Code, Cursor, GitHub Copilot, etc.).
 metadata:
   author: Make
   version: "0.1.3"
@@ -14,6 +14,19 @@ metadata:
 
 This skill guides building a scenario in Make. A scenario is an automated workflow composed of modules connected together. Before building anything, Phase 1 below MUST be completed.
 
+## Interface: MCP or CLI
+
+Before invoking any tool in this skill, determine which interface to use.
+
+The default path is the **Make MCP server** — check whether the `make` MCP server is connected and call tools natively. The tool names referenced below (`apps_recommend`, `app-module_get`, `rpc_execute`, `validate_module_configuration`, `extract_blueprint_components`, etc.) are MCP tools.
+
+<!-- variant:cli-start -->
+If the MCP server isn't connected and the agent has shell access, use the **Make CLI** where a matching subcommand exists. Run `command -v make-cli` (Bash); if found, run `make-cli whoami` to verify authentication. Invoke supported operations via `make-cli <category> <action> --flag=value --output=json`. Check **make-interface-reference** for the MCP↔CLI mapping before assuming a CLI equivalent; some tools require a REST/curl fallback or switching back to MCP.
+
+If neither is available, ask the user to configure the Make MCP server (`https://mcp.make.com`) or install the Make CLI (`brew install integromat/tap/make-cli` or `npm install -g @makehq/cli`, then `make-cli login`).
+<!-- variant:cli-end -->
+
+See **make-interface-reference** for connection setup and the full MCP↔CLI mapping.
 
 ## Phase 1: Understand the Business Need & Identify Modules
 
@@ -334,4 +347,4 @@ The `model` parameter in `ai-tools:Ask` (and other Make AI Toolkit modules) is *
 ## Related Skills
 
 - **make-module-configuring** — HOW to configure each module: parameters, connections, mapping, webhooks, data stores, IML expressions, validation
-- **make-mcp-reference** — MCP server configuration, scopes, access control, and troubleshooting
+- **make-interface-reference** — CLI and MCP setup (install, auth, tokens, OAuth), tool/command mapping, and troubleshooting

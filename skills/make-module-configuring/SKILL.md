@@ -2,7 +2,7 @@
 name: make-module-configuring
 description: This skill should be used when configuring Make module parameters, assigning connections, mapping data between modules, setting up webhooks or data stores in modules, working with IML expressions, handling keys, or defining data structures for module inputs/outputs. Covers the practical HOW of module configuration — complementary to make-scenario-building which covers WHICH modules to use and WHY.
 license: MIT
-compatibility: Requires a Make.com account with permissions to create scenarios. Works with any agent that supports MCP (Claude Code, Cursor, GitHub Copilot, etc.).
+compatibility: Requires a Make.com account with permissions to create scenarios. Works either with shell access and the Make CLI installed/authenticated, or with any agent that supports MCP and has the Make MCP server connected (Claude Code, Cursor, GitHub Copilot, etc.).
 metadata:
   author: Make
   version: "0.1.3"
@@ -13,6 +13,20 @@ metadata:
 # Make Module Configuration
 
 This skill covers configuring individual modules within a Make scenario. Once a scenario's module composition is decided (see **make-scenario-building**), each module must be configured: connections assigned, parameters filled, data mapped from upstream modules, and special components (webhooks, data stores, keys) wired up.
+
+## Interface: MCP or CLI
+
+Before invoking any tool in this skill, determine which interface to use.
+
+The default path is the **Make MCP server** — check whether the `make` MCP server is connected and call tools natively. The tool names referenced below (`app-module_get`, `rpc_execute`, `validate_module_configuration`, `connections_list`, `credential_requests_create`, etc.) are MCP tools.
+
+<!-- variant:cli-start -->
+If the MCP server isn't connected and the agent has shell access, the **Make CLI** supports the same workflow for many tools. Run `command -v make-cli` (Bash); if found, run `make-cli whoami` to verify authentication. Invoke available commands via `make-cli <category> <action> --flag=value --output=json`. Some MCP tools referenced below may not have a matching CLI subcommand in the current CLI version; when that happens, follow the documented MCP↔CLI mapping and use the REST/curl fallback where noted.
+
+If neither is available, ask the user to configure the Make MCP server (`https://mcp.make.com`) or install the Make CLI (`brew install integromat/tap/make-cli` or `npm install -g @makehq/cli`, then `make-cli login`).
+<!-- variant:cli-end -->
+
+See **make-interface-reference** for connection setup and the full MCP↔CLI mapping.
 
 ## Quick Routing
 
@@ -54,4 +68,4 @@ These apply to every module configuration. Violating any of them is the most com
 ## Related Skills
 
 - **make-scenario-building** — Which modules to use and how to compose them into flows (routing, branching, filtering, iterations, aggregations, error handling)
-- **make-mcp-reference** — MCP server configuration, scopes, access control
+- **make-interface-reference** — CLI and MCP setup (install, auth, tokens, OAuth), tool/command mapping, and troubleshooting

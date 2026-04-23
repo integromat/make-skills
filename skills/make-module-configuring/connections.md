@@ -57,16 +57,21 @@ Alternatively, offer to create a brand new connection with all required scopes f
 
 For connections that don't exist yet:
 
-1. **Create a credential request** via `credential_requests_create`. Provide:
-   - The connection type (from Extract Blueprint Components)
-   - Required scopes (for OAuth connections)
-   - The user will receive a URL to complete the authorization flow
+1. **Create a credential request** via `credential_requests_create`. Always pass **app + modules** (not explicit scope lists). The platform derives the exact scope set from the module schemas — this is the only way to be sure the scopes cover what the scenario will actually execute.
+
+   - Provide the connection's **app name** (`appName`) and the list of **modules** the scenario uses on that app (`appModules`). The platform returns the full, correct scope list.
+   - **Do not hand-pick scope strings.** The human-readable scope names in Extract Blueprint Components output are a preview, not an authoritative set — a module typically needs several scopes, and short names like `gmail.send` or `calendar.readonly` are almost always insufficient on their own. Explicit scope lists should only be used when the agent has no module context (e.g., bare HTTP or API-key credentials).
+   - The user will receive a URL to complete the authorization flow.
 
 2. **Wait for user completion.** The user clicks through the OAuth flow, enters API keys, or completes whatever authentication the service requires. The agent does not handle connection inner fields (API keys, custom domains, tokens) — the credential request flow covers all of that.
 
 3. **Retrieve the result.** Once the user confirms completion, call `credential_requests_get` to verify the credential request status and obtain the **connection ID** that was created.
 
-4. **Store the connection ID.** This ID goes into the module's parameters when configuring the module.
+4. **Verify the granted scopes before using the connection.** OAuth consent screens (Google in particular) present per-scope checkboxes that users can silently uncheck. The credential request can come back as `authorized` and the connection can pass `connections_verify`, yet still be missing scopes the scenario needs — the scenario will then fail at runtime with a `403 insufficient scopes` or similar error that points at a module, not at the connection.
+
+   After retrieval, inspect the new connection's actual `scopes` array (e.g., `connections_get` on the new ID) and confirm it contains every scope the credential request asked for. If a scope is missing, call the scope-expansion tool with the missing scope(s) and have the user reauthorize — and on that second consent screen, explicitly tell the user to leave every checkbox enabled.
+
+5. **Store the connection ID.** This ID goes into the module's parameters when configuring the module.
 
 ### Step 4: Assign to Modules
 
@@ -88,7 +93,8 @@ When the Extract Blueprint Components output shows multiple connection type opti
 ## Gotchas
 
 - **Never create connections directly.** Always use credential requests. The agent should never ask the user for API keys, tokens, or passwords directly — the credential request flow handles credential entry securely.
-- **Scope mismatches cause runtime failures.** A connection that authenticates successfully but lacks a required scope will fail with 403/permission errors when the module tries to perform a scoped operation. Always verify scopes match what Extract Blueprint Components specifies.
+- **Scope mismatches cause runtime failures.** A connection that authenticates successfully and passes `connections_verify` can still be missing scopes — it just can't call the protected endpoints. The failure surfaces at runtime as `403 insufficient scopes` inside the affected module. Always re-read the connection's `scopes` array immediately after authorization and confirm every requested scope is present.
+- **Google consent screens silently drop scopes.** On Google's OAuth consent screen each scope is a separate checkbox, and users can uncheck individual scopes before clicking Continue. The connection is then created with partial scopes and no warning. When asking the user to authorize, explicitly tell them to leave every checkbox enabled, and always verify scopes afterwards (see Step 3b.4).
 - **One connection per auth context.** If the user needs to access different accounts of the same service (e.g., two Google accounts), separate connections are needed.
 - **Connection field names vary.** Don't assume the parameter name is always `__IMTCONN__`. Check the module interface for the exact field name.
 - **Connections are team-level resources.** They're shared across all scenarios in a team, not scoped to a single scenario.

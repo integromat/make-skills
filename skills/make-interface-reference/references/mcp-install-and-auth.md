@@ -1,18 +1,6 @@
----
-name: make-mcp-reference
-description: This skill should be used when the user asks about "Make MCP server", "Make MCP tools", "MCP token", "Make OAuth", "scenario as tool", "MCP scopes", "Make API access", "connect Make to Claude", "scenario not appearing", "MCP timeout", "MCP connection refused", or discusses configuring, troubleshooting, or understanding the Make.com MCP server integration. Provides technical reference for connection methods, scopes, access control, and troubleshooting.
-license: MIT
-compatibility: Requires a Make.com account with permissions to create scenarios. Works with any agent that supports MCP (Claude Code, Cursor, GitHub Copilot, etc.).
-metadata:
-  author: Make
-  version: "0.1.3"
-  homepage: https://www.make.com
-  repository: https://github.com/integromat/make-skills
----
+# Make MCP Server: Install & Authenticate
 
-# Make MCP Server Reference
-
-Technical reference for the Make.com MCP server — enables AI clients to execute scenarios and manage Make accounts.
+Technical reference for connecting an AI client to the Make MCP server. This is the default interface the skills assume — every supported AI host can call it.
 
 ## Connection Methods
 
@@ -23,15 +11,17 @@ Connect via OAuth consent flow. Select organization and scopes during authentica
 **Endpoint:** `https://mcp.make.com`
 
 **URL variants:**
-| Transport | URL |
-|-----------|-----|
-| Stateless Streamable HTTP (default) | `https://mcp.make.com` |
-| Streamable HTTP | `https://mcp.make.com/stream` |
-| SSE | `https://mcp.make.com/sse` |
+
+| Transport                            | URL                          |
+|--------------------------------------|------------------------------|
+| Stateless Streamable HTTP (default)  | `https://mcp.make.com`       |
+| Streamable HTTP                      | `https://mcp.make.com/stream`|
+| SSE                                  | `https://mcp.make.com/sse`   |
 
 For clients without SSE support, a legacy transport using the Cloudflare `mcp-remote` proxy wrapper is available: `npx -y mcp-remote https://mcp.make.com/sse`.
 
 **Configuration for Claude Code:**
+
 ```json
 {
   "mcpServers": {
@@ -49,17 +39,19 @@ For clients without SSE support, a legacy transport using the Cloudflare `mcp-re
 
 Generate a token in Make profile → API access tab → Add token.
 
-**Endpoint:** `https://<MAKE_ZONE>/mcp/u/<MCP_TOKEN>/stateless`
+**Endpoint:** `https://<MAKE_ZONE>/mcp/u/<MCP_TOKEN>` (suffix-less URL defaults to stateless; `/stateless` is the explicit form)
 
 **URL variants:**
-| Transport | URL |
-|-----------|-----|
-| Stateless Streamable HTTP | `https://<ZONE>/mcp/u/<TOKEN>/stateless` |
-| Streamable HTTP | `https://<ZONE>/mcp/u/<TOKEN>/stream` |
-| SSE | `https://<ZONE>/mcp/u/<TOKEN>/sse` |
-| Header Auth | `https://<ZONE>/mcp/stateless` + `Authorization: Bearer <TOKEN>` |
+
+| Transport                  | URL                                          |
+|----------------------------|----------------------------------------------|
+| Stateless Streamable HTTP  | `https://<ZONE>/mcp/u/<TOKEN>/stateless`     |
+| Streamable HTTP            | `https://<ZONE>/mcp/u/<TOKEN>/stream`        |
+| SSE                        | `https://<ZONE>/mcp/u/<TOKEN>/sse`           |
+| Header Auth                | `https://<ZONE>/mcp/stateless` + `Authorization: Bearer <TOKEN>` |
 
 **Configuration for Claude Code:**
+
 ```json
 {
   "mcpServers": {
@@ -104,6 +96,7 @@ For a scenario to appear as an MCP tool:
 6. Add a detailed **scenario description** — strongly recommended to help AI understand the tool's purpose and improve discoverability
 
 **Input/output best practices:**
+
 - Write clear, descriptive names (AI agents rely on these)
 - Add detailed descriptions explaining expected data
 - Use specific data types over `Any`
@@ -114,21 +107,25 @@ For a scenario to appear as an MCP tool:
 Restrict which scenarios are available via URL query parameters:
 
 **Organization level:**
+
 ```
 ?organizationId=<id>
 ```
 
 **Team level:**
+
 ```
 ?teamId=<id>
 ```
 
 **Scenario level (single):**
+
 ```
 ?scenarioId=<id>
 ```
 
 **Multiple scenarios:**
+
 ```
 ?scenarioId[]=<id1>&scenarioId[]=<id2>
 ```
@@ -137,10 +134,10 @@ Levels are mutually exclusive — cannot combine organization, team, and scenari
 
 ## Timeouts
 
-| Tool Type | OAuth | Token (Stateless) | Token (SSE/Stream) |
-|-----------|-------|--------------------|--------------------|
-| Scenario Run | 25s | 40s | 40s |
-| Management | 30s | 60s | 320s |
+| Tool Type     | OAuth | Token (Stateless) | Token (SSE/Stream) |
+|---------------|-------|-------------------|--------------------|
+| Scenario Run  | 25s   | 40s               | 40s                |
+| Management    | 30s   | 60s               | 320s               |
 
 When a scenario run exceeds the timeout, the response includes an `executionId`. The scenario continues running in Make for up to 40 minutes. Use `executions_get` with that ID to poll for results.
 
@@ -149,24 +146,9 @@ When a scenario run exceeds the timeout, the response includes an `executionId`.
 ### Tool Name Length
 
 Customize maximum tool name length with query parameter:
+
 ```
 ?maxToolNameLength=<32-160>
 ```
+
 Default: 56 characters.
-
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| Scenario not appearing as tool | Verify: active status, on-demand scheduling, correct scope |
-| Timeout errors | Switch from `https://mcp.make.com` to a zone-specific `https://<MAKE_ZONE>/mcp/<TRANSPORT>` URL for longer timeouts. Alternatively, reduce scenario complexity or use SSE transport |
-| Permission denied | Check token scopes and access control parameters |
-| Connection refused | Verify zone URL and token validity |
-| Stale tool list | Reconnect MCP client to refresh available tools |
-
-## Resources
-
-- **`references/transport-details.md`** — Detailed transport comparison, URL construction, and zone list
-- **[Make MCP Server docs](https://developers.make.com/mcp-server)** — Official documentation
-- **make-scenario-building** skill — Scenario construction: routing, filtering, iterations, aggregations, error handling, blueprint construction
-- **make-module-configuring** skill — Module configuration: parameters, connections, mapping, webhooks, data stores
