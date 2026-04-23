@@ -21,7 +21,7 @@ Before invoking any tool in this skill, determine which interface to use.
 The default path is the **Make MCP server** — check whether the `make` MCP server is connected and call tools natively. The tool names referenced below (`app-module_get`, `rpc_execute`, `validate_module_configuration`, `connections_list`, `credential_requests_create`, etc.) are MCP tools.
 
 <!-- variant:cli-start -->
-If the MCP server isn't connected and the agent has shell access, the **Make CLI** wraps the same tool set. Run `command -v make-cli` (Bash); if found, run `make-cli whoami` to verify authentication. Invoke tools via `make-cli <category> <action> --flag=value --output=json`. Every tool named below has a matching CLI subcommand.
+If the MCP server isn't connected and the agent has shell access, the **Make CLI** supports the same workflow for many tools. Run `command -v make-cli` (Bash); if found, run `make-cli whoami` to verify authentication. Invoke available commands via `make-cli <category> <action> --flag=value --output=json`. Some MCP tools referenced below may not have a matching CLI subcommand in the current CLI version; when that happens, follow the documented MCP↔CLI mapping and use the REST/curl fallback where noted.
 
 If neither is available, ask the user to configure the Make MCP server (`https://mcp.make.com`) or install the Make CLI (`brew install integromat/tap/make-cli` or `npm install -g @makehq/cli`, then `make-cli login`).
 <!-- variant:cli-end -->

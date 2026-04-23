@@ -4,14 +4,14 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-**make-skills** provides expert skills for designing, building, and deploying Make.com automation scenarios. Skills work with two interchangeable interfaces — the Make MCP server (the default, works in every supported host) and the Make CLI (a local binary that wraps the same tool set for agents with shell access). Distributed as both a Claude Code plugin and as Open Agent Skills (compatible with 40+ AI agents via `npx skills add integromat/make-skills`). Published by Make under MIT license.
+**make-skills** provides expert skills for designing, building, and deploying Make.com automation scenarios. Skills work with two interfaces — the Make MCP server (the default, works in every supported host) and the Make CLI (a local binary for agents with shell access; wraps a subset of MCP tools as direct subcommands, with REST/curl fallbacks for the rest). Distributed as both a Claude Code plugin and as Open Agent Skills (compatible with 40+ AI agents via `npx skills add integromat/make-skills`). Published by Make under MIT license.
 
 The skills connect to Make via one of:
 
 - **Make MCP server (`https://mcp.make.com`)** — Make's hosted MCP service, called via native tool invocation. Authenticated via OAuth (default) or MCP token. This is the default path and the common denominator across every supported AI host (Claude Desktop, claude.ai, Claude Code, Cursor, Copilot, etc.).
 - **Make CLI (`@makehq/cli`)** — a local binary installed via Homebrew, npm, or binary release. Authenticated once via `make-cli login`; credentials stored at `~/.config/make-cli/config.json`. Invoked by the agent through Bash. Use it as a local alternative when the agent has shell access.
 
-The CLI is built from the same `MakeMCPTools` SDK definition as the MCP server, so every MCP tool has a matching `make-cli` subcommand. There is no capability gap between the two interfaces.
+The CLI is built from the same `MakeMCPTools` SDK definition as the MCP server, but CLI coverage is documented in `cli-tool-invocation-mapping.md` rather than assumed to be a complete one-to-one wrapper for every MCP tool. When a direct `make-cli` subcommand is unavailable, follow the documented Tier 2/3 fallback guidance.
 
 ## Repository Structure
 

@@ -15,9 +15,9 @@ metadata:
 AI agents interact with Make through one of two interfaces:
 
 - **Make MCP server** (`https://mcp.make.com`) — a hosted MCP service the agent calls via native tool invocation. The default path; works in every supported host (Claude Desktop, claude.ai, Claude Code, Cursor, Copilot, etc.).
-- **Make CLI** (`@makehq/cli`) — a local binary the agent invokes through shell (Bash). An alternative when the agent has shell access; wraps the same tool set as the MCP server.
+- **Make CLI** (`@makehq/cli`) — a local binary the agent invokes through shell (Bash). An alternative when the agent has shell access; wraps a subset of MCP tools as direct subcommands, with REST/curl fallbacks for the rest.
 
-Both expose the same tool set. The CLI is generated from the same `MakeMCPTools` SDK definition that backs the MCP server, so every MCP tool has a matching CLI subcommand.
+The CLI is generated from the same `MakeMCPTools` SDK definition that backs the MCP server, but wraps a subset of MCP tools as direct subcommands. See `references/cli-tool-invocation-mapping.md` for the current Tier 1 (direct CLI) / Tier 2 (REST curl fallback) / Tier 3 (no CLI path, switch to MCP) breakdown.
 
 ## Choosing an interface
 
@@ -29,7 +29,7 @@ Run this check once at the start of any Make-related task and remember the resul
 **If the MCP server isn't connected and the agent has shell access, check for the CLI.** Run `command -v make-cli` (Bash).
 
 - Found? Run `make-cli whoami` to verify authentication.
-  - Success → use the **CLI path** for this session — it wraps the same tool set and avoids a network round-trip per call.
+  - Success → use the **CLI path** for this session — it avoids a network round-trip per call. Consult `references/cli-tool-invocation-mapping.md` when a tool isn't wrapped as a direct subcommand.
   - Authentication failure → tell the user: "The Make CLI is installed but not authenticated. Run `make-cli login`, or I can use the MCP server instead if it is configured."
 - Not found → tell the user: "I need either the Make MCP server or the Make CLI. Easiest: configure the Make MCP server at `https://mcp.make.com`. Alternative: install the CLI with `brew install integromat/tap/make-cli` (or `npm install -g @makehq/cli`) then run `make-cli login`."
 <!-- variant:cli-end -->

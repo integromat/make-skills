@@ -1,6 +1,6 @@
 # Make CLI: Install & Authenticate
 
-The Make CLI (`@makehq/cli`) exposes every Make MCP tool as a command-line subcommand. When an AI agent has shell access, the CLI is an alternative to the Make MCP server — it wraps the same tool set and avoids a network round-trip per call.
+The Make CLI (`@makehq/cli`) exposes a subset of Make MCP tools as command-line subcommands. When an AI agent has shell access, the CLI can be an alternative to the Make MCP server for those supported operations and avoids a network round-trip per call; for the current CLI-to-tool mapping and any REST/curl fallbacks, see `cli-tool-invocation-mapping.md`.
 
 ## Installation
 
