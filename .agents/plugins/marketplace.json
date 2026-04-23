@@ -5,7 +5,7 @@
   },
   "plugins": [
     {
-      "name": "Make Skills",
+      "name": "make-skills",
       "source": {
         "source": "local",
         "path": "./../.."
