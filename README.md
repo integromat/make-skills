@@ -33,6 +33,13 @@ codex plugin marketplace add integromat/make-skills
 
 Then open the plugin directory, select the **Make** marketplace, and install `make-skills`.
 
+If Codex does not register the MCP server automatically after install, add it manually:
+
+```bash
+codex mcp add make --url https://mcp.make.com
+codex mcp login make
+```
+
 ### Claude Code Plugin (Marketplace)
 
 ```bash
@@ -91,6 +98,12 @@ Add to your agent's MCP configuration:
 ```
 
 On first use, you'll authenticate through Make's OAuth consent screen.
+
+**Codex CLI equivalent:**
+```bash
+codex mcp add make --url https://mcp.make.com
+codex mcp login make
+```
 
 ### MCP Token
 
