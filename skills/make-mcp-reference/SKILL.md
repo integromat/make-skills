@@ -16,6 +16,17 @@ Technical reference for the Make.com MCP server — enables AI clients to execut
 
 ## Connection Methods
 
+### Codex Quick Setup
+
+If the Codex plugin installs but the Make MCP server is not present in `codex mcp list`, add it manually:
+
+```bash
+codex mcp add make --url https://mcp.make.com
+codex mcp login make
+```
+
+After login, reconnect the Codex session or start a new one before testing tools.
+
 ### OAuth (Default)
 
 Connect via OAuth consent flow. Select organization and scopes during authentication.
