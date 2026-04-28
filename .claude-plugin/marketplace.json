@@ -11,7 +11,7 @@
       "name": "make-skills",
       "description": "Expert skills for scenario architecture, module configuration, and MCP troubleshooting",
       "version": "0.1.3",
-      "source": "./",
+      "source": "./plugins/make-skills",
       "author": {
         "name": "Make",
         "url": "https://www.make.com"

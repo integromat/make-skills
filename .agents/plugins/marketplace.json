@@ -9,7 +9,7 @@
       "version": "0.1.3",
       "source": {
         "source": "local",
-        "path": "../.."
+        "path": "../../plugins/make-skills"
       },
       "policy": {
         "installation": "AVAILABLE",

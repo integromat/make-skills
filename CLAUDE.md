@@ -14,25 +14,33 @@ The skills connect to the remote Make MCP server:
 
 ```
 .claude-plugin/
-  plugin.json              # Plugin manifest (name, version, description)
-  marketplace.json         # Marketplace metadata
-.mcp.json                  # MCP server configuration (remote Make server)
-skills/
-  make-mcp-reference/      # MCP config & troubleshooting (1 reference file)
-    SKILL.md
-    references/transport-details.md
-  make-module-configuring/  # Module configuration workflow (11 reference files)
-    SKILL.md
-    general-principles.md, connections.md, mapping.md, webhooks.md,
-    data-stores.md, data-structures.md, keys.md, filtering.md,
-    iml-expressions.md, aggregators.md, ai-agents.md
-  make-scenario-building/   # Scenario design methodology (18 reference files)
-    SKILL.md
-    blueprint-construction.md, connections.md, webhooks.md,
-    scheduling-and-triggers.md, routing.md, branching.md, merging.md,
-    filtering.md, iterations.md, aggregations.md, mapping.md,
-    error-handling.md, data-stores.md, subscenarios.md, bundles.md,
-    ai-agents.md, quick-patterns.md, CONTRIBUTING.md
+  marketplace.json         # Claude Code marketplace registry (points at plugins/make-skills)
+.agents/plugins/
+  marketplace.json         # OpenAI Codex marketplace registry
+plugins/
+  make-skills/             # The plugin
+    .claude-plugin/
+      plugin.json          # Claude Code plugin manifest
+    .codex-plugin/
+      plugin.json          # Codex plugin manifest (with interface block)
+    .mcp.json              # MCP server configuration (remote Make server)
+    assets/                # icon.png, logo.png
+    skills/
+      make-mcp-reference/      # MCP config & troubleshooting (1 reference file)
+        SKILL.md
+        references/transport-details.md
+      make-module-configuring/  # Module configuration workflow (11 reference files)
+        SKILL.md
+        general-principles.md, connections.md, mapping.md, webhooks.md,
+        data-stores.md, data-structures.md, keys.md, filtering.md,
+        iml-expressions.md, aggregators.md, ai-agents.md
+      make-scenario-building/   # Scenario design methodology (18 reference files)
+        SKILL.md
+        blueprint-construction.md, connections.md, webhooks.md,
+        scheduling-and-triggers.md, routing.md, branching.md, merging.md,
+        filtering.md, iterations.md, aggregations.md, mapping.md,
+        error-handling.md, data-stores.md, subscenarios.md, bundles.md,
+        ai-agents.md, quick-patterns.md, CONTRIBUTING.md
 ```
 
 ## Skills
@@ -121,16 +129,17 @@ Construct blueprint JSON -> `validate_blueprint_schema` -> `scenarios_create`
 
 ### Adding a new skill
 
-1. Create `skills/<skill-name>/SKILL.md` with YAML frontmatter (`name`, `description`)
+1. Create `plugins/make-skills/skills/<skill-name>/SKILL.md` with YAML frontmatter (`name`, `description`)
 2. Add reference files in the same directory (no `references/` subdirectory required, but supported)
 3. Skill descriptions must use third person ("This skill should be used when...")
 4. Skill body should avoid second person ("you should/need/must/can")
 5. Target 500-5000 words
 6. Add optional Open Agent Skills frontmatter: `license`, `compatibility`, `metadata` (with `author`, `version`, `homepage`, `repository`)
+7. Register the new skill path in `package.json` (`agents.skills`), `.versionrc.json` (`bumpFiles`), and `build.sh` (`SKILLS` array)
 
 ### Modifying MCP configuration
 
-Edit `.mcp.json`. The `make` server uses HTTP transport to Make's hosted endpoint at `https://mcp.make.com`.
+Edit `plugins/make-skills/.mcp.json`. The `make` server uses HTTP transport to Make's hosted endpoint at `https://mcp.make.com`.
 
 ### Releasing a new version
 

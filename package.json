@@ -36,15 +36,15 @@
     "skills": [
       {
         "name": "make-scenario-building",
-        "path": "./skills/make-scenario-building"
+        "path": "./plugins/make-skills/skills/make-scenario-building"
       },
       {
         "name": "make-module-configuring",
-        "path": "./skills/make-module-configuring"
+        "path": "./plugins/make-skills/skills/make-module-configuring"
       },
       {
         "name": "make-mcp-reference",
-        "path": "./skills/make-mcp-reference"
+        "path": "./plugins/make-skills/skills/make-mcp-reference"
       }
     ]
   },

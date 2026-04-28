@@ -63,7 +63,7 @@ Or download the [complete bundle](https://raw.githubusercontent.com/integromat/m
 
 ### Manual Installation (Any Agent)
 
-Copy the `skills/` directory into your agent's skills folder:
+Copy the `plugins/make-skills/skills/` directory into your agent's skills folder:
 
 | Agent | Skills directory |
 |-------|-----------------|

@@ -11,8 +11,9 @@
 
 set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_ROOT="$REPO_ROOT/plugins/make-skills"
 DIST_DIR="$REPO_ROOT/dist"
-VERSION=$(grep '"version"' "$REPO_ROOT/.claude-plugin/plugin.json" | head -1 | sed 's/.*: *"\([^"]*\)".*/\1/')
+VERSION=$(grep '"version"' "$PLUGIN_ROOT/.claude-plugin/plugin.json" | head -1 | sed 's/.*: *"\([^"]*\)".*/\1/')
 
 # Cleanup temp dirs on exit/error/interrupt
 _CLEANUP_DIRS=()
@@ -42,7 +43,7 @@ for skill in "${SKILLS[@]}"; do
     echo "  - $skill"
     TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/make-skills.XXXXXX")
     _CLEANUP_DIRS+=("$TMPDIR")
-    cp -r "$REPO_ROOT/skills/$skill" "$TMPDIR/$skill"
+    cp -r "$PLUGIN_ROOT/skills/$skill" "$TMPDIR/$skill"
     (cd "$TMPDIR" && zip -rq "$DIST_DIR/${skill}-v${VERSION}.zip" "$skill/" -x "*.DS_Store")
     # Stable alias (version-free) so docs don't 404 after a bump
     cp "$DIST_DIR/${skill}-v${VERSION}.zip" "$DIST_DIR/${skill}.zip"
@@ -55,9 +56,9 @@ TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/make-skills.XXXXXX")
 _CLEANUP_DIRS+=("$TMPDIR")
 BUNDLE="$TMPDIR/make-skills"
 mkdir -p "$BUNDLE"
-cp -r "$REPO_ROOT/.claude-plugin" "$BUNDLE/.claude-plugin"
-cp -r "$REPO_ROOT/skills" "$BUNDLE/skills"
-cp "$REPO_ROOT/.mcp.json" "$BUNDLE/.mcp.json"
+cp -r "$PLUGIN_ROOT/.claude-plugin" "$BUNDLE/.claude-plugin"
+cp -r "$PLUGIN_ROOT/skills" "$BUNDLE/skills"
+cp "$PLUGIN_ROOT/.mcp.json" "$BUNDLE/.mcp.json"
 cp "$REPO_ROOT/README.md" "$BUNDLE/README.md"
 cp "$REPO_ROOT/LICENSE" "$BUNDLE/LICENSE"
 cp "$REPO_ROOT/CLAUDE.md" "$BUNDLE/CLAUDE.md"
