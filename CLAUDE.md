@@ -4,11 +4,11 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-**make-skills** provides expert skills for designing, building, and deploying Make.com automation scenarios. Distributed as both a Claude Code plugin and as Open Agent Skills (compatible with 40+ AI agents via `npx skills add integromat/make-skills`). Published by Make under MIT license.
+**make-skills** provides expert skills for designing, building, and deploying Make automation scenarios. Distributed as both a Claude Code plugin and as Open Agent Skills (compatible with 40+ AI agents via `npx skills add integromat/make-skills`). Published by Make under MIT license.
 
 The skills connect to the remote Make MCP server:
 
-- **`make`** — Make.com's hosted MCP server at `https://mcp.make.com`. Provides tools for app discovery, module configuration, connections, webhooks, data stores, and scenario lifecycle. Authenticated via OAuth (default) or MCP token.
+- **`make`** — Make's hosted MCP server at `https://mcp.make.com`. Provides tools for app discovery, module configuration, connections, webhooks, data stores, and scenario lifecycle. Authenticated via OAuth (default) or MCP token.
 
 ## Repository Structure
 
@@ -18,6 +18,13 @@ The skills connect to the remote Make MCP server:
   marketplace.json         # Marketplace metadata
 .mcp.json                  # MCP server configuration (remote Make server)
 skills/
+  make-api-shell-connection-workflow/  # API-call shell provisioning + retrieval transport (4 reference files)
+    SKILL.md
+    discovery-and-shells.md
+    connection-requests.md
+    retrieval-execution.md
+    sanitization-and-sharing.md
+    examples/generic-api-shell-blueprint.json
   make-mcp-reference/      # MCP config & troubleshooting (1 reference file)
     SKILL.md
     references/transport-details.md
@@ -37,11 +44,18 @@ skills/
 
 ## Skills
 
-Three auto-activated skills guide scenario building end-to-end. They divide responsibilities:
+Four auto-activated skills guide scenario building end-to-end. They divide responsibilities:
 
+- **make-api-shell-connection-workflow** handles reusable Make API-call shell provisioning and Make-first SaaS retrieval routing
 - **make-scenario-building** decides WHICH modules to use and WHY (scenario architecture)
 - **make-module-configuring** handles HOW to configure each module (parameters, connections, mapping)
 - **make-mcp-reference** covers MCP infrastructure (connection methods, scopes, troubleshooting)
+
+### make-api-shell-connection-workflow
+
+Reusable API-call shell workflow: provider/app resolution, connection reuse vs credential request, shell creation/patching, explicit interface setup, run validation, and SaaS retrieval via the shell contract.
+
+References: 4 files (discovery-and-shells, connection-requests, retrieval-execution, sanitization-and-sharing) plus 1 example blueprint
 
 ### make-mcp-reference
 

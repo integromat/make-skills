@@ -1,7 +1,7 @@
 {
   "name": "make-skills",
   "version": "0.1.3",
-  "description": "Expert skills for designing, building, and deploying Make.com automation scenarios",
+  "description": "Expert skills for designing, building, and deploying Make automation scenarios",
   "author": {
     "name": "Make",
     "email": "support@make.com",
@@ -24,8 +24,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Make",
-    "shortDescription": "Build Make.com scenarios with expert skills",
-    "longDescription": "Three auto-activated skills that guide Make.com scenario design end-to-end: choosing which modules to use and why, configuring each module, and troubleshooting the Make MCP connection. Works together with the hosted Make MCP server to discover apps, configure modules, manage connections and webhooks, and deploy scenarios. If Codex does not register the MCP server automatically after install, run `codex mcp add make --url https://mcp.make.com` and then `codex mcp login make`.",
+    "shortDescription": "Build Make scenarios with expert skills",
+    "longDescription": "Four auto-activated skills that guide Make scenario design end-to-end: provisioning reusable API-call shells, choosing which modules to use and why, configuring each module, and troubleshooting the Make MCP connection. Works together with the hosted Make MCP server to discover apps, configure modules, manage connections and webhooks, and deploy scenarios. If Codex does not register the MCP server automatically after install, run `codex mcp add make --url https://mcp.make.com` and then `codex mcp login make`.",
     "developerName": "Make",
     "category": "Productivity",
     "capabilities": ["Read", "Write"],
@@ -35,6 +35,7 @@
     "defaultPrompt": [
       "Build a Make scenario that sends a Slack message when a new row is added to Google Sheets.",
       "Design a Make scenario that summarizes daily emails and posts the summary to Notion.",
+      "Create a reusable Make API-call shell for a SaaS app connection.",
       "Help me configure a Make HTTP module to call my API with OAuth."
     ],
     "brandColor": "#6D00CC",

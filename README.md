@@ -1,18 +1,19 @@
 # make-skills
 
-Expert skills for designing, building, and deploying [Make.com](https://www.make.com) automation scenarios — for Claude Code, Cursor, GitHub Copilot, and [other AI agents](https://skills.sh).
+Expert skills for designing, building, and deploying [Make](https://www.make.com) automation scenarios — for Claude Code, Cursor, GitHub Copilot, and [other AI agents](https://skills.sh).
 
 ## Skills
 
 | Skill | What it does |
 |-------|-------------|
+| **make-api-shell-connection-workflow** | Reusable Make API-call shell provisioning — app discovery, connection request/reuse, interface setup, shell execution, SaaS retrieval transport |
 | **make-scenario-building** | End-to-end scenario design — app discovery, module selection, blueprint construction, routing, error handling, deployment |
 | **make-module-configuring** | Module configuration workflow — parameter filling, connections, mapping, webhooks, data stores, IML expressions, validation |
 | **make-mcp-reference** | MCP server reference — configuration, OAuth/token auth, scopes, troubleshooting |
 
 ## Prerequisites
 
-- A [Make.com](https://www.make.com) account
+- A [Make](https://www.make.com) account
 - Active scenarios with on-demand scheduling (for MCP tool access)
 
 ## Installation
@@ -23,7 +24,7 @@ Expert skills for designing, building, and deploying [Make.com](https://www.make
 npx skills add integromat/make-skills
 ```
 
-Installs all three skills into your agent's skills directory. Works with Claude Code, Cursor, GitHub Copilot, Windsurf, Cline, and [40+ other agents](https://skills.sh).
+Installs all four skills into your agent's skills directory. Works with Claude Code, Cursor, GitHub Copilot, Windsurf, Cline, and [40+ other agents](https://skills.sh).
 
 ### Codex
 
@@ -62,11 +63,12 @@ Download individual skills as zip files:
 
 | Skill | Download |
 |-------|----------|
+| API Shell + Connection Workflow | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-api-shell-connection-workflow.zip) |
 | Scenario Building | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-building.zip) |
 | Module Configuring | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-module-configuring.zip) |
 | MCP Reference | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-mcp-reference.zip) |
 
-Or download the [complete bundle](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-skills.zip) with all 3 skills + MCP config.
+Or download the [complete bundle](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-skills.zip) with all 4 skills + MCP config.
 
 ### Manual Installation (Any Agent)
 

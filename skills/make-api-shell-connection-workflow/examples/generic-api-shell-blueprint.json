@@ -1,0 +1,59 @@
+{
+  "name": "Generic API Shell",
+  "flow": [
+    {
+      "id": 2,
+      "module": "scenario-service:StartSubscenario",
+      "version": 2,
+      "parameters": {},
+      "mapper": {},
+      "metadata": {
+        "designer": { "x": 0, "y": 0 },
+        "restore": {},
+        "interface": [
+          { "name": "path", "type": "text", "required": false, "multiline": false },
+          { "name": "body", "type": "any", "required": false },
+          { "name": "header", "type": "any", "required": false },
+          { "name": "method", "type": "text", "required": false, "multiline": false }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "module": "APP_NAME:API_CALL_MODULE_NAME",
+      "version": 1,
+      "parameters": {},
+      "filter": null,
+      "mapper": {
+        "url": "{{2.path}}",
+        "method": "{{2.method}}",
+        "headers": "{{2.header}}",
+        "body": "{{2.body}}"
+      },
+      "metadata": {
+        "designer": { "x": 300, "y": 0 },
+        "restore": {
+          "expectUserSelection": true,
+          "notes": "Replace module name, version, and connection metadata with values discovered from the active workspace. Reconcile any app-specific expect or restore structures against a real current blueprint before activation."
+        }
+      }
+    },
+    {
+      "id": 4,
+      "module": "scenario-service:ReturnData",
+      "version": 1,
+      "parameters": {},
+      "mapper": {
+        "data": "{{3.body}}"
+      },
+      "metadata": {
+        "designer": { "x": 600, "y": 0 },
+        "restore": {}
+      }
+    }
+  ],
+  "metadata": {
+    "version": 1,
+    "notes": "Template only. Replace placeholders with discovered app and connection data before deployment. This file is a provisioning starter, not proof that the scenario is activatable. After create or update, explicitly patch the scenario-level interface before the first run. For the generic shell contract, keep ReturnData mapped to {{3.body}} so ExpectDataAny receives the raw response body; validate runs to confirm body contains the intended payload or error object. If a provider module mishandles empty bodies on GET or DELETE, keep this shell contract but consider a read shell without the Module 2 body mapper and a separate write shell with it."
+  }
+}

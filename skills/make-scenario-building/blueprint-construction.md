@@ -488,6 +488,8 @@ want to prevent formula evaluation.
 | `builtin:Ignore`   | Ignore error and continue     |
 | `builtin:Break`    | Move to incomplete executions |
 
+Use the exact token `builtin:Ignore`. Do not document or search for a separate `builtin:IgnoreError` directive; that name is not the canonical Make blueprint directive.
+
 ## Deployment Checklist
 
 After constructing a blueprint, follow this sequence to deploy and run it:
