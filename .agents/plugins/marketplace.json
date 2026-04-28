@@ -7,9 +7,6 @@
     {
       "name": "make-skills",
       "version": "0.1.3",
-      "interface": {
-        "displayName": "Make Skills"
-      },
       "source": {
         "source": "local",
         "path": "../.."
