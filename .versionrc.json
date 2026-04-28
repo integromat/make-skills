@@ -5,6 +5,7 @@
     { "filename": ".claude-plugin/plugin.json", "type": "json" },
     { "filename": ".codex-plugin/plugin.json", "type": "json" },
     { "filename": ".claude-plugin/marketplace.json", "updater": "scripts/marketplace-version.js" },
+    { "filename": ".agents/plugins/marketplace.json", "updater": "scripts/marketplace-version.js" },
     { "filename": "skills/make-scenario-building/SKILL.md", "updater": "scripts/skill-version.js" },
     { "filename": "skills/make-module-configuring/SKILL.md", "updater": "scripts/skill-version.js" },
     { "filename": "skills/make-mcp-reference/SKILL.md", "updater": "scripts/skill-version.js" }
