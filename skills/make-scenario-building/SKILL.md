@@ -86,6 +86,28 @@ If a tool is not found by exact name, search for similarly named tools on the Ma
 - **App version** (exact version as returned by the tool)
 - **Module name** (exact technical name/slug of each module you plan to use)
 
+### Step 2.5: Look Up Reference Templates
+
+Once apps and modules are identified, search the Make public template library for similar scenarios. Studying an existing template's blueprint reveals canonical module versions, mapper shapes, and aggregator/feeder bindings that aren't visible from `app-module_get` alone.
+
+**Recommended whenever the planned flow includes:**
+- An aggregator (`util:TextAggregator`, `builtin:BasicAggregator`, etc.)
+- A Make AI Tools module or any AI provider module
+- An app you haven't configured earlier in this session
+- Multi-module composition (more than 2-3 modules, branching, iteration)
+
+**Skip allowed for** single-module trigger → single-action flows with well-known apps and no aggregation/AI.
+
+**How:**
+1. `public-templates_list` with `name: <use-case keywords>` and `usedApps: <app slugs from Step 2>`
+2. If matches found, pick the highest-`usage` one with the most app overlap
+3. `public-templates_get-blueprint` to fetch the full structure
+4. Use as STRUCTURAL reference — NOT as the literal blueprint to copy. Templates often implement a slightly different pattern (e.g., per-item loop vs digest-style aggregation). Note diffs and present them to the user in Step 3.
+
+If `public-templates_get*` returns "Organization-bound request can't be used outside of the Organization Context", retry once; if it persists, reconnect the Make MCP server (`/mcp` reauth) and retry. If still failing, proceed without — the template is a nice-to-have reference, not a requirement.
+
+See [Templates Lookup](./templates-lookup.md) for search patterns, blueprint-diffing tips, and MCP workarounds.
+
 ### Step 3: Present the Module Composition & Get Confirmation
 
 Present the proposed module sequence to the user using **flowchart notation**:
@@ -323,7 +345,7 @@ This is the one valid use of date + literal time concatenation. The general rule
 
 ### Make AI Tools (`ai-tools:Ask`): Model Is Required, No Default
 
-The `model` parameter in `ai-tools:Ask` (and other Make AI Toolkit modules) is **required** — there is no default value. Omitting it causes a 400 error at runtime. When using Make's AI Provider (`ai-provider` connection), use tier names: `"low"`, `"medium"`, or `"high"`. Do not use provider-specific model IDs (e.g., `"gpt-4o-mini"`) with the Make AI Provider — they are not valid tier names and will fail.
+The `model` parameter in `ai-tools:Ask` (and other Make AI Toolkit modules) is **required** — there is no default value. Omitting it causes a 400 error at runtime. When using Make's AI Provider (`ai-provider` connection), use tier slug names: `"small"`, `"medium"`, or `"large"`. (Older docs mention `low/medium/high` — these are stale; the runtime rejects them with `Model X not allowed for Make AI Provider`.) Only `small` is empirically verified for `ai-tools:Summarize` v2 as of 2026-05; the others follow Make UI conventions but should be confirmed via the Module dropdown. The dropdown labels surface as e.g. "SmallModel: gpt-5-nano. Reasoning: minimal." — match those slugs. Do not use provider-specific model IDs (e.g., `"gpt-4o-mini"`) with the Make AI Provider — they are not valid tier names and will fail. The `RpcGetModels` RPC currently fails through the MCP server (org-context bug), so the model list cannot be queried programmatically — inspect the UI dropdown if unsure. See [make-mcp-reference — Known MCP server bugs](../make-mcp-reference/SKILL.md#known-mcp-server-bugs) for the org-context bug.
 
 **No Make AI Provider connection?** If the user has no `ai-provider` connection and cannot create one, check `connections_list` for alternative AI provider connections (`openai-gpt-3`, `anthropic-claude`, `gemini-ai-*`) and use the corresponding app-specific module instead of `ai-tools:Ask`. These modules accept provider-specific model IDs. See [Blueprint Construction — AI Tools](./blueprint-construction.md) for details.
 

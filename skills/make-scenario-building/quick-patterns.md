@@ -130,7 +130,7 @@ mapper: {
 
 **Gotchas:**
 - Column references use `{{1.\`0\`}}` — 0-based, backtick-quoted. NOT `{{1.1}}` or `{{1.jan}}`.
-- `model: "medium"` for Make AI Provider — `RpcGetModels` fails via MCP; use tier names directly.
+- `model: "small"` for Make AI Provider (cost-effective tier; valid slugs: `small`/`medium`/`large`). Older docs say `low/medium/high` — stale. `RpcGetModels` fails via MCP, so the dropdown can't be queried from the agent side — confirm the slug via Make UI if unsure.
 - `valueInputOption: "USER_ENTERED"` in updateRow mapper — mandatory for correct value formatting.
 - Columns without headers get `"undefined"` as their key in the `values` object.
 

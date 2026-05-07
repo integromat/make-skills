@@ -108,6 +108,7 @@ This back-and-forth is necessary because the aggregator's target variant needs t
 ## Gotchas
 
 - **Feeder is required.** Every aggregator must specify which module feeds it. Without a feeder, the aggregator doesn't know which loop to collect from.
+- **Validator-vs-blueprint mismatch on `feeder`.** `validate_module_configuration` rejects `parameters.feeder` as `"Unknown field 'feeder'"` even though it's required for the blueprint to deploy. This is a known mismatch — the per-module schema returned by `app-module_get` doesn't expose `feeder`, but the blueprint orchestration layer requires it. **Workaround:** skip the per-module validator for aggregators, OR run it without `feeder` (just to validate `rowSeparator`, `target`, mapper, etc.), then re-add `feeder` before deploying. Always verify with `validate_blueprint_schema` (whole-blueprint validator) — it accepts `feeder` correctly, and `scenarios_create` will too.
 - **Don't confuse feeder with source module ID in mapper.** The `feeder` parameter identifies the loop source. The mapper references (e.g., `{{2.email}}`) use the module ID of the module whose output fields are being collected — these are
   often the same module, but not always.
 - **Empty aggregations.** If the feeder produces zero bundles, the aggregator produces nothing by default. Use `stopIfEmpty: true` to halt the scenario, or handle the empty case downstream.
