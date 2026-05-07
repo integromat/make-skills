@@ -174,29 +174,6 @@ Default: 56 characters.
 | Permission denied | Check token scopes and access control parameters |
 | Connection refused | Verify zone URL and token validity |
 | Stale tool list | Reconnect MCP client to refresh available tools |
-| `Organization-bound request can't be used outside of the Organization Context` on `public-templates_get`, `public-templates_get-blueprint`, or RPC-backed validators | Known MCP server bug. Retry the call; if persistent, reconnect the make MCP server (`/mcp` reauth) and retry. If still failing, fall back: skip template lookup, or guess-and-test for RPC-backed values (see "Known MCP server bugs" below). |
-
-## Known MCP server bugs
-
-These are server-side issues with the Make MCP server itself, not configuration problems on the client. Document workarounds here and report upstream if patterns persist.
-
-### "Organization-bound request" errors
-
-Several endpoints intermittently fail with:
-- `MakeError: Organization-bound request can't be used outside of the Organization Context.`
-- `MakeError: Organization-bound RPC can't access resources outside of the Organization Context.`
-
-The schemas of the affected tools do NOT expose an `organizationId` parameter, so there's no way to supply context explicitly. The OAuth session should bind to an organization but doesn't reliably propagate to these endpoints.
-
-**Affected (observed 2026-05):**
-- `public-templates_get` and `public-templates_get-blueprint` — sometimes succeed on retry after `/mcp` reauth
-- `rpc_execute` for organization-bound RPCs (e.g., `RpcGetModels` for `ai-tools`) — consistently fails
-- `validate_module_configuration` when the validated module has dynamic fields backed by an org-bound RPC — fails with the same error wrapped inside the validation result
-
-**Workarounds:**
-1. **Retry after `/mcp` reauth.** Sometimes resolves the public-templates variants. The list endpoint (`public-templates_list`) is NOT affected — only the per-template get/get-blueprint variants.
-2. **Skip the failing validator.** When a module's strict validation fails purely because an RPC can't resolve, deploy anyway and rely on `scenarios_run` for empirical verification. The runtime error message names the offending field clearly (e.g., `Model X not allowed for Make AI Provider`).
-3. **Empirically test values.** For RPC-backed select fields (e.g., AI model dropdown), guess from documented patterns and run the scenario. Combine with the Make UI to inspect the dropdown labels for ground truth.
 
 ## Resources
 
