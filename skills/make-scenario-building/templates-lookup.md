@@ -67,21 +67,6 @@ For long debug sessions, save the chosen blueprint to `/tmp` as JSON with key ta
 
 Include the original blueprint, plus a short `_keyTakeaways` array calling out the patterns to copy and the patterns to swap. Re-read this file later in the session instead of re-querying the MCP — `public-templates_get-blueprint` is rate-affecting and intermittently fails (see workarounds below).
 
-## Workarounds for "Organization-bound" Errors
-
-`public-templates_get` and `public-templates_get-blueprint` sometimes fail with:
-
-```
-MakeError: Organization-bound request can't be used outside of the Organization Context.
-```
-
-The `public-templates_list` call is NOT affected — only the per-template `get*` variants. Workaround order:
-
-1. **Retry once** — sometimes the next call succeeds without intervention.
-2. **Reauth the Make MCP server** — `/mcp` reauth in Claude Code, then retry. Often resolves the issue.
-3. **Fall back without the template** — proceed using `SKILL.md` + `make-module-configuring` skill alone. The template is a nice-to-have reference, not a requirement.
-
-See [make-mcp-reference — Known MCP server bugs](../make-mcp-reference/SKILL.md#known-mcp-server-bugs) for the full bug context and other affected endpoints.
 
 ## Official Documentation
 
