@@ -106,7 +106,7 @@ Once apps and modules are identified, search the Make public template library fo
 
 If `public-templates_get*` returns "Organization-bound request can't be used outside of the Organization Context", retry once; if it persists, reconnect the Make MCP server (`/mcp` reauth) and retry. If still failing, proceed without — the template is a nice-to-have reference, not a requirement.
 
-See [Templates Lookup](./templates-lookup.md) for search patterns, blueprint-diffing tips, and MCP workarounds.
+See [Templates Lookup](./templates-lookup.md) for search patterns, blueprint-diffing tips, and MCP workarounds. The top 10 most-used public templates are also kept locally under [examples/popular-templates/](./examples/popular-templates/) — check there first when the user's request is a near-match for a common automation (e.g., AI enrichment of Sheets rows, webhook → Sheets, chatbot reply) and skip the remote round-trip.
 
 ### Step 3: Present the Module Composition & Get Confirmation
 

@@ -5,6 +5,8 @@ description: How to find public Make templates that match a planned scenario, th
 
 # Templates Lookup
 
+> **Local shortcut:** the top-10-by-usage templates are checked into [examples/popular-templates/](./examples/popular-templates/) (each file is the full API response). For common asks — AI enrichment of Sheets rows, webhook → Sheets, chatbot reply, attachment iteration, multi-platform fanout — read those first and skip the `public-templates_list` / `public-templates_get-blueprint` round-trip. See [blueprint-construction.md](./blueprint-construction.md) for the pattern → file mapping.
+
 ## What It Does
 
 Searches Make's public template library for scenarios similar to the one being designed, fetches the closest match's full blueprint, and uses it as a structural reference. Templates surface canonical module versions, mapper shapes, and aggregator/feeder bindings that aren't visible from `app-module_get` alone — and they save the agent from guessing parameter shapes that the live API will reject at runtime.

@@ -1,0 +1,95 @@
+{
+	"blueprint": {
+		"flow": [
+			{
+				"id": 4,
+				"mapper": {},
+				"module": "google-email:TriggerNewEmail",
+				"version": 2,
+				"metadata": {
+					"restore": {
+						"searchType": { "label": "Simple filter" }
+					},
+					"designer": { "x": 0, "y": 0 },
+					"parameters": [
+						{ "name": "account", "type": "account", "label": "Connection", "required": true },
+						{ "name": "searchType", "type": "select", "label": "Filter type", "required": true, "validate": { "enum": ["simple", "gmail"] } },
+						{ "name": "markSeen", "type": "boolean", "label": "Mark email message(s) as read when fetched" },
+						{ "name": "maxResults", "type": "uinteger", "label": "Maximum number of results" },
+						{ "name": "criteria", "type": "select", "label": "Criteria", "required": true, "validate": { "enum": ["ALL", "SEEN", "UNSEEN"] } },
+						{ "name": "from", "type": "email", "label": "Sender email address" },
+						{ "name": "subject", "type": "text", "label": "Subject" },
+						{ "name": "text", "type": "text", "label": "Search phrase" },
+						{ "name": "folder", "type": "folder", "label": "Folder", "required": true }
+					]
+				},
+				"parameters": {
+					"from": null,
+					"text": "",
+					"subject": "",
+					"markSeen": false,
+					"maxResults": 2,
+					"searchType": "simple"
+				}
+			},
+			{
+				"id": 5,
+				"mapper": {
+					"array": "{{4.attachments}}"
+				},
+				"module": "builtin:BasicFeeder",
+				"version": 1,
+				"metadata": {
+					"designer": { "x": 300, "y": 0 }
+				},
+				"parameters": {}
+			},
+			{
+				"id": 6,
+				"mapper": {
+					"data": "{{5.data}}",
+					"select": "value",
+					"filename": "{{5.fileName}}"
+				},
+				"module": "google-drive:uploadAFile",
+				"version": 4,
+				"metadata": {
+					"designer": { "x": 600, "y": 0 },
+					"parameters": [
+						{ "name": "__IMTCONN__", "type": "account", "label": "Connection", "required": true }
+					]
+				},
+				"parameters": {}
+			}
+		],
+		"metadata": {
+			"instant": false,
+			"version": 1,
+			"designer": { "orphans": [] },
+			"scenario": {
+				"dlq": false,
+				"dataloss": false,
+				"maxErrors": 3,
+				"autoCommit": true,
+				"roundtrips": 1,
+				"sequential": false,
+				"confidential": false,
+				"freshVariables": false,
+				"autoCommitTriggerLast": true
+			}
+		}
+	},
+	"controller": {
+		"name": "Save new Gmail attachments to Google Drive",
+		"description": "Automatically save incoming Gmail attachments to your Google Drive. Demonstrates the Iterator pattern (BasicFeeder) for processing arrays of attachments one at a time."
+	},
+	"scheduling": {
+		"type": "indefinitely",
+		"interval": 900
+	},
+	"language": "en",
+	"metadata": {
+		"templateUrl": "1686-save-new-gmail-attachments-to-google-drive",
+		"usage": 20473
+	}
+}

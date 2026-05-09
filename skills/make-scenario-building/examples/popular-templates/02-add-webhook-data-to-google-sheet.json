@@ -1,0 +1,83 @@
+{
+	"blueprint": {
+		"flow": [
+			{
+				"id": 1,
+				"mapper": {},
+				"module": "gateway:CustomWebHook",
+				"version": 1,
+				"metadata": {
+					"restore": {
+						"parameters": {
+							"hook": {
+								"data": { "editable": "true" },
+								"label": "My gateway-webhook webhook"
+							}
+						}
+					},
+					"designer": { "x": 0, "y": 0 },
+					"parameters": [
+						{ "name": "hook", "type": "hook:gateway-webhook", "label": "Webhook", "required": true },
+						{ "name": "maxResults", "type": "number", "label": "Maximum number of results" }
+					]
+				},
+				"parameters": {
+					"maxResults": 2
+				}
+			},
+			{
+				"id": 2,
+				"mapper": {
+					"from": "drive",
+					"mode": "select",
+					"values": {},
+					"sheetId": "Sheet1",
+					"spreadsheetId": "/1eNymjBWzJYzUgoc8gkqP4vCsjnh3T8EulpRifR4Rnt4",
+					"includesHeaders": true,
+					"insertDataOption": "INSERT_ROWS",
+					"valueInputOption": "USER_ENTERED",
+					"insertUnformatted": false
+				},
+				"module": "google-sheets:addRow",
+				"version": 2,
+				"metadata": {
+					"designer": { "x": 300, "y": 0 },
+					"parameters": [
+						{ "name": "__IMTCONN__", "type": "account:google", "label": "Connection", "required": true }
+					]
+				},
+				"parameters": {}
+			}
+		],
+		"metadata": {
+			"instant": false,
+			"version": 1,
+			"designer": { "orphans": [] },
+			"scenario": {
+				"dlq": false,
+				"slots": null,
+				"dataloss": false,
+				"maxErrors": 3,
+				"autoCommit": true,
+				"roundtrips": 1,
+				"sequential": false,
+				"confidential": false,
+				"freshVariables": false,
+				"autoCommitTriggerLast": true
+			}
+		}
+	},
+	"controller": {
+		"name": "Add webhook data to a Google Sheet",
+		"description": "Use this automation to instantly capture data from a webhook and automatically add it as a new row in a Google Sheet. This is ideal for real-time data logging, form submissions, or any event-driven updates that must be stored in a spreadsheet."
+	},
+	"scheduling": {
+		"type": "immediately",
+		"interval": 900
+	},
+	"language": "en",
+	"metadata": {
+		"templateUrl": "5893-add-data-to-a-google-sheet-received-from-a-webhook",
+		"usage": 39913
+	}
+}

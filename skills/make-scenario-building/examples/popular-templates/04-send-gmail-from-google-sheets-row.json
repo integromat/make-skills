@@ -1,0 +1,84 @@
+{
+	"blueprint": {
+		"flow": [
+			{
+				"id": 1,
+				"mapper": {},
+				"module": "google-sheets:watchRows",
+				"version": 2,
+				"metadata": {
+					"restore": {
+						"valueRenderOption": { "mode": "chose", "label": "Formatted value" },
+						"dateTimeRenderOption": { "mode": "chose", "label": "Formatted string" }
+					},
+					"designer": { "x": 0, "y": 0 },
+					"parameters": [
+						{ "name": "__IMTCONN__", "type": "account", "label": "Connection", "required": true },
+						{ "name": "spreadsheetId", "type": "select", "label": "Spreadsheet", "required": true },
+						{ "name": "includesHeaders", "type": "select", "label": "Table contains headers", "required": true, "validate": { "enum": [true, false] } },
+						{ "name": "valueRenderOption", "type": "select", "label": "Value render option", "validate": { "enum": ["FORMATTED_VALUE", "UNFORMATTED_VALUE", "FORMULA"] } },
+						{ "name": "dateTimeRenderOption", "type": "select", "label": "Date and time render option", "validate": { "enum": ["SERIAL_NUMBER", "FORMATTED_STRING"] } },
+						{ "name": "limit", "type": "uinteger", "label": "Limit", "required": true },
+						{ "name": "tableFirstRow", "type": "text", "label": "First table row", "required": true },
+						{ "name": "sheetId", "type": "select", "label": "Sheet", "required": true }
+					]
+				},
+				"parameters": {
+					"limit": 2,
+					"valueRenderOption": "FORMATTED_VALUE",
+					"dateTimeRenderOption": "FORMATTED_STRING"
+				}
+			},
+			{
+				"id": 2,
+				"mapper": {
+					"cc": [],
+					"to": ["{{1.`0`}}"],
+					"bcc": [],
+					"from": "",
+					"html": "{{1.`2`}}",
+					"subject": "{{1.`1`}}",
+					"attachments": []
+				},
+				"module": "google-email:ActionSendEmail",
+				"version": 2,
+				"metadata": {
+					"designer": { "x": 300, "y": 0 },
+					"parameters": [
+						{ "name": "account", "type": "account:google-restricted", "label": "Connection" }
+					]
+				},
+				"parameters": {}
+			}
+		],
+		"metadata": {
+			"instant": false,
+			"version": 1,
+			"designer": { "orphans": [] },
+			"scenario": {
+				"dlq": false,
+				"dataloss": false,
+				"maxErrors": 3,
+				"autoCommit": true,
+				"roundtrips": 1,
+				"sequential": false,
+				"confidential": false,
+				"freshVariables": false,
+				"autoCommitTriggerLast": true
+			}
+		}
+	},
+	"controller": {
+		"name": "Send a Gmail email from a new Google Sheets row",
+		"description": "Effortlessly send Gmail messages when a new row is added to your Google Sheets. Spreadsheet must include columns: Email Address, Subject, Content."
+	},
+	"scheduling": {
+		"type": "indefinitely",
+		"interval": 900
+	},
+	"language": "en",
+	"metadata": {
+		"templateUrl": "5770-send-a-gmail-email-from-a-new-google-sheets-row",
+		"usage": 37832
+	}
+}

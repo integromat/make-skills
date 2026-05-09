@@ -1,0 +1,102 @@
+{
+	"blueprint": {
+		"flow": [
+			{
+				"id": 6,
+				"mapper": {},
+				"module": "email:TriggerNewEmail",
+				"version": 7,
+				"metadata": {
+					"restore": {
+						"parameters": {
+							"folder": { "path": ["INBOX"] },
+							"account": {
+								"data": { "scoped": "true", "connection": "imap" },
+								"label": "My Others (IMAP) connection"
+							},
+							"criteria": { "label": "Only Unread emails" }
+						}
+					},
+					"designer": { "x": 0, "y": 0 },
+					"parameters": [
+						{ "name": "account", "type": "account:imap,google-restricted,microsoft-smtp-imap", "label": "Connection", "required": true },
+						{ "name": "criteria", "type": "select", "label": "Criteria", "required": true, "validate": { "enum": ["ALL", "SEEN", "UNSEEN"] } },
+						{ "name": "from", "type": "email", "label": "Sender email address" },
+						{ "name": "to", "type": "email", "label": "Recipient email address" },
+						{ "name": "subject", "type": "text", "label": "Subject" },
+						{ "name": "text", "type": "text", "label": "Phrase" },
+						{ "name": "markSeen", "type": "boolean", "label": "Mark message(s) as read when fetched" },
+						{ "name": "maxResults", "type": "number", "label": "Maximum number of results" },
+						{ "type": "hidden" },
+						{ "name": "folder", "type": "folder", "label": "Folder", "required": true }
+					]
+				},
+				"parameters": {
+					"to": "",
+					"from": "",
+					"text": "",
+					"folder": "INBOX",
+					"subject": "",
+					"markSeen": false
+				}
+			},
+			{
+				"id": 5,
+				"mapper": {
+					"mode": "fromAll",
+					"values": {
+						"0": "{{now}}",
+						"1": "{{6.from.name}}",
+						"2": "{{6.subject}}",
+						"3": "{{6.from.address}}"
+					},
+					"sheetId": "Sheet1",
+					"spreadsheetId": "1K9uaXKsXvgceueOUrVr9v2wpQkyWAS-QLT_Z4fgzCYc",
+					"includesHeaders": true,
+					"insertDataOption": "INSERT_ROWS",
+					"valueInputOption": "USER_ENTERED",
+					"insertUnformatted": false
+				},
+				"module": "google-sheets:addRow",
+				"version": 2,
+				"metadata": {
+					"designer": { "x": 300, "y": 0 },
+					"parameters": [
+						{ "name": "__IMTCONN__", "type": "account:google", "label": "Connection", "required": true }
+					]
+				},
+				"parameters": {}
+			}
+		],
+		"metadata": {
+			"instant": false,
+			"version": 1,
+			"designer": { "orphans": [] },
+			"scenario": {
+				"dlq": false,
+				"slots": null,
+				"dataloss": false,
+				"maxErrors": 3,
+				"autoCommit": true,
+				"roundtrips": 1,
+				"sequential": false,
+				"confidential": false,
+				"freshVariables": false,
+				"autoCommitTriggerLast": true
+			}
+		}
+	},
+	"controller": {
+		"name": "Add new incoming emails to a Google Sheets spreadsheet as a new row",
+		"description": "Every time you receive a new email, Make will automatically add selected data from the email to a new row in a Google Sheets spreadsheet."
+	},
+	"scheduling": {
+		"type": "indefinitely",
+		"interval": 900
+	},
+	"language": "en",
+	"metadata": {
+		"templateUrl": "2-add-new-incoming-emails-to-a-google-sheets-spreadsheet-as-a-new-row",
+		"usage": 22537
+	}
+}

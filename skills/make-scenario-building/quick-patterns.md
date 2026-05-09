@@ -209,3 +209,24 @@ validate_blueprint_schema → scenarios_create → scenarios_activate → scenar
 - `scenarios_create` requires blueprint `metadata` — always include the metadata block (see blueprint-construction.md)
 - `scenarios_activate` is mandatory before `scenarios_run` — newly created scenarios are inactive
 - Always provide the scenario URL to the user after creation
+
+## Canonical Real-World Examples
+
+The chains above describe the call sequence; for fully-configured production blueprints (real mapper expressions, `restore` metadata, scheduling, designer coords) see the top-10-by-usage templates under [examples/popular-templates/](./examples/popular-templates/). Cross-reference by use case:
+
+| Pattern above | Production blueprint to study |
+|---|---|
+| Send a Slack Message | (no popular-templates match — use `quick-patterns.md` chain as-is) |
+| Fetch Google Sheets Data | [02-add-webhook-data-to-google-sheet.json](./examples/popular-templates/02-add-webhook-data-to-google-sheet.json) (writes; trigger differs but `addRow` mapper is canonical), [05-facebook-leads-to-google-sheets.json](./examples/popular-templates/05-facebook-leads-to-google-sheets.json) |
+| Create an Airtable Record | (no popular-templates match — Airtable templates exist further down the usage list) |
+| Send an Email via Gmail | [04-send-gmail-from-google-sheets-row.json](./examples/popular-templates/04-send-gmail-from-google-sheets-row.json) — canonical `google-email:ActionSendEmail` mapper with `to`/`subject`/`html` from sheet columns |
+| Google Sheets → AI Tools → Google Sheets | [01-chatgpt-completions-from-google-sheets.json](./examples/popular-templates/01-chatgpt-completions-from-google-sheets.json) — same shape as this pattern but using OpenAI directly. Mirror the `watchRows` parameters, `{{1.\`0\`}}` input mapping, and the `updateRow` mapper using `__ROW_NUMBER__`/`__SHEET__`/`__SPREADSHEET_ID__` for write-back |
+| Google Calendar → Aggregated Email Summary | [10-sync-notion-to-google-calendar.json](./examples/popular-templates/10-sync-notion-to-google-calendar.json) — different direction (Notion→Calendar) but a canonical reference for Calendar create/update/delete via router branches |
+
+Adjacent patterns not covered by the chains above:
+
+- **Webhook → addRow (instant trigger):** [02-add-webhook-data-to-google-sheet.json](./examples/popular-templates/02-add-webhook-data-to-google-sheet.json), [05-facebook-leads-to-google-sheets.json](./examples/popular-templates/05-facebook-leads-to-google-sheets.json)
+- **Conversational chatbot (trigger → AI → reply):** [03-chatgpt-telegram-bot.json](./examples/popular-templates/03-chatgpt-telegram-bot.json), [06-whatsapp-basic-chatbot.json](./examples/popular-templates/06-whatsapp-basic-chatbot.json)
+- **IMAP email → sheet:** [07-incoming-emails-to-google-sheets.json](./examples/popular-templates/07-incoming-emails-to-google-sheets.json) — IMAP/Google-Restricted/Microsoft-SMTP-IMAP connection variants in `account` type spec
+- **Iterator over array bundle:** [09-save-gmail-attachments-to-drive.json](./examples/popular-templates/09-save-gmail-attachments-to-drive.json) — `builtin:BasicFeeder` with `{{4.attachments}}`
+- **Router fanout (multi-platform publish):** [08-summarize-website-and-create-social-posts.json](./examples/popular-templates/08-summarize-website-and-create-social-posts.json)

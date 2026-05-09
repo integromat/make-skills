@@ -1,0 +1,169 @@
+{
+	"blueprint": {
+		"flow": [
+			{
+				"id": 1,
+				"mapper": {},
+				"module": "google-sheets:watchRows",
+				"version": 2,
+				"metadata": {
+					"restore": {
+						"parameters": {
+							"from": {
+								"label": "My Drive"
+							},
+							"mode": {
+								"label": "Search by path"
+							},
+							"sheetId": {
+								"label": "Sheet1"
+							},
+							"__IMTCONN__": {
+								"data": {
+									"scoped": "true",
+									"connection": "google"
+								},
+								"label": "My Google connection"
+							},
+							"spreadsheetId": {
+								"path": [
+									"Create new completions with OpenAI ChatGPT from new rows in Google Sheets"
+								]
+							},
+							"includesHeaders": {
+								"label": "Yes"
+							},
+							"valueRenderOption": {
+								"mode": "chose",
+								"label": "Formatted value"
+							},
+							"dateTimeRenderOption": {
+								"mode": "chose",
+								"label": "Formatted string"
+							}
+						}
+					},
+					"designer": {
+						"x": 0,
+						"y": 0,
+						"name": "Get inputs"
+					},
+					"parameters": [
+						{ "name": "__IMTCONN__", "type": "account:google", "label": "Connection", "required": true },
+						{ "name": "mode", "type": "select", "label": "Search Method", "required": true, "validate": { "enum": ["select", "fromAll", "map"] } },
+						{ "name": "includesHeaders", "type": "select", "label": "Table contains headers", "required": true, "validate": { "enum": [true, false] } },
+						{ "name": "limit", "type": "uinteger", "label": "Limit", "required": true },
+						{ "name": "valueRenderOption", "type": "select", "label": "Value render option", "validate": { "enum": ["FORMATTED_VALUE", "UNFORMATTED_VALUE", "FORMULA"] } },
+						{ "name": "dateTimeRenderOption", "type": "select", "label": "Date and time render option", "validate": { "enum": ["SERIAL_NUMBER", "FORMATTED_STRING"] } },
+						{ "name": "from", "type": "select", "label": "Drive", "required": true, "validate": { "enum": ["drive", "share", "team"] } },
+						{ "name": "spreadsheetId", "type": "file", "label": "Spreadsheet ID", "required": true },
+						{ "name": "sheetId", "type": "select", "label": "Sheet Name", "required": true },
+						{ "name": "tableFirstRow", "type": "text", "label": "Row with headers", "required": true }
+					]
+				},
+				"parameters": {
+					"from": "drive",
+					"mode": "select",
+					"limit": 1,
+					"sheetId": "Sheet1",
+					"spreadsheetId": "/1rtbT3Rb0nfIWk24tTqAk2H00CGFaDhrovZm_iM1X808",
+					"tableFirstRow": "A1:Z1",
+					"includesHeaders": true,
+					"valueRenderOption": "FORMATTED_VALUE",
+					"dateTimeRenderOption": "FORMATTED_STRING"
+				}
+			},
+			{
+				"id": 2,
+				"mapper": {
+					"model": "gpt-4o-mini",
+					"top_p": "1",
+					"select": "chat",
+					"messages": [
+						{
+							"role": "user",
+							"content": "You are a SEO expert.\n\nWhat are 5 effective SEO keywords that could be used to optimize an article about the {{1.`0`}}?",
+							"imageDetail": "auto"
+						}
+					],
+					"max_tokens": "1000",
+					"temperature": "1",
+					"n_completions": "1",
+					"response_format": "text"
+				},
+				"module": "openai-gpt-3:CreateCompletion",
+				"version": 1,
+				"metadata": {
+					"designer": {
+						"x": 300,
+						"y": 0,
+						"name": "Generate ChatGPT completion"
+					},
+					"parameters": [
+						{ "name": "__IMTCONN__", "type": "account:openai-gpt-3", "label": "Connection", "required": true }
+					]
+				},
+				"parameters": {}
+			},
+			{
+				"id": 3,
+				"mapper": {
+					"mode": "map",
+					"values": {
+						"0": "{{2.result}}"
+					},
+					"sheetId": "{{1.`__SHEET__`}}",
+					"rowNumber": "{{1.`__ROW_NUMBER__`}}",
+					"spreadsheetId": "{{1.`__SPREADSHEET_ID__`}}",
+					"tableFirstRow": "A1:Z1",
+					"valueInputOption": "USER_ENTERED"
+				},
+				"module": "google-sheets:updateRow",
+				"version": 2,
+				"metadata": {
+					"designer": {
+						"x": 600,
+						"y": 0,
+						"name": "Paste completion"
+					},
+					"parameters": [
+						{ "name": "__IMTCONN__", "type": "account:google", "label": "Connection", "required": true }
+					]
+				},
+				"parameters": {}
+			}
+		],
+		"metadata": {
+			"instant": false,
+			"version": 1,
+			"designer": {
+				"orphans": []
+			},
+			"scenario": {
+				"dlq": false,
+				"slots": null,
+				"dataloss": false,
+				"maxErrors": 3,
+				"autoCommit": true,
+				"roundtrips": 1,
+				"sequential": false,
+				"confidential": false,
+				"freshVariables": false,
+				"autoCommitTriggerLast": true
+			}
+		}
+	},
+	"controller": {
+		"name": "Generate ChatGPT Completions from Google Sheets Rows",
+		"description": "Effortlessly enhance your content creation process by integrating ChatGPT with Google Sheets. This powerful template allows you to automatically generate relevant completions, ranging from SEO keywords to custom responses, boosting productivity and content quality with ease."
+	},
+	"scheduling": {
+		"type": "indefinitely",
+		"interval": 900
+	},
+	"language": "en",
+	"metadata": {
+		"templateUrl": "10570-create-new-completions-with-openai-chatgpt-from-new-rows-in-google-sheets",
+		"usage": 107031
+	}
+}

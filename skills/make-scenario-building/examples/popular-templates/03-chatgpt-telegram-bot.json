@@ -1,0 +1,104 @@
+{
+	"blueprint": {
+		"flow": [
+			{
+				"id": 1,
+				"mapper": {},
+				"module": "telegram:WatchUpdates",
+				"version": 1,
+				"metadata": {
+					"restore": {
+						"parameters": {
+							"__IMTHOOK__": {
+								"data": {},
+								"label": "Choose a hook"
+							}
+						}
+					},
+					"designer": { "x": 0, "y": 0 },
+					"parameters": [
+						{ "name": "__IMTHOOK__", "type": "hook:telegramapi", "label": "Webhook" }
+					]
+				},
+				"parameters": {}
+			},
+			{
+				"id": 2,
+				"mapper": {
+					"model": "gpt-3.5-turbo",
+					"top_p": "1",
+					"select": "chat",
+					"messages": [
+						{
+							"role": "user",
+							"content": "Reply to this message: {{1.channel_post.text}}\nIf the message is about {topic}, provide all the relevant details related to the message. If the message is about anything other {topic} like golf, video games etc, reply by saying that you do not answer any other topic besides {topic}."
+						}
+					],
+					"max_tokens": "1000",
+					"temperature": "1",
+					"n_completions": "1",
+					"response_format": "text"
+				},
+				"module": "openai-gpt-3:CreateCompletion",
+				"version": 1,
+				"metadata": {
+					"designer": { "x": 300, "y": 0 },
+					"parameters": [
+						{ "name": "__IMTCONN__", "type": "account:openai-gpt-3", "label": "Connection", "required": true }
+					]
+				},
+				"parameters": {}
+			},
+			{
+				"id": 3,
+				"mapper": {
+					"text": "{{2.result}}",
+					"chatId": "{{1.channel_post.chat.id}}",
+					"parseMode": "",
+					"replyMarkup": "",
+					"messageThreadId": "",
+					"replyToMessageId": "",
+					"replyMarkupAssembleType": "reply_markup_enter"
+				},
+				"module": "telegram:SendReplyMessage",
+				"version": 1,
+				"metadata": {
+					"designer": { "x": 600, "y": 0 },
+					"parameters": [
+						{ "name": "__IMTCONN__", "type": "account:telegram", "label": "Connection", "required": true }
+					]
+				},
+				"parameters": {}
+			}
+		],
+		"metadata": {
+			"instant": false,
+			"version": 1,
+			"designer": { "orphans": [] },
+			"scenario": {
+				"dlq": false,
+				"slots": null,
+				"dataloss": false,
+				"maxErrors": 3,
+				"autoCommit": true,
+				"roundtrips": 1,
+				"sequential": false,
+				"confidential": false,
+				"freshVariables": false,
+				"autoCommitTriggerLast": true
+			}
+		}
+	},
+	"controller": {
+		"name": "ChatGPT-Powered Telegram Bot for Instant Replies",
+		"description": "Elevate your Telegram channel with our ChatGPT-powered bot. Deliver instant, smart responses to user queries, enhancing engagement and customer satisfaction effortlessly."
+	},
+	"scheduling": {
+		"type": "immediately"
+	},
+	"language": "en",
+	"metadata": {
+		"templateUrl": "10813-generate-telegram-bot-responses-with-ai",
+		"usage": 39268
+	}
+}

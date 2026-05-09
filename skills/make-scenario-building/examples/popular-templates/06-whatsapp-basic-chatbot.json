@@ -1,0 +1,74 @@
+{
+	"blueprint": {
+		"flow": [
+			{
+				"id": 1,
+				"mapper": {},
+				"module": "whatsapp-business-cloud:watchEvents",
+				"version": 1,
+				"metadata": {
+					"restore": {
+						"parameters": {
+							"__IMTHOOK__": {
+								"data": { "editable": "false" },
+								"label": "allUnchecked"
+							}
+						}
+					},
+					"designer": { "x": 0, "y": 0 },
+					"parameters": [
+						{ "name": "__IMTHOOK__", "type": "hook:whatsapp-business-cloud2", "label": "Webhook", "required": true }
+					]
+				},
+				"parameters": {}
+			},
+			{
+				"id": 2,
+				"mapper": {
+					"to": "{{1.contacts[].wa_id}}",
+					"text": {
+						"body": "Thanks for your message! I'm a basic chatbot! To make my answers more sophisticated, you can use routers, filters or send http requests to your own scenarios with webhooks.",
+						"preview_url": false
+					},
+					"type": "text"
+				},
+				"module": "whatsapp-business-cloud:sendMessage",
+				"version": 1,
+				"metadata": {
+					"designer": { "x": 300, "y": 0 },
+					"parameters": [
+						{ "name": "__IMTCONN__", "type": "account:whatsapp-business-cloud2", "label": "Connection", "required": true }
+					]
+				},
+				"parameters": {}
+			}
+		],
+		"metadata": {
+			"instant": false,
+			"version": 1,
+			"designer": { "orphans": [] },
+			"scenario": {
+				"dlq": false,
+				"dataloss": false,
+				"maxErrors": 3,
+				"autoCommit": true,
+				"roundtrips": 1,
+				"sequential": false,
+				"confidential": false,
+				"autoCommitTriggerLast": true
+			}
+		}
+	},
+	"controller": {
+		"name": "Create a basic chatbot for WhatsApp",
+		"description": "This template shows how to create a basic chatbot for WhatsApp. Every time a new message is received, Make will automatically answer it with the Send a Message module. To create more complex chatbots, you can add routers and filters."
+	},
+	"scheduling": {
+		"type": "immediately"
+	},
+	"language": "en",
+	"metadata": {
+		"templateUrl": "10260-create-a-basic-chatbot-for-whatsapp",
+		"usage": 35956
+	}
+}

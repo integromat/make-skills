@@ -1,11 +1,12 @@
 {
-  "enabledPlugins": {
-    "plugin-dev@claude-plugins-official": true
-  },
   "permissions": {
     "allow": [
       "WebFetch(domain:help.make.com)",
       "WebFetch(domain:developers.make.com)"
     ]
+  },
+  "enabledPlugins": {
+    "plugin-dev@claude-plugins-official": true,
+    "make-skills@make-marketplace": true
   }
 }

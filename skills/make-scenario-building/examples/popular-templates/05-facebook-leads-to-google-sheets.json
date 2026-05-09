@@ -1,0 +1,80 @@
+{
+	"blueprint": {
+		"flow": [
+			{
+				"id": 1,
+				"mapper": {},
+				"module": "facebook-lead-ads:NewLeadMultiple",
+				"version": 2,
+				"metadata": {
+					"restore": {
+						"parameters": {
+							"__IMTHOOK__": {
+								"data": {},
+								"label": "Choose a hook"
+							}
+						}
+					},
+					"designer": { "x": 0, "y": 0 },
+					"parameters": [
+						{ "name": "__IMTHOOK__", "type": "hook:facebook-lead-ads-new-event", "label": "Webhook" }
+					]
+				},
+				"parameters": {}
+			},
+			{
+				"id": 2,
+				"mapper": {
+					"from": "drive",
+					"mode": "select",
+					"values": {},
+					"sheetId": "Sheet1",
+					"spreadsheetId": "/14c5Q3N9lPxTOBTaCetZ4h59U7HFaol-KNS85ZEzOwI8",
+					"includesHeaders": true,
+					"insertDataOption": "INSERT_ROWS",
+					"valueInputOption": "USER_ENTERED",
+					"insertUnformatted": false
+				},
+				"module": "google-sheets:addRow",
+				"version": 2,
+				"metadata": {
+					"designer": { "x": 300, "y": 0 },
+					"parameters": [
+						{ "name": "__IMTCONN__", "type": "account:google", "label": "Connection", "required": true }
+					]
+				},
+				"parameters": {}
+			}
+		],
+		"metadata": {
+			"instant": false,
+			"version": 1,
+			"designer": { "orphans": [] },
+			"scenario": {
+				"dlq": false,
+				"slots": null,
+				"dataloss": false,
+				"maxErrors": 3,
+				"autoCommit": true,
+				"roundtrips": 1,
+				"sequential": false,
+				"confidential": false,
+				"freshVariables": false,
+				"autoCommitTriggerLast": true
+			}
+		}
+	},
+	"controller": {
+		"name": "Sync Facebook Lead Ads leads with Google Sheets",
+		"description": "Seamlessly capture and organize new Facebook Lead Ads leads by automatically adding them to a Google Sheets spreadsheet."
+	},
+	"scheduling": {
+		"type": "immediately",
+		"interval": 900
+	},
+	"language": "en",
+	"metadata": {
+		"templateUrl": "4219-save-new-facebook-lead-ads-leads-into-google-sheets",
+		"usage": 37283
+	}
+}
