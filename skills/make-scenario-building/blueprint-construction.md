@@ -41,6 +41,8 @@ Match a planned scenario to the closest analogue:
 
 When the user's request is a near-match for one of these, copy the module sequence and `mapper`/`parameters` shape directly, then swap connection IDs and resource IDs. When it diverges, treat the file as a structural reference for the modules it shares.
 
+Before reusing any of these files as a blueprint, see [`examples/popular-templates/README.md`](./examples/popular-templates/README.md) — hardcoded resource IDs have been emptied to `""` and need to be supplied, and real-world module IDs are often non-sequential and must be renumbered to satisfy the construction rules below.
+
 ## Module Structure
 
 ```json

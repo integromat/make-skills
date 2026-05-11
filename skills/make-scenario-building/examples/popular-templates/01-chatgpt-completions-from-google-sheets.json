@@ -66,7 +66,7 @@
 					"mode": "select",
 					"limit": 1,
 					"sheetId": "Sheet1",
-					"spreadsheetId": "/1rtbT3Rb0nfIWk24tTqAk2H00CGFaDhrovZm_iM1X808",
+					"spreadsheetId": "",
 					"tableFirstRow": "A1:Z1",
 					"includesHeaders": true,
 					"valueRenderOption": "FORMATTED_VALUE",

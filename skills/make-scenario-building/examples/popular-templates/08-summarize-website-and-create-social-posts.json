@@ -686,7 +686,7 @@
                   },
                   "content": "{{2.result}}",
                   "visibility": "LOGGED_IN",
-                  "organization": "urn:li:organization:81852342",
+                  "organization": "",
                   "feedDistribution": "MAIN_FEED",
                   "isReshareDisabledByAuthor": false
                 },
@@ -1549,7 +1549,7 @@
                 "id": 7,
                 "mapper": {
                   "message": "{{6.result}}",
-                  "page_id": "110346865025711"
+                  "page_id": ""
                 },
                 "module": "facebook-pages:CreatePost",
                 "version": 6,
