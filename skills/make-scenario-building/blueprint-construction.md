@@ -17,7 +17,7 @@ The `flow` array contains modules executed in sequence. Each module can have nes
 
 ### Real-world template examples
 
-The teaching blueprints above are deliberately stripped to highlight structure. When a real mapper expression, `restore` metadata block, scheduling shape, or production-shaped module config is needed, consult the top-10-by-usage public templates kept under [examples/popular-templates/](./examples/popular-templates/). Each file is the full Make API response (`blueprint`, `controller`, `scheduling`, plus `metadata.templateUrl` and `metadata.usage`) — copy the relevant module config and adapt rather than reconstructing from scratch.
+The teaching blueprints above are deliberately stripped to highlight structure. When a real mapper expression, `restore` metadata block, scheduling shape, or production-shaped module config is needed, consult the top-10-by-usage public templates kept under [examples/popular-templates/](./examples/popular-templates/). Each file is the full Make API response (`blueprint`, `controller`, `scheduling`; most also include `metadata.templateUrl` and `metadata.usage`) — copy the relevant module config and adapt rather than reconstructing from scratch.
 
 Match a planned scenario to the closest analogue:
 
