@@ -1,6 +1,6 @@
 # Popular templates — snapshots, not drop-in blueprints
 
-These 10 files are verbatim `public-templates_get-blueprint` responses for the most-used public Make templates, kept here as canonical references for real `mapper`, `parameters`, `restore`, and `scheduling` shapes. They are **not** ready-to-import blueprints.
+These 10 files are sanitized snapshots of `public-templates_get-blueprint` responses for the most-used public Make templates, kept here as canonical references for real `mapper`, `parameters`, `restore`, and `scheduling` shapes. Resource IDs and publisher-specific labels have been blanked or replaced (see below); everything structural (blueprint flow, controller, scheduling, module versions, designer coordinates) is preserved verbatim. They are **not** ready-to-import blueprints.
 
 ## Before reusing as a scenario blueprint
 
@@ -10,7 +10,7 @@ These 10 files are verbatim `public-templates_get-blueprint` responses for the m
 
 3. **Renumber module IDs when adapting.** Real templates often have non-1-based or non-sequential IDs (e.g., template `07` flows `id: 6` → `id: 5`; template `09` starts at `id: 4`) because of edit history in the original scenario. The project rule in [`blueprint-construction.md`](../../blueprint-construction.md) (sequential, starting at 1) applies when **constructing** new blueprints. When reusing a snippet from here, renumber the modules and update every mapper reference (`{{4.attachments}}`, `{{1.\`0\`}}`, etc.) accordingly.
 
-4. **Replace placeholder content.** Some templates carry sample prompts, default LinkedIn/Facebook copy, or example URLs (`https://www.example.com`). Treat all human-readable strings inside `mapper.*` as starter text, not production copy.
+4. **Replace placeholder content.** Some templates carry sample prompts, default LinkedIn/Facebook copy, example URLs (`https://www.example.com`), or even publisher typos in placeholders (e.g., `Content: {[Insert Content}` in template 08). Treat all human-readable strings inside `mapper.*` as starter text, not production copy — fix typos when adapting, not in the snapshot (a refresh would re-introduce them).
 
 ## What stays verbatim
 
