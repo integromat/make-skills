@@ -221,7 +221,7 @@ The chains above describe the call sequence; for fully-configured production blu
 | Create an Airtable Record | (no popular-templates match — Airtable templates exist further down the usage list) |
 | Send an Email via Gmail | [04-send-gmail-from-google-sheets-row.json](./examples/popular-templates/04-send-gmail-from-google-sheets-row.json) — canonical `google-email:ActionSendEmail` mapper with `to`/`subject`/`html` from sheet columns |
 | Google Sheets → AI Tools → Google Sheets | [01-chatgpt-completions-from-google-sheets.json](./examples/popular-templates/01-chatgpt-completions-from-google-sheets.json) — same shape as this pattern but using OpenAI directly. Mirror the `watchRows` parameters, `{{1.\`0\`}}` input mapping, and the `updateRow` mapper using `__ROW_NUMBER__`/`__SHEET__`/`__SPREADSHEET_ID__` for write-back |
-| Google Calendar → Aggregated Email Summary | [10-sync-notion-to-google-calendar.json](./examples/popular-templates/10-sync-notion-to-google-calendar.json) — different direction (Notion→Calendar) but a canonical reference for Calendar create/update/delete via router branches |
+| Notion ↔ Google Calendar sync (router: create/update/delete) | [10-sync-notion-to-google-calendar.json](./examples/popular-templates/10-sync-notion-to-google-calendar.json) — canonical reference for state-routing a single bundle into Calendar create/update/delete branches |
 
 Adjacent patterns not covered by the chains above:
 

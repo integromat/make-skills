@@ -29,7 +29,7 @@ Match a planned scenario to the closest analogue:
 - [07-incoming-emails-to-google-sheets.json](./examples/popular-templates/07-incoming-emails-to-google-sheets.json) — `email:TriggerNewEmail` (IMAP) → `google-sheets:addRow`
 
 **Linear 3-module AI enrichment:**
-- [01-chatgpt-completions-from-google-sheets.json](./examples/popular-templates/01-chatgpt-completions-from-google-sheets.json) — `watchRows` → `openai-gpt-3:CreateCompletion` → `updateRow`. Canonical reference for the row-level AI enrichment pattern, including `{{1.\`0\`}}` column mapping and `mapper.rowNumber: "{{1.__ROW_NUMBER__}}"` for write-back.
+- [01-chatgpt-completions-from-google-sheets.json](./examples/popular-templates/01-chatgpt-completions-from-google-sheets.json) — `watchRows` → `openai-gpt-3:CreateCompletion` → `updateRow`. Canonical reference for the row-level AI enrichment pattern, including `{{1.\`0\`}}` column mapping and `mapper.rowNumber: "{{1.\`__ROW_NUMBER__\`}}"` for write-back.
 - [03-chatgpt-telegram-bot.json](./examples/popular-templates/03-chatgpt-telegram-bot.json) — `telegram:WatchUpdates` → `openai-gpt-3:CreateCompletion` → `telegram:SendReplyMessage`
 
 **Iterator (BasicFeeder):**
