@@ -10,7 +10,7 @@
     {
       "name": "make-skills",
       "description": "Expert skills for API-call shells, scenario architecture, module configuration, and MCP troubleshooting",
-      "version": "0.1.4",
+      "version": "0.1.5",
       "source": "./",
       "author": {
         "name": "Make",

@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires a Make account with API access and permissions to create scenarios or credential requests. Works best in environments that can call Make APIs or Make MCP tools.
 metadata:
   author: Make
-  version: "0.1.4"
+  version: "0.1.5"
   homepage: https://www.make.com
   repository: https://github.com/integromat/make-skills
 ---
