@@ -112,7 +112,7 @@ Why this matters:
 }
 ```
 
-When the intent really is to clear a field, prefer the explicit IML `erase` function over `""` (see [IML Expressions](./iml-expressions.md)). It documents the intent in the blueprint and won't be confused for an accidental blank.
+When the intent really is to clear a field, prefer the explicit IML `erase` keyword over `""` (see [IML Expressions](./iml-expressions.md) — `erase` is listed there alongside `null` and `ignore`). It documents the intent in the blueprint and won't be confused for an accidental blank.
 
 Create modules are usually safe — most APIs treat `""` and "absent" as equivalent on insert — but the omission habit is worth keeping uniform across both, since the same blueprint shape often gets edited later into an update.
 
