@@ -81,6 +81,41 @@ The mapper is a JSON object where keys are the target module's input field names
 
 See [IML Expressions](./iml-expressions.md) for the full expression language.
 
+## Field Omission on Updates and Upserts
+
+On update, upsert, and patch modules — anything that modifies an existing record rather than creating one — **omit the key entirely from `mapper` for any field you don't intend to write**. Do not include the key with an empty string `""`.
+
+Why this matters:
+
+- An empty-string mapping writes `""` to the target field, overwriting whatever value was there. A missing key tells Make "leave this field alone."
+- Make's visual editor renders an empty-string mapping **identically** to a field with no mapping at all — both look like a blank input box. A user reviewing the scenario in the UI has no way to see that the mapper is silently zeroing out a field.
+- `validate_module_configuration` accepts `""` as a valid value, so the validator will not flag this. The damage only shows up at runtime, on real records.
+
+**Wrong** — sending an empty string for `phone` on an update will erase the contact's phone number:
+
+```json
+{
+  "recordId": "{{1.id}}",
+  "name": "{{1.firstName}} {{1.lastName}}",
+  "email": "{{1.email}}",
+  "phone": ""
+}
+```
+
+**Right** — omit `phone` entirely; the record's existing phone stays untouched:
+
+```json
+{
+  "recordId": "{{1.id}}",
+  "name": "{{1.firstName}} {{1.lastName}}",
+  "email": "{{1.email}}"
+}
+```
+
+When the intent really is to clear a field, prefer the explicit IML `erase` function over `""` (see [IML Expressions](./iml-expressions.md)). It documents the intent in the blueprint and won't be confused for an accidental blank.
+
+Create modules are usually safe — most APIs treat `""` and "absent" as equivalent on insert — but the omission habit is worth keeping uniform across both, since the same blueprint shape often gets edited later into an update.
+
 ## Gotchas
 
 - **Module IDs must be unique.** When generating blueprints, never assign the same ID to two modules. When editing existing blueprints, preserve existing IDs.

@@ -82,6 +82,7 @@ Shopify - Watch Orders
 - **Array fields need iteration.** If you map an array field directly into a non-array input, you'll get the entire array as a single value. Use an Iterator to process items individually.
 - **Type coercion.** Make auto-coerces types in some cases (number to string, etc.), but explicit conversion with `toString()` or `toNumber()` is safer.
 - **Empty values.** Use `ifempty(value, fallback)` to provide defaults when a mapped field might be null/empty.
+- **Don't write empty strings into update mappers.** On any update, upsert, or patch module, omit fields you don't intend to write — including a key with `""` will silently overwrite the existing record value and look identical to "unmapped" in the visual editor. See [make-module-configuring → Field Omission on Updates and Upserts](../make-module-configuring/mapping.md#field-omission-on-updates-and-upserts).
 - **Source module identification.** In the Make UI, hovering over a mapped item causes the source module to pulse, making it easy to trace data origins.
 
 ## Official Documentation

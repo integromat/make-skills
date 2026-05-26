@@ -46,6 +46,8 @@ These apply to every module configuration. Violating any of them is the most com
 
 5. **Connection selection is interactive.** Always present all matching connections to the user and let them choose. Never auto-select, even if only one match exists. See [Connections](./connections.md).
 
+6. **Omit unwritten fields on updates.** On update, upsert, and patch modules, omit any field that should be left alone from the `mapper` — never include it with an empty string `""`. An empty-string mapping overwrites the target record's existing value, looks identical to "unmapped" in the visual editor, and is not caught by `validate_module_configuration`. See [Mapping → Field Omission on Updates and Upserts](./mapping.md#field-omission-on-updates-and-upserts).
+
 ## Official Documentation
 
 - [Module Settings](https://help.make.com/module-settings)

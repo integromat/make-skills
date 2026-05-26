@@ -178,7 +178,7 @@ Many modules have nested parameter structures:
 - **Always use instructions format.** Calling `app-module_get` without requesting the instructions format gives less useful output. The instructions format includes component requirements and RPC instructions.
 - **Do not guess parameter names or values.** Parameter names are exact slugs, not human-readable labels. Always retrieve the interface first.
 - **Select parameters are strict.** Passing a value not in the allowed set causes a validation error. Check the spec for allowed values.
-- **Empty vs null vs missing.** Some modules treat these differently. An empty string `""` is not the same as omitting a parameter. When in doubt, omit optional parameters rather than sending empty values.
+- **Empty vs null vs missing.** Some modules treat these differently. An empty string `""` is not the same as omitting a parameter. When in doubt, omit optional parameters rather than sending empty values. The same rule applies — even more dangerously — to mapper fields on update and upsert modules, where an empty-string mapping silently overwrites existing record data. See [Mapping → Field Omission on Updates and Upserts](./mapping.md#field-omission-on-updates-and-upserts).
 - **Dynamic/conditional parameters.** Some modules have parameters that change based on other parameter values (e.g., selecting an action type reveals action-specific fields). The module interface describes these dependencies — set the controlling parameter first.
 - **Module version matters.** Different app versions may have different parameter sets. Always use the version from `app-modules_list`.
 - **Never omit RPC data parameter.** Even if only the connection ID is needed, always pass it. Omitting causes schema validation errors.
