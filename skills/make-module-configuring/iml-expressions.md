@@ -73,6 +73,20 @@ IML uses **semicolons** (`;`) to separate function arguments, not commas:
 | `/` | Division |
 | `%` | Modulo |
 
+#### Logical operator usage
+
+Use the symbols `&` (AND) and `|` (OR) — never the words `AND` / `OR`, which are not valid IML and will fail to parse.
+
+**Example 1** — combining bundle fields:
+
+- Correct: `{{1.something & 2.somethingElse | 3.aaa}}`
+- Wrong: `{{1.something AND 2.somethingElse OR 3.aaa}}`
+
+**Example 2** — inside a conditional:
+
+- Correct: `{{if(1.status = "active" & 1.role = "admin"; "activeAdmin"; "someoneElse")}}`
+- Wrong: `{{if(1.status = "active" AND 1.role = "admin"; "activeAdmin"; "someoneElse")}}`
+
 ## Functions Reference
 
 **Only use functions documented here.** Never use a function, variable, operator, or keyword not listed in this reference.
