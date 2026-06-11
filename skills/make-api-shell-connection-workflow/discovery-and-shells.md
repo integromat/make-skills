@@ -54,6 +54,7 @@ Expose these inputs:
 - `path`
 - `method`
 - `header`
+- `qs`
 - `body`
 
 Important:
@@ -73,11 +74,35 @@ Typical mapper:
   "url": "{{2.path}}",
   "method": "{{2.method}}",
   "headers": "{{2.header}}",
+  "qs": "{{2.qs}}",
   "body": "{{2.body}}"
 }
 ```
 
 Default retrieval should use `GET`. Treat `PUT`, `PATCH`, and `DELETE` as write/destructive methods and require explicit user confirmation before running them.
+
+### Connection binding is part of the blueprint, not an afterthought
+
+The middle module must carry the connection in its `parameters` block:
+
+```json
+{
+  "parameters": { "__IMTCONN__": CONNECTION_ID }
+}
+```
+
+A shell created without `__IMTCONN__` can pass blueprint validation, patch its
+interface, and even activate — and then fail at run time with a provider auth
+error such as Slack's `not_authed`. Verify the binding right after create or
+update by re-reading the blueprint, and bind the connection in the same write
+that creates the module, not in a later repair step.
+
+### Activation gate
+
+`POST /scenarios/{scenarioId}/run` on a created-but-inactive scenario fails
+with `IM325: Scenario is not activated`. Activation
+(`POST /scenarios/{scenarioId}/start`) is a separate mandatory step after
+create/patch/verify and before the first run.
 
 ### Body-mapper compatibility rule
 
@@ -99,15 +124,54 @@ Use:
 Typical mapper:
 ```json
 {
-  "data": "{{3.body}}"
+  "data": "{{MIDDLE_API_MODULE_ID.body}}"
 }
 ```
 
-For the generic API shell contract, `{{3.body}}` is not just a heuristic. It is the intended transport contract.
+For the generic API shell contract, `{{MIDDLE_API_MODULE_ID.body}}` is not just a heuristic. It is the intended transport contract.
 
-Do not replace it with `{{3}}` or `{{3.data}}` inside this generic shell pattern.
+In this skill's generic example blueprint, the middle API-call module id is `3`, so the example mapper is `{{3.body}}`. In a real blueprint, do not hardcode `3`: inspect the actual middle module id and map ReturnData to that module's `body`. A Make UI export may use ids such as StartSubscenario `2`, API-call module `5`, and ReturnData `4`; in that case the correct mapper is `{{5.body}}`.
+
+Do not replace it with `{{MIDDLE_API_MODULE_ID}}` or `{{MIDDLE_API_MODULE_ID.data}}` inside this generic shell pattern.
 
 Use bundle inspection only to confirm that `body` contains the expected payload or error object. Do not use bundle inspection to redefine the generic shell contract.
+
+## App-action shell fallback
+
+Use this only when the version sweep proves that no app version exposes a
+universal API-call module.
+
+Keep the same three-module frame, but the middle module is an app-specific
+action module with its own real parameter mapping instead of the HTTP
+transport mapper:
+
+- `scenario-service:StartSubscenario` with the standard interface
+- one app action module, for example `google-calendar:ActionGetEvents` v4
+- `scenario-service:ReturnData`
+
+Rules that differ from the generic shell:
+
+1. Map the module's real parameters, not `url`/`method`/`headers`. Feed
+   variable inputs from the standard interface's `qs` object as
+   `{{2.qs.<field>}}`. Required module parameters must be mapped or set as
+   literals or the run fails with
+   `BundleValidationError: Missing value of required parameter '<name>'`
+   (confirmed example: `ActionGetEvents` requires `singleEvents`).
+2. `ReturnData.data` maps the module's actual output field, which is usually
+   not `body`. `ActionGetEvents` returns its events under `array`, so the
+   mapper is `{{5.array}}` when the middle module id is `5`.
+3. `__IMTCONN__` binding is mandatory, exactly as for the generic shell.
+4. Write safety cannot use the HTTP method, because the action itself decides
+   mutation. Treat module names matching Get/List/Search/Watch/Download/Read/
+   Fetch as read-style; require explicit confirmation for everything else
+   (Create/Update/Delete/Send/...).
+5. Pass run inputs as a plain `qs` object so named fields resolve in the
+   mapper. Do not convert `qs` to key/value pair lists for action shells;
+   that format is only correct for universal API-call modules.
+
+An app-action shell is bound to one module and one parameter shape. It is
+reusable for that one operation, not a generic transport. Name it after the
+operation, and prefer the generic shell whenever a universal module exists.
 
 ## Activation readiness rule
 
@@ -138,11 +202,66 @@ Common variants include:
 
 Never guess the exact name or casing.
 
+### Sweep app versions before concluding a module does not exist
+
+The universal API-call module may exist only in some app versions, and the
+version your discovery returns first is not necessarily the one that has it.
+
+Confirmed example: `google-calendar` v4 exposes only app-specific action
+modules (`ActionGetEvents`, `ActionCreateEvent`, ...) and has no universal
+API-call module at all, while `google-calendar` v5 exposes `makeApiCall`
+("Make an API Call"). Slack exposes `MakeAPICall` in v4.
+
+Before falling back to app-specific action modules:
+1. enumerate the app's available versions
+2. query the module catalog per version:
+   `GET /api/v2/imt/apps/{appName}/{version}/modules-with-credentials`
+3. search each version's module list case-insensitively for an API-call module
+4. prefer the version that has the universal module, even if it is not the
+   version an existing scenario or first lookup returned
+
+Only when no version has a universal API-call module, use the app-action
+shell fallback described below.
+
+### Module base URL and path prefix
+
+Universal API-call modules prepend an app-specific base URL to the `url`
+input. Passing a full provider path can double a prefix and produce a
+provider-side 404 with a visibly duplicated segment.
+
+Confirmed example: `google-calendar:makeApiCall` v5 has a base URL ending in
+`/calendar`, so the correct shell path for an events read is
+`/v3/calendars/primary/events` — not `/calendar/v3/calendars/primary/events`,
+which fails with a Google 404 for `/calendar/calendar/v3/...`.
+
+When a shell run returns 404 and the echoed URL shows a repeated segment,
+strip the app prefix from `path` and retry before touching the blueprint.
+
 ## API surfaces
 
 ### IMT app discovery
 List apps:
-- `GET /api/v2/imt/apps?organizationId=ORG_ID&teamId=TEAM_ID&scoredSearch=true`
+- `GET /api/v2/imt/apps?organizationId=ORG_ID&teamId=TEAM_ID`
+
+Warning: this endpoint has no working server-side search. `search`, `query`,
+`limit`, and `scoredSearch` are silently ignored and the response is always
+the full catalog (about 4k apps, alphabetical). Filter client-side over
+`name` and `label`, case-insensitively, and prefer a curated top-apps catalog
+before fetching the full list at all. Do not feed the unfiltered response to
+a model context.
+
+The catalog mixes verified, community, and custom apps. Auto-selection rules:
+
+- **Community apps** (name prefix `communityApp-*`) are never auto-selected.
+  When the requested provider exists only as a community app, treat it as not
+  available and build a generic HTTP fallback shell instead.
+- **Custom/SDK apps of the own organization** (catalog name prefix `app#*`)
+  are selectable. The authoritative source is
+  `GET /api/v2/imt/apps-meta?organizationId=ORG_ID` ("all verified and custom
+  apps"); custom-app names appear there without the `app#` prefix.
+- **Builtin utility pseudo-apps** — `builtin` (Flow Control), `util` (Tools),
+  `gateway` (Webhooks), `regexp` (Text parser) — are not SaaS providers and
+  must be excluded from search results entirely.
 
 Get one app in detail:
 - `GET /api/v2/imt/apps/{appName}/{version}`
@@ -171,6 +290,14 @@ Set interface:
 Inspect blueprint:
 - `GET /api/v2/scenarios/{scenarioId}/blueprint`
 
+Inspect a failed run:
+- `GET /api/v2/scenarios/{scenarioId}/logs/{executionId}`
+
+The run-log response carries the structured error (`error.name`,
+`error.message`, for example `BundleValidationError` with the missing
+parameter), which is far more specific than the run endpoint's status. The
+full REST surface is documented at `{BASE_URL}/api/v2/openapi.json`.
+
 For on-demand API shells, do not stop after scenario create or update. Explicitly patch the scenario-level interface, then verify it:
 
 ```json
@@ -179,12 +306,56 @@ For on-demand API shells, do not stop after scenario create or update. Explicitl
     { "name": "path", "type": "text", "required": false, "label": "Path" },
     { "name": "method", "type": "text", "required": false, "label": "Method" },
     { "name": "header", "type": "any", "required": false, "label": "Header" },
+    { "name": "qs", "type": "any", "required": false, "label": "Query String" },
     { "name": "body", "type": "any", "required": false, "label": "Body" }
   ]
 }
 ```
 
 Reason: `StartSubscenario.metadata.interface` documents the shell shape, but it does not reliably deploy the scenario-level run interface by itself. Treat `PATCH /interface` as mandatory for reusable on-demand shells.
+
+### Query-string discipline
+
+Treat query parameters as a separate shell input named `qs`.
+
+Use `qs` for provider API query parameters such as:
+- Google Drive `q`, `fields`, `supportsAllDrives`, `uploadType`, or `alt`
+- Gmail search/list options
+- Microsoft Graph `$select`, `$filter`, `$top`, or pagination tokens
+- SaaS-specific page, limit, cursor, or projection fields
+
+If a caller gives a path that already includes a query string, split the path before running the shell:
+- `path`: the API path without `?query`
+- `qs`: the query parameters as key/value entries
+
+This keeps delete/read/update calls deterministic. For example, Google Drive file delete is a `DELETE /drive/v3/files/{fileId}` call with query parameters such as `supportsAllDrives=true`; those belong in `qs`, not in an ad hoc URL string.
+
+### Blueprint shape normalization
+
+Make blueprints appear in two common shapes:
+- Create/update API payloads require a top-level `flow`.
+- UI exports and some stored artifacts may carry the scenario steps under `subflows[0].flow`.
+
+Normalize before writing:
+- when creating or patching a scenario, send a payload with top-level `flow`
+- when exporting or storing a human-readable artifact, `subflows[0].flow` is acceptable
+
+Do not send a raw UI export to `POST /api/v2/scenarios` or `PATCH /api/v2/scenarios/{scenarioId}` without converting `subflows[0].flow` to top-level `flow`.
+
+### Connection APIs
+List candidate connections:
+- `GET /api/v2/connections?teamId=TEAM_ID&type[]=CONNECTION_TYPE`
+
+Inspect connection details:
+- `GET /api/v2/connections/{connectionId}`
+
+Verify connection liveness:
+- `POST /api/v2/connections/{connectionId}/test`
+
+Verify whether required scopes are present, when scope IDs are known:
+- `POST /api/v2/connections/{connectionId}/scoped`
+
+Use `/test` before reusing a connection or a shell that already points at one. A response with `verified: true` is the Make-side proof that the saved provider credentials are still valid. If a Credential Request detail is stale or still says `pending`, a verified connection still wins.
 
 ## Base URL and zone
 
@@ -253,8 +424,14 @@ If that final call returns `403 Permission denied`, treat the zone as wrong or t
 curl -sS \
   -H "authorization: Token $API_KEY" \
   -H 'accept: application/json' \
-  "${BASE_URL}/api/v2/imt/apps?organizationId=${ORG_ID}&teamId=${TEAM_ID}&scoredSearch=true"
+  "${BASE_URL}/api/v2/imt/apps?organizationId=${ORG_ID}&teamId=${TEAM_ID}" \
+  | jq '[.apps[] | select((.name + " " + .label) | ascii_downcase | contains("outlook"))]'
 ```
+
+The endpoint returns the entire catalog regardless of query parameters
+(`search`/`limit`/`scoredSearch` are ignored), so the filtering must happen
+client-side as shown. Example: searching "outlook" this way surfaces
+`microsoft-email` ("Microsoft 365 Email (Outlook)").
 
 ### Step 2: find apps exposing API-call modules
 Search module names case-insensitively for strings such as:
@@ -343,7 +520,7 @@ Look for a scenario that has all of the following:
 Prefer reusing a shell when:
 - the module slug and app version still match current metadata
 - the shell is still bound to the same app family and connection family
-- the scenario interface still exposes `path`, `method`, `header`, and `body`
+- the scenario interface still exposes `path`, `method`, `header`, `qs`, and `body`
 - the shell is already linked to a suitable connection or can be patched safely
 
 Do not reuse a shell for a newly created connection. When the connection is new, create a new shell dedicated to that connection.
@@ -362,7 +539,7 @@ Record these values before deciding to reuse or create:
 - scenario name
 - app name and version
 - middle-module slug
-- whether the current `ReturnData` mapper still returns `{{3.body}}`
+- whether the current `ReturnData` mapper still returns the actual middle API-call module body, such as `{{3.body}}` in the generic example or `{{5.body}}` in a blueprint whose middle module id is `5`
 
 ## Practical workflow
 
@@ -392,9 +569,11 @@ For this generic shell pattern, the shell output contract is fixed:
 
 ```json
 {
-  "data": "{{3.body}}"
+  "data": "{{MIDDLE_API_MODULE_ID.body}}"
 }
 ```
+
+In the generic example blueprint, `MIDDLE_API_MODULE_ID` is `3`, so the example mapping is `{{3.body}}`.
 
 The shell may activate successfully while still returning an unusable payload for the business question. That is a retrieval/output-normalization problem, not a shell-contract problem.
 
