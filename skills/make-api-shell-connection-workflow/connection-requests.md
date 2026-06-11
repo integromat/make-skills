@@ -56,6 +56,15 @@ Always include the exact expected format in the credential-request
 When the provider is unknown, say explicitly which of the two API-key
 conventions applies after checking the provider's API docs.
 
+If a pasted value keeps failing after UI edits (verified live with the e2b
+connection — multiple UI re-saves did not fix a malformed key), write it
+programmatically instead: `GET /connections/{id}/editable-data-schema` lists
+the writable fields, then `POST /connections/{id}/set-data` (e.g.
+`{"apiKey": "..."}`) updates the connection guaranteed whitespace-free.
+Verify with a real module run, not just `/connections/{id}/test` — the test
+endpoint can report `verified: true` for basic-type connections even when the
+stored secret is wrong.
+
 ## Decision ladder
 
 Prefer the most current supported path first, then fall back only when needed.

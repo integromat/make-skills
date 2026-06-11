@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires the make-api-shell-connection-workflow skill, a Make API token owned by the runtime provider, and an E2B runner endpoint owned by infrastructure when hosted execution is requested.
 metadata:
   author: Make
-  version: "0.2.0"
+  version: "0.2.1"
   homepage: https://www.make.com
   repository: https://github.com/integromat/make-skills
 ---
@@ -91,12 +91,22 @@ version 0), module `e2b:RunE2BSandbox`:
   `connection_parameter="account"` to `create_app_action_shell_scenario`.
 - Patch the scenario interface to the generic shell contract before the first
   run, then activate the scenario.
+- The module's output field is **`logs`** with shape
+  `{"stdout": ["..."], "stderr": []}` — map ReturnData as
+  `{"data": "{{<moduleId>.logs}}"}` (`stdout`/`result`/`output` do not exist
+  and silently return null). Use `return_field="logs"` in helper environments.
+- Editing the scenario in the Make UI **renumbers module ids** and rewrites
+  the module parameters (dropping `__IMTCONN__`). After any UI edit, re-read
+  the blueprint, re-bind the connection both ways, and fix the ReturnData
+  reference to the new module id — a stale reference returns `data: null`
+  on otherwise successful runs.
 - E2B error fingerprints from the module: `401: authorization header is
   missing` means the module sent no key (connection not bound);
   `401: authorization header is malformed` means the stored apiKey does not
-  start with `e2b_` — common causes: a "Bearer " prefix, quotes, or the
-  `sk_e2b_...` Access Token pasted instead of the API Key. The e2b app sends
-  `X-API-Key: <apiKey>` raw, so store the bare `e2b_...` API Key.
+  start with `e2b_` — common causes: a "Bearer " prefix, quotes, the
+  `sk_e2b_...` Access Token pasted instead of the API Key, or a UI save that
+  silently did not persist (fix via `POST /connections/{id}/set-data`). The
+  e2b app sends `X-API-Key: <apiKey>` raw, so store the bare `e2b_...` key.
 
 ## Nested SaaS Access
 
