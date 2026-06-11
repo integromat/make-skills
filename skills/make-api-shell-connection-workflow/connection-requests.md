@@ -9,11 +9,32 @@ Use a Make API token in the header:
 Authorization: Token YOUR_API_KEY
 ```
 
-## Plan gate: credential requests are an Enterprise/Partner feature
+## Choose the request path by recipient first
 
-Free/Core/Pro organizations cannot use credential requests at all. Check the
-capability BEFORE creating a request — the authoritative source is the
-organization license flag, not the plan name:
+Resolve WHO the credential is for before picking an endpoint. There are two
+separate flows with different gating:
+
+| Recipient | Endpoint | Gating |
+|---|---|---|
+| The current Make user (default) | `POST /api/v2/credential-requests/actions/create` — self-service, no `provider` field, one `connection` or `key` object per call, returns `publicUri` | Available to a wide range of plans; not gated by the Enterprise credential-requests license |
+| A colleague, employee, or service-account owner — only when the task explicitly says so | `POST /api/v2/credential-requests/requests/v2` — requires `provider` (`providerMakeUserId` or invite by name/email) | Enterprise/Partner feature; check the plan gate below first |
+
+Unless the task explicitly states that the credential must come from another
+person or a shared/service account, use the self-service flow. The external
+request flow exists for delegating authorization to someone else; that
+delegation is the heavily gated feature.
+
+The guided connection flow (below) remains the last fallback for BOTH paths:
+when a request endpoint fails with a policy denial, create the shell without
+a credential and walk the user through adding the connection in the UI.
+
+## Plan gate: external credential requests are an Enterprise/Partner feature
+
+The gate applies to the external request flow (`requests/v2`). Free/Core/Pro
+organizations cannot request credentials from other people; the self-service
+path above is the route that works on a wider range of plans. Check the
+capability BEFORE creating an external request — the authoritative source is
+the organization license flag, not the plan name:
 
 ```bash
 curl -sS "${BASE_URL}/api/v2/organizations/${ORG_ID}" \
@@ -70,11 +91,12 @@ stored secret is wrong.
 Prefer the most current supported path first, then fall back only when needed.
 
 0. Before creating anything, list existing connections for the target app in the active team and reuse one if it already satisfies the workflow.
-1. Check the plan gate above; on `credentialRequests: false` use the guided connection flow instead of any request endpoint.
-2. Try:
+1. Decide the recipient (see "Choose the request path by recipient first").
+2. For the current Make user (default), use the self-service path:
+   - for API-call shells: `POST /api/v2/credential-requests/actions/create-by-credentials` with an explicit connection `type` and `scope` array (see the scope rule for universal API-call modules below)
+   - for regular modules that declare their own scopes: `POST /api/v2/credential-requests/actions/create` with the app/module selection, or the equivalent MCP credential-request tool
+3. Only for an explicitly external recipient: check the plan gate above (on `credentialRequests: false` use the guided connection flow), then:
    - `POST /api/v2/credential-requests/requests/v2`
-3. If that path is unavailable for the workspace or feature set, try:
-   - `POST /api/v2/credential-requests/actions/create-by-credentials`
 4. Use older legacy request paths only when the workspace clearly still depends on them.
 
 Important branching rule:
@@ -163,9 +185,11 @@ Reason:
 
 It also prevents a different class of mismatch: same vendor suite, wrong connection family. Example: a provider's mail app and calendar app may both authenticate through the same vendor, while the discovered Make modules still require different app bindings or different connection families.
 
-## Recommended V2 request style
+## External-recipient V2 request style
 
-Why this is preferable:
+Use this style only when the credential must come from a different person or
+a service-account owner (see the recipient decision above). Why this style
+for that case:
 - you specify the app and module context directly
 - Make can derive required credential types more reliably
 - the request is less dependent on hardcoded connection-type assumptions
@@ -200,7 +224,32 @@ payload-shape error.
 pairs. `appVersion` matters: request the version that carries the universal
 API-call module (see the version sweep rule in discovery-and-shells.md).
 
-Use this path when the workspace can infer the needed connection family from the discovered app/module context and you do not need to force an explicit connection type.
+`appVersion` is app-specific — never copy it from another app's example;
+two apps, even from the same vendor, can sit on different current versions.
+Take it from `apps_recommend` output, which returns the current `appVersion`
+per app, or sweep versions with `app_modules_list`. Module validation on
+credential requests only checks the module list of the requested version, so
+an API-call module that lives in a different version produces a misleading
+"module does not exist" error.
+
+Use this external path only for a different recipient, and only when the workspace can infer the needed connection family from the discovered app/module context; when an explicit connection type or scope must be encoded, hand the recipient a `create-by-credentials`-shaped request instead.
+
+## Scope rule for universal API-call modules
+
+Module-derived credential requests inherit OAuth scopes from the modules
+named in `appModules`. Universal API-call modules declare no provider scopes
+themselves, so a request derived only from the API-call module yields a
+connection that authenticates but carries only baseline identity scopes —
+every provider API call through the shell then fails with an
+insufficient-scope error.
+
+`["*"]` module derivation is not a safe substitute here either: it can
+resolve to a different connection family of the same vendor than the one the
+API-call module requires.
+
+For API-call shells, request the connection with `create-by-credentials` and
+an explicit `scope` array. Reserve module-derived requests for regular
+modules that declare their own scopes.
 
 ## Insufficient-scope failures on existing connections
 
@@ -221,9 +270,11 @@ Handling rule:
 - after authorization, bind the shell to the new connection; do not expect
   the old connection to gain scopes in place
 
-## Fallback create-by-credentials style
+## Self-service create-by-credentials style
 
-Use this when the workspace requires an explicit connection type.
+This is the standard self-service choice for API-call shells: it is not
+gated like the external request flow, and it encodes the connection type and
+scope explicitly instead of deriving them from modules.
 
 Example body with placeholders:
 ```json
@@ -245,9 +296,9 @@ Example body with placeholders:
 This fallback is often the safer generic choice when you already know the exact connection family and scope requirement and want the request to encode them directly.
 
 Practical rule:
-- prefer the V2 request style first
-- if the workspace does not infer the right connection family, or if the request needs an explicit scope declaration, fall back to `create-by-credentials`
-- for Google-family apps in particular, verify whether the discovered module expects a Gmail-specific family such as `google-email` or a broader Google family such as `google`
+- for the current user, prefer `create-by-credentials` with explicit type and scope (API-call shells) or `actions/create` with module selection (regular modules)
+- use the external V2 request style only when the credential must come from a different recipient
+- for vendor suites with multiple connection families, verify whether the discovered module expects an app-specific family (such as a mail-specific connection) or a broader vendor-wide family before encoding the type
 
 ## Inspect authorization state
 

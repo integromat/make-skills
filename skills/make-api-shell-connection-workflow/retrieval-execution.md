@@ -53,6 +53,13 @@ The concrete `path` changes by provider, but the scenario-run payload shape stay
 
 Use `qs` for query-string parameters. Do not hide provider options inside a concatenated URL when the shell supports `qs`; normalize `path?x=1&y=2` into `path` plus `qs` before the run.
 
+The provider module's base URL may already include a service segment. This
+applies to any provider: when a 404 error output echoes a doubled path
+segment (`/<segment>/<segment>/...`), the `path` value repeated a segment the
+module base already carries — remove the duplicated prefix from `path` and
+retry. Confirm the effective base by checking the provider module
+documentation or a single probe call before composing further paths.
+
 Important deployment precondition:
 - do not assume the `StartSubscenario` module metadata alone made this callable
 - explicitly set the scenario-level input interface first
