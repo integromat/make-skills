@@ -40,6 +40,7 @@ When using the generic three-module shell, run it with a payload shaped like thi
     "path": "...",
     "method": "GET",
     "header": [],
+    "qs": [],
     "body": null
   },
   "responsive": true
@@ -49,6 +50,8 @@ When using the generic three-module shell, run it with a payload shaped like thi
 This is the default execution contract for the shell across providers.
 
 The concrete `path` changes by provider, but the scenario-run payload shape stays the same.
+
+Use `qs` for query-string parameters. Do not hide provider options inside a concatenated URL when the shell supports `qs`; normalize `path?x=1&y=2` into `path` plus `qs` before the run.
 
 Important deployment precondition:
 - do not assume the `StartSubscenario` module metadata alone made this callable
@@ -129,6 +132,19 @@ Use:
 2. fetch detail only for the shortlisted IDs
 3. normalize requester, status, SLA or priority, latest comment, and next action
 
+### Chat/messaging pattern
+
+Chat providers usually require a container identifier before any message
+read. Confirmed example: Slack's `/conversations.history` rejects calls
+without `channel` (`missing required field: channel`).
+
+Use:
+1. list conversations first (`/conversations.list` with `types` and a small `limit`)
+2. pick the target container by recency or by the user's naming
+3. fetch history only for that container id, with a small `limit`
+4. normalize channel name, sender, timestamp, and text; note that bot or
+   attachment-only messages can have empty `text` fields and still be valid
+
 ## Suggested normalization contract
 
 For user-facing summaries, normalize the provider payload into a stable business shape whenever practical:
@@ -158,15 +174,17 @@ For the three-module generic API transport shell:
 
 ```json
 {
-  "data": "{{3.body}}"
+  "data": "{{MIDDLE_API_MODULE_ID.body}}"
 }
 ```
 
 That is the contract. It should stay stable across providers.
 
+In the generic example blueprint, `MIDDLE_API_MODULE_ID` is `3`, so the example mapping is `{{3.body}}`. In real Make exports, inspect the module ids and map to the actual middle API-call module. For example, a flow with StartSubscenario id `2`, API-call module id `5`, and ReturnData id `4` must use `{{5.body}}`.
+
 Do not switch that generic contract to:
-- `{{3}}`
-- `{{3.data}}`
+- `{{MIDDLE_API_MODULE_ID}}`
+- `{{MIDDLE_API_MODULE_ID.data}}`
 - another guessed nested field
 
 ### B. Retrieval-specific normalization
@@ -179,8 +197,8 @@ Only after the body has been returned through the generic shell may you decide h
 - errors
 
 If `data: null`, a bare number, or another unusable shape appears, first ask:
-1. did the generic shell still return `{{3.body}}`?
-2. did the API path, method, headers, or body match the provider requirement?
+1. did the generic shell still return `{{MIDDLE_API_MODULE_ID.body}}` for the actual middle module id?
+2. did the API path, method, headers, query parameters, or body match the provider requirement?
 3. is the downstream interpreter reading the body correctly?
 
 If the failure is actually an authorization failure from an expired or invalid connection, stop retrieval debugging and go back to the credential-request path instead of trying to re-auth the old connection in place.
@@ -197,3 +215,57 @@ Keep failure diagnosis phase-specific:
 
 If activation fails with a generic validation error, go back to shell metadata.
 If the run succeeds but the payload is wrong, stay in Make and fix the API-call plan or downstream normalization before considering fallback.
+
+## Generic debugging matrix
+
+Scenario exists but `/run` returns no useful output:
+- check the output interface
+- check `scenario-service:ReturnData` mapping if used
+- verify `responsive: true` behavior and response shape
+- verify the output keys the downstream reader expects
+
+`400` or `422` from `/run`:
+- compare submitted `data` keys and types against `/api/v2/scenarios/{scenarioId}/interface`
+- verify required inputs and defaults
+
+Empty business data:
+- check the retrieval query or filter
+- check the target account/workspace identity
+- check the provider API endpoint and permissions
+
+Authentication or authorization error:
+- do not work around it locally
+- verify the Make connection with `POST /api/v2/connections/{connectionId}/test`
+- create, inspect, or reauthorize the correct Make connection if verification fails
+
+Wrong account/workspace data:
+- treat this as a connection identity mismatch
+- confirm the target identity and patch or create the correct shell
+
+Scope or permission error:
+- derive the minimal missing scope from the selected API endpoint
+- create or update the Credential Request
+- reauthorize and retest
+
+Existing shell points to an old connection:
+- extract the connection ID from the shell blueprint and verify it with `/api/v2/connections/{connectionId}/test`
+- patch only when the current request clearly targets the same automation
+- otherwise create a separate shell
+
+## Definition of Done
+
+Do not call retrieval complete just because the scenario exists. Done means:
+- target provider confirmed
+- target account/workspace/mailbox/tenant confirmed
+- retrieval target and operation confirmed
+- connection identity and scope verified
+- connection liveness verified by Make's connection test API
+- Credential Request completed if needed
+- resulting connection ID extracted and recorded
+- real Make scenario exists with `scenario-service:StartSubscenario`, the app-specific API-call module, and `scenario-service:ReturnData`
+- scenario-level input/output interface patched and verified
+- blueprint shows the correct app module and connection ID
+- `/run` with `responsive: true` returns real output data
+- retrieval returns records from the intended account/workspace
+- downstream normalization/reporting works if requested
+- schedule points to the final validated configuration if scheduling was requested

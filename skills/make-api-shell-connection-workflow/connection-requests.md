@@ -9,19 +9,67 @@ Use a Make API token in the header:
 Authorization: Token YOUR_API_KEY
 ```
 
+## Plan gate: credential requests are an Enterprise/Partner feature
+
+Free/Core/Pro organizations cannot use credential requests at all. Check the
+capability BEFORE creating a request — the authoritative source is the
+organization license flag, not the plan name:
+
+```bash
+curl -sS "${BASE_URL}/api/v2/organizations/${ORG_ID}" \
+  -H "authorization: Token $API_KEY" | jq '.organization.license.credentialRequests'
+```
+
+(In helper environments: `get_organization_capabilities()`.)
+
+When the flag is `false` (or the create call fails with a policy denial), do
+NOT give up and do NOT ask the user to paste secrets into chat. Switch to the
+**guided connection flow** instead:
+
+1. Create (or reuse) the shell scenario first, without a working credential.
+2. Hand the user the scenario editor URL
+   (`https://<zone>.make.com/<teamId>/scenarios/<scenarioId>/edit`) and a
+   click path: open the middle module -> click "Add" next to the
+   connection/keychain field -> fill the fields -> Save.
+3. State the **exact paste format** for the credential fields (see
+   "Credential paste formats" below) — this is mandatory, users cannot know
+   provider-specific shapes such as Bearer prefixes.
+4. Ask the user to reply "done" when finished, then verify the connection
+   with `POST /connections/{id}/test` or a narrow shell test run before any
+   real retrieval.
+
+In helper environments `connection_setup_guide(scenario_id, module_label=...,
+provider=...)` generates this guide.
+
+## Credential paste formats (state these verbatim to the user)
+
+Always include the exact expected format in the credential-request
+`description` AND in chat. Known shapes:
+
+| Provider / type | What to paste |
+|---|---|
+| HTTP app, API Key Auth keychain | Fields: Key, Placement, Name. Provider expects `Authorization: Bearer <key>` -> Key = `Bearer <key>` (literal prefix + space), Placement = header, Name = `Authorization`. Provider uses a plain key header (e.g. `X-API-Key`) -> Key = raw key, Name = header name. |
+| Daytona (HTTP app keychain) | Key = `Bearer <daytona-key>`, Placement = header, Name = `Authorization` |
+| e2b app connection | raw API Key starting with `e2b_` — no `Bearer ` prefix, no quotes, and NOT the `sk_e2b_...` Access Token (app sends `X-API-Key` itself; any value not starting with `e2b_` fails with `401: authorization header is malformed`) |
+| Basic auth keychain | username/password exactly as issued, no encoding |
+
+When the provider is unknown, say explicitly which of the two API-key
+conventions applies after checking the provider's API docs.
+
 ## Decision ladder
 
 Prefer the most current supported path first, then fall back only when needed.
 
 0. Before creating anything, list existing connections for the target app in the active team and reuse one if it already satisfies the workflow.
-1. Try:
+1. Check the plan gate above; on `credentialRequests: false` use the guided connection flow instead of any request endpoint.
+2. Try:
    - `POST /api/v2/credential-requests/requests/v2`
-2. If that path is unavailable for the workspace or feature set, try:
+3. If that path is unavailable for the workspace or feature set, try:
    - `POST /api/v2/credential-requests/actions/create-by-credentials`
-3. Use older legacy request paths only when the workspace clearly still depends on them.
+4. Use older legacy request paths only when the workspace clearly still depends on them.
 
 Important branching rule:
-- if the workspace returns a policy or permission denial such as `403 Permission denied` or a message indicating credential requests are not enabled for the target user/workspace, stop and report a workspace feature restriction
+- if the workspace returns a policy or permission denial such as `403 Permission denied` or a message indicating credential requests are not enabled for the target user/workspace, stop retrying request endpoints and switch to the guided connection flow above
 - do not keep retrying equivalent credential-request endpoints when the failure is clearly policy-based rather than endpoint-shape-based
 - only fall back to another endpoint when the evidence suggests API-version mismatch, route availability, or request-shape incompatibility
 - if authorization fails because an existing connection is expired, revoked, or otherwise invalid, do not try to re-auth that connection in place; use the credential-request path to create a fresh connection
@@ -53,6 +101,26 @@ Do not treat a type match alone as enough to reuse the connection. Also confirm:
 - the connection is not known to be expired, revoked, or otherwise invalid
 
 If Make MCP or another supported surface exposes connection detail, inspect it before reuse. Useful checks include the visible account label and scope count.
+
+## Connection verification before reuse
+
+Before reusing a connection, or before trusting an existing shell that already points at a connection, verify the connection through Make itself:
+
+1. Get connection detail:
+   - `GET /api/v2/connections/{connectionId}`
+2. Test the saved credentials:
+   - `POST /api/v2/connections/{connectionId}/test`
+3. When scope IDs are available and scope fit matters, check scope explicitly:
+   - `POST /api/v2/connections/{connectionId}/scoped`
+
+Treat `{"verified": true}` from `/test` as the liveness proof. Treat `verified: false`, provider auth errors, revoked credentials, or a past `expire` value as not reusable.
+
+Important nuance:
+- a future `expire` timestamp means the connection is still usable
+- Credential Request detail can lag or remain `pending` even after the UI shows a credential as authorized
+- when `/connections/{connectionId}/test` returns `verified: true`, that verified connection wins over stale request-detail status
+
+Do not create a second Credential Request for the same app/account just because an old request detail still says `pending`. Reuse the saved `requestId`, inspect it, list matching connections again, verify candidate connections, and continue if a verified connection is found.
 
 ## Recipient and account-identity gate
 
@@ -106,11 +174,43 @@ Example body with placeholders:
       "appVersion": 2,
       "nameOverride": "outlook-api-shell"
     }
-  ]
+  ],
+  "provider": { "providerMakeUserId": MAKE_USER_ID }
 }
 ```
 
+`provider` is required by `POST /credential-requests/requests/v2`: either
+`{"providerMakeUserId": <existing Make user id>}` or
+`{"name": "...", "email": "..."}` to invite a new user. A current Make user
+id for the active account is visible as `authorId` in scenario run logs and
+via `GET /api/v2/users/me`. Requests without `provider` are rejected with a
+payload-shape error.
+
+`appModules` entries are module IDs (for example `["makeApiCall"]`, or
+`["*"]` for all modules with credentials) — not `appName`/`moduleName`
+pairs. `appVersion` matters: request the version that carries the universal
+API-call module (see the version sweep rule in discovery-and-shells.md).
+
 Use this path when the workspace can infer the needed connection family from the discovered app/module context and you do not need to force an explicit connection type.
+
+## Insufficient-scope failures on existing connections
+
+A structurally compatible connection can still fail at run time with
+`403 Request had insufficient authentication scopes` (Google wording; other
+providers phrase it differently). This means the connection exists and
+authenticates, but was authorized without the scope the call needs.
+
+Confirmed example: a generic `google` connection bound to a Google Calendar
+shell authenticated fine but lacked
+`https://www.googleapis.com/auth/calendar`, so every events read returned 403.
+
+Handling rule:
+- treat insufficient-scope as "no suitable connection exists" in the decision
+  ladder, even though the connection tests as valid
+- create one credential request for the target app/module (V2 style), or use
+  the create-by-credentials fallback when the exact scope must be encoded
+- after authorization, bind the shell to the new connection; do not expect
+  the old connection to gain scopes in place
 
 ## Fallback create-by-credentials style
 
@@ -151,6 +251,15 @@ Confirm:
 - resulting credential or connection identifier
 
 Also confirm whether the resulting connection is usable in the target scenario or module family. Authorization success alone does not prove that retrieval execution is correctly configured.
+
+After inspecting the request detail, list connections again and match the resulting connection back to the target identity before patching the scenario.
+
+Then verify the matched connection:
+- `GET /api/v2/connections/{connectionId}` for visible details
+- `POST /api/v2/connections/{connectionId}/test` for credential liveness
+- `POST /api/v2/connections/{connectionId}/scoped` if the required scope IDs are known and scope fit is still uncertain
+
+Only patch or create a shell after the target connection is verified. If verification fails, treat the credential as not ready and go back to the same Credential Request or create a new request only when the old request can no longer satisfy the app/account requirement.
 
 ## Patch the scenario after authorization
 

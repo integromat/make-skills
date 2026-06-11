@@ -14,6 +14,7 @@
           { "name": "path", "type": "text", "required": false, "multiline": false },
           { "name": "body", "type": "any", "required": false },
           { "name": "header", "type": "any", "required": false },
+          { "name": "qs", "type": "any", "required": false },
           { "name": "method", "type": "text", "required": false, "multiline": false }
         ]
       }
@@ -28,6 +29,7 @@
         "url": "{{2.path}}",
         "method": "{{2.method}}",
         "headers": "{{2.header}}",
+        "qs": "{{2.qs}}",
         "body": "{{2.body}}"
       },
       "metadata": {
@@ -54,6 +56,6 @@
   ],
   "metadata": {
     "version": 1,
-    "notes": "Template only. Replace placeholders with discovered app and connection data before deployment. This file is a provisioning starter, not proof that the scenario is activatable. After create or update, explicitly patch the scenario-level interface before the first run. For the generic shell contract, keep ReturnData mapped to {{3.body}} so ExpectDataAny receives the raw response body; validate runs to confirm body contains the intended payload or error object. If a provider module mishandles empty bodies on GET or DELETE, keep this shell contract but consider a read shell without the Module 2 body mapper and a separate write shell with it."
+    "notes": "Template only. Replace placeholders with discovered app and connection data before deployment. This file is a provisioning starter, not proof that the scenario is activatable. After create or update, explicitly patch the scenario-level interface before the first run. Query-string parameters belong in qs, not in ad hoc path concatenation. For the generic shell contract, keep ReturnData mapped to the actual middle API-call module body. In this template the middle module id is 3, so ReturnData is {{3.body}}; if a real export uses a different middle module id, update the mapper accordingly. Validate runs to confirm body contains the intended payload or error object. If a provider module mishandles empty bodies on GET or DELETE, keep this shell contract but consider a read shell without the Module 2 body mapper and a separate write shell with it. If this blueprint is stored as subflows[0].flow, normalize it back to top-level flow before Make scenario create/update calls."
   }
 }

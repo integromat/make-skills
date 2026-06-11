@@ -6,3 +6,5 @@ node_modules/
 # committed for raw.githubusercontent.com downloads. Versioned ZIPs belong in
 # GitHub Releases, not in the repo history.
 dist/*-v*.zip
+dist/make-custom-app-generation.zip
+skills/make-custom-app-generation/
