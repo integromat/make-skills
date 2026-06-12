@@ -29,8 +29,8 @@ Bad:
 - `tenant-scoped API shell execution`
 
 Better:
-- `outlook-api-shell`
-- `gmail-api-shell`
+- `provider-api-shell`
+- `api-shell-debug`
 - `generic API shell execution`
 
 ## Rewrite evidence language

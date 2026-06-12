@@ -32,6 +32,7 @@ Read the file that matches the current task:
 | Discover the app, module, and connection type layers | [Discovery and Shells](./discovery-and-shells.md) |
 | Create, inspect, or resolve a credential request | [Connection Requests](./connection-requests.md) |
 | Choose and execute the post-connection retrieval path | [Retrieval Execution](./retrieval-execution.md) |
+| Repair provider authorization or scope failures after a shell run | [Retrieval Execution](./retrieval-execution.md#authorization-repair-playbook) |
 | Sanitize examples and prepare a public shareable version | [Sanitization and Sharing](./sanitization-and-sharing.md) |
 | Start from a generic blueprint template | [Example shell blueprint](./examples/generic-api-shell-blueprint.json) |
 | Provider has no Make app: generic HTTP shell with noAuth / API key / Basic auth / OAuth 2.0 | [HTTP Fallback Shells](./http-fallback-shells.md) |
@@ -104,7 +105,7 @@ If one of those items is missing and cannot be discovered safely, stop and ask o
 22. Expose query parameters as a first-class shell input named `qs`. Use `qs` for provider API query parameters such as Gmail search options, Drive `fields`, Drive `q`, Graph `$select`, pagination, or `supportsAllDrives`. If a caller provides a query string in `path`, normalize it into `qs` before running the shell.
 23. When moving blueprints between Make UI exports and Make scenario create/update APIs, normalize shape deliberately: UI/export artifacts may store the flow at `subflows[0].flow`, while scenario create/update payloads require a top-level `flow`. Do not send a raw UI export to create/update without normalization.
 24. Shell reuse is app-specific, not just provider-family-specific. A shell built around one app module should not be repointed to another app module just because both belong to the same vendor suite.
-25. Before reusing any existing connection or a shell that points to an existing connection, call Make's connection verification API: `POST /api/v2/connections/{connectionId}/test`. A response with `verified: true` is the liveness proof. A stale Credential Request status does not override a verified connection.
+25. Before reusing any existing connection or a shell that points to an existing connection, call Make's connection verification API: `POST /api/v2/connections/{connectionId}/test`. A response with `verified: true` is the liveness proof. A stale Credential Request status does not override a verified connection. Liveness is not proof that the provider will authorize every path, method, or scope; provider authorization is proven only by a successful shell run for the intended operation. On provider auth or scope errors, use the [Authorization Repair Playbook](./retrieval-execution.md#authorization-repair-playbook).
 26. When resuming after user authorization, reuse the saved Credential Request `requestId`; inspect the request, then list and verify connections. Do not create a new Credential Request while an active request for the same app/account is still being resolved.
 27. Treat a future `expire` timestamp as valid. Treat only a past expiry, revoked connection, failed verification, or provider auth error as invalid.
 

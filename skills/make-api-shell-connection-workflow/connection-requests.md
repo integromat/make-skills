@@ -114,6 +114,17 @@ Before opening a new credential request, verify all of the following:
 - existing connections for the target app in that team
 - whether one of those connections is already suitable for the requested account and scope
 
+Use a two-tier proof model:
+- A connection is a reuse candidate when the app or connection family matches the discovered module, the account identity matches the requested target, `POST /api/v2/connections/{connectionId}/test` returns `verified: true`, and the required scope fit is known or can be checked.
+- A connection is proven for retrieval only after a real `POST /api/v2/scenarios/{scenarioId}/run` succeeds through a shell bound to that connection for the intended path, method, query, and body.
+
+A proven run validates that operation. It does not prove unrelated future provider paths or write methods.
+
+No-duplicate request rule:
+- before creating a new request, search existing requests for the same app, account target, recipient, and required scope or credential shape
+- if an active request exists, resume it by `requestId` and inspect/list connections again instead of creating a duplicate
+- a stale `pending` request status never overrides a verified connection, and a completed request is not proof that the resulting connection is usable until the connection and a real shell run are verified
+
 REST example:
 ```bash
 curl -sS \
@@ -144,7 +155,7 @@ Before reusing a connection, or before trusting an existing shell that already p
 3. When scope IDs are available and scope fit matters, check scope explicitly:
    - `POST /api/v2/connections/{connectionId}/scoped`
 
-Treat `{"verified": true}` from `/test` as the liveness proof. Treat `verified: false`, provider auth errors, revoked credentials, or a past `expire` value as not reusable.
+Treat `{"verified": true}` from `/test` as the liveness proof. Treat `verified: false`, provider auth errors, revoked credentials, or a past `expire` value as not reusable. Liveness is necessary for reuse, but it is not provider authorization proof for every path or scope; the first successful shell run proves only the tested operation.
 
 Important nuance:
 - a future `expire` timestamp means the connection is still usable
@@ -254,19 +265,18 @@ modules that declare their own scopes.
 ## Insufficient-scope failures on existing connections
 
 A structurally compatible connection can still fail at run time with
-`403 Request had insufficient authentication scopes` (Google wording; other
-providers phrase it differently). This means the connection exists and
-authenticates, but was authorized without the scope the call needs.
-
-Confirmed example: a generic `google` connection bound to a Google Calendar
-shell authenticated fine but lacked
-`https://www.googleapis.com/auth/calendar`, so every events read returned 403.
+`403 Request had insufficient authentication scopes` or a similar provider
+permission error. Provider wording varies, but the meaning is the same: the
+connection exists and authenticates, yet it was authorized without the scope
+or permission the intended call needs.
 
 Handling rule:
 - treat insufficient-scope as "no suitable connection exists" in the decision
   ladder, even though the connection tests as valid
-- create one credential request for the target app/module (V2 style), or use
-  the create-by-credentials fallback when the exact scope must be encoded
+- follow the [Authorization Repair Playbook](./retrieval-execution.md#authorization-repair-playbook)
+- create one credential request for the target app/module, or use
+  `create-by-credentials` when the exact connection type and scope must be
+  encoded
 - after authorization, bind the shell to the new connection; do not expect
   the old connection to gain scopes in place
 
@@ -279,15 +289,15 @@ scope explicitly instead of deriving them from modules.
 Example body with placeholders:
 ```json
 {
-  "name": "Gmail API shell connection",
-  "description": "Authorize Gmail for the generic API shell scenario.",
+  "name": "Provider API shell connection",
+  "description": "Authorize the provider account for the generic API shell scenario.",
   "teamId": TEAM_ID,
   "connections": [
     {
-      "type": "google-email",
-      "description": "Readonly Gmail connection for the API shell example.",
-      "scope": ["https://www.googleapis.com/auth/gmail.readonly"],
-      "nameOverride": "gmail-api-shell"
+      "type": "PROVIDER_CONNECTION_TYPE",
+      "description": "Readonly provider connection for the API shell example.",
+      "scope": ["PROVIDER_READ_SCOPE"],
+      "nameOverride": "provider-api-shell"
     }
   ]
 }
@@ -310,7 +320,7 @@ Confirm:
 - credential state
 - resulting credential or connection identifier
 
-Also confirm whether the resulting connection is usable in the target scenario or module family. Authorization success alone does not prove that retrieval execution is correctly configured.
+Also confirm whether the resulting connection is usable in the target scenario or module family. Authorization success alone does not prove that retrieval execution is correctly configured. A credential request appearing in a list, reporting `completed`, or returning a connection identifier is still only request-state evidence; it is not authorization proof for the intended provider operation.
 
 After inspecting the request detail, list connections again and match the resulting connection back to the target identity before patching the scenario.
 
@@ -361,6 +371,6 @@ Reply with YES to proceed, or tell me what to change first.
 
 If this workflow is being published or contributed to a shared repository:
 - replace real team IDs, organization IDs, user IDs, connection IDs, and workspace-specific names with placeholders
-- use neutral labels such as `gmail-api-shell` instead of personal labels
+- use neutral labels such as `provider-api-shell` instead of personal labels
 - avoid phrases such as `verified live` or `worked in tenant X`
 - describe fallbacks as compatibility options, not as tenant-specific facts
