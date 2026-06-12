@@ -234,7 +234,7 @@ For hard SaaS retrieval failures, collect one private troubleshooting bundle bef
 - credential request IDs, recipient, app or connection type, scope or credential shape, and current status
 - failing shell run payload summary (`path`, `method`, `qs`, `body` shape) and the exact provider or Make error
 - execution-log reference from `GET /api/v2/scenarios/{scenarioId}/logs/{executionId}` when an execution ID exists
-- final proof result: `success`, `auth_repair_pending`, `missing_scope`, `wrong_connection`, `path_error`, or `unknown`
+- final proof result: `success`, `auth_request_pending`, `missing_scope`, `wrong_connection`, `path_error`, or `unknown`
 
 This bundle is for private debugging. Before sharing publicly, sanitize it according to [Sanitization and Sharing](./sanitization-and-sharing.md).
 
@@ -247,9 +247,9 @@ Use this sequence for provider authentication, authorization, insufficient-scope
 3. If the shell has no bound connection, the wrong app/module, or the wrong connection family, treat it as shell provisioning or binding drift before changing API paths.
 4. Inspect the bound connection with `GET /api/v2/connections/{connectionId}` and test liveness with `POST /api/v2/connections/{connectionId}/test`.
 5. If the connection is not live, expired, revoked, or belongs to the wrong account/workspace, treat it as no suitable connection. Return to the credential-request path.
-6. If the connection is live but the provider returns auth, permission, or scope errors, derive the minimal missing permission from the selected endpoint, provider documentation, or live error. When scope IDs are known, check with `POST /api/v2/connections/{connectionId}/scoped`.
-7. Before creating a request, search existing credential requests for the same app, account target, recipient, and required scope or credential shape. Resume an active matching `requestId` instead of creating a duplicate. A stale `pending` request never overrides a verified connection.
-8. If a new request is required, create exactly one request with explicit connection `type`, and explicit `scope` when the provider family is scope-based. For API-key, Basic, or other non-scope credential families, follow the credential paste-format rules instead of inventing scopes.
+6. If the connection is live but the provider returns auth, permission, or scope errors, do not try to repair the old OAuth connection in place. Derive the minimal missing permission from the selected endpoint, provider documentation, or live error. When scope IDs are known, check with `POST /api/v2/connections/{connectionId}/scoped` only as evidence for the new request shape.
+7. Create or return a fresh Make Credential Request/new connection for this auth failure. If an already-created fresh pending request for the same app, recipient, account target, and required scope exists, return its `publicUri` instead of creating another duplicate during the same incident. Otherwise create exactly one new request.
+8. The user-facing answer must include the exact request `publicUri` auth link. If Make does not return a URL, state the exact `publicUriUnavailableReason` and the request status; do not collapse this into a vague "reauthorize" answer. For scope-based providers, include explicit connection `type` and explicit `scope`. For API-key, Basic, or other non-scope credential families, follow the credential paste-format rules instead of inventing scopes.
 9. After authorization, list connections again, match the resulting connection to the target identity, test it, and run `/scoped` when scope IDs are known.
 10. Bind according to the shell ownership rule: a newly authorized connection gets a newly created shell; patch an existing shell only when reusing a connection for the same automation and after the required write confirmation.
 11. Rerun the same request payload (`path`, `method`, `header`, `qs`, `body`) through the correctly bound shell. This proves that operation only; repeat scope/path validation for materially different operations.

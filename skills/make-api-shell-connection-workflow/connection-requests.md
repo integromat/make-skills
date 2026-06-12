@@ -121,9 +121,10 @@ Use a two-tier proof model:
 A proven run validates that operation. It does not prove unrelated future provider paths or write methods.
 
 No-duplicate request rule:
-- before creating a new request, search existing requests for the same app, account target, recipient, and required scope or credential shape
-- if an active request exists, resume it by `requestId` and inspect/list connections again instead of creating a duplicate
+- before initial provisioning, search existing requests for the same app, account target, recipient, and required scope or credential shape
+- if an active request already exists for the same fresh authorization incident, return its `publicUri` instead of creating another duplicate link
 - a stale `pending` request status never overrides a verified connection, and a completed request is not proof that the resulting connection is usable until the connection and a real shell run are verified
+- after a live shell run proves an existing connection has provider auth, permission, or insufficient-scope failure, do not repair that old OAuth connection in place; create or return a fresh Make Credential Request/new connection link for the missing authorization
 
 REST example:
 ```bash
@@ -162,7 +163,7 @@ Important nuance:
 - Credential Request detail can lag or remain `pending` even after the UI shows a credential as authorized
 - when `/connections/{connectionId}/test` returns `verified: true`, that verified connection wins over stale request-detail status
 
-Do not create a second Credential Request for the same app/account just because an old request detail still says `pending`. Reuse the saved `requestId`, inspect it, list matching connections again, verify candidate connections, and continue if a verified connection is found.
+Do not create a second Credential Request for the same app/account just because an old request detail still says `pending` during initial provisioning. Reuse the saved `requestId`, inspect it, list matching connections again, verify candidate connections, and continue if a verified connection is found. This preflight rule does not override a live shell-run authorization failure: when a run proves the old connection lacks the needed provider permission, create or return a fresh request link for a new connection.
 
 ## Recipient and account-identity gate
 
