@@ -10,7 +10,7 @@ Given a connection-ready Make API-call shell:
 - configure the right API path pattern for the business request
 - run a narrow validation request through the shell
 - inspect the real output bundle
-- normalize the result for Hermes or the user-facing caller
+- normalize the result for the user-facing caller
 
 ## Retrieval transport rule
 
@@ -40,6 +40,7 @@ When using the generic three-module shell, run it with a payload shaped like thi
     "path": "...",
     "method": "GET",
     "header": [],
+    "qs": [],
     "body": null
   },
   "responsive": true
@@ -49,6 +50,15 @@ When using the generic three-module shell, run it with a payload shaped like thi
 This is the default execution contract for the shell across providers.
 
 The concrete `path` changes by provider, but the scenario-run payload shape stays the same.
+
+Use `qs` for query-string parameters. Do not hide provider options inside a concatenated URL when the shell supports `qs`; normalize `path?x=1&y=2` into `path` plus `qs` before the run.
+
+The provider module's base URL may already include a service segment. This
+applies to any provider: when a 404 error output echoes a doubled path
+segment (`/<segment>/<segment>/...`), the `path` value repeated a segment the
+module base already carries — remove the duplicated prefix from `path` and
+retry. Confirm the effective base by checking the provider module
+documentation or a single probe call before composing further paths.
 
 Important deployment precondition:
 - do not assume the `StartSubscenario` module metadata alone made this callable
@@ -89,7 +99,7 @@ Generic operating rules:
 - keep batch sizes modest on detail-enrichment loops
 - separate read-heavy and write-heavy workloads when the provider module behaves differently
 
-Confirmed example to remember, but not to universalize: Google Calendar has been observed around the order of a few hundred requests per minute per user in some environments, which is high enough for bursts but still easy to exceed with naive fan-out. Treat provider documentation and live error responses as the actual source of truth.
+Treat provider documentation and live error responses as the actual rate-limit source of truth. Even generous read limits are easy to exceed with naive fan-out.
 
 If a provider module shows empty-body serialization issues on `GET` or `DELETE`, split the shell design:
 - read/delete shell without a Module 2 `body` mapper
@@ -129,6 +139,19 @@ Use:
 2. fetch detail only for the shortlisted IDs
 3. normalize requester, status, SLA or priority, latest comment, and next action
 
+### Chat/messaging pattern
+
+Chat providers usually require a container identifier before any message
+read. Confirmed example: Slack's `/conversations.history` rejects calls
+without `channel` (`missing required field: channel`).
+
+Use:
+1. list conversations first (`/conversations.list` with `types` and a small `limit`)
+2. pick the target container by recency or by the user's naming
+3. fetch history only for that container id, with a small `limit`
+4. normalize channel name, sender, timestamp, and text; note that bot or
+   attachment-only messages can have empty `text` fields and still be valid
+
 ## Suggested normalization contract
 
 For user-facing summaries, normalize the provider payload into a stable business shape whenever practical:
@@ -158,15 +181,17 @@ For the three-module generic API transport shell:
 
 ```json
 {
-  "data": "{{3.body}}"
+  "data": "{{MIDDLE_API_MODULE_ID.body}}"
 }
 ```
 
 That is the contract. It should stay stable across providers.
 
+In the generic example blueprint, `MIDDLE_API_MODULE_ID` is `3`, so the example mapping is `{{3.body}}`. In real Make exports, inspect the module ids and map to the actual middle API-call module. For example, a flow with StartSubscenario id `2`, API-call module id `5`, and ReturnData id `4` must use `{{5.body}}`.
+
 Do not switch that generic contract to:
-- `{{3}}`
-- `{{3.data}}`
+- `{{MIDDLE_API_MODULE_ID}}`
+- `{{MIDDLE_API_MODULE_ID.data}}`
 - another guessed nested field
 
 ### B. Retrieval-specific normalization
@@ -179,8 +204,8 @@ Only after the body has been returned through the generic shell may you decide h
 - errors
 
 If `data: null`, a bare number, or another unusable shape appears, first ask:
-1. did the generic shell still return `{{3.body}}`?
-2. did the API path, method, headers, or body match the provider requirement?
+1. did the generic shell still return `{{MIDDLE_API_MODULE_ID.body}}` for the actual middle module id?
+2. did the API path, method, headers, query parameters, or body match the provider requirement?
 3. is the downstream interpreter reading the body correctly?
 
 If the failure is actually an authorization failure from an expired or invalid connection, stop retrieval debugging and go back to the credential-request path instead of trying to re-auth the old connection in place.
@@ -197,3 +222,84 @@ Keep failure diagnosis phase-specific:
 
 If activation fails with a generic validation error, go back to shell metadata.
 If the run succeeds but the payload is wrong, stay in Make and fix the API-call plan or downstream normalization before considering fallback.
+
+## Private debug bundle
+
+For hard SaaS retrieval failures, collect one private troubleshooting bundle before changing strategy:
+- original user request and resolved business target
+- agent step log with timestamps and phase labels
+- Make zone, organization, team, app name, app version, and API-call module slug
+- scenario ID plus the relevant `GET /api/v2/scenarios/{scenarioId}/blueprint` excerpt showing the middle module and `__IMTCONN__`
+- bound connection ID, connection detail summary, `/connections/{connectionId}/test` result, and `/connections/{connectionId}/scoped` result when scope IDs are known
+- credential request IDs, recipient, app or connection type, scope or credential shape, and current status
+- failing shell run payload summary (`path`, `method`, `qs`, `body` shape) and the exact provider or Make error
+- execution-log reference from `GET /api/v2/scenarios/{scenarioId}/logs/{executionId}` when an execution ID exists
+- final proof result: `success`, `auth_request_pending`, `missing_scope`, `wrong_connection`, `path_error`, or `unknown`
+
+This bundle is for private debugging. Before sharing publicly, sanitize it according to [Sanitization and Sharing](./sanitization-and-sharing.md).
+
+## Authorization Repair Playbook
+
+Use this sequence for provider authentication, authorization, insufficient-scope, wrong-account, or shell-bound-to-old-connection failures after a shell run:
+
+1. Preserve the failing request payload exactly: `path`, `method`, `header`, `qs`, and `body` shape.
+2. Read the shell blueprint with `GET /api/v2/scenarios/{scenarioId}/blueprint` and extract the middle module app, version, module slug, and bound `__IMTCONN__`.
+3. If the shell has no bound connection, the wrong app/module, or the wrong connection family, treat it as shell provisioning or binding drift before changing API paths.
+4. Inspect the bound connection with `GET /api/v2/connections/{connectionId}` and test liveness with `POST /api/v2/connections/{connectionId}/test`.
+5. If the connection is not live, expired, revoked, or belongs to the wrong account/workspace, treat it as no suitable connection. Return to the credential-request path.
+6. If the connection is live but the provider returns auth, permission, or scope errors, do not try to repair the old OAuth connection in place. Derive the minimal missing permission from the selected endpoint, provider documentation, or live error. When scope IDs are known, check with `POST /api/v2/connections/{connectionId}/scoped` only as evidence for the new request shape.
+7. Create or return a fresh Make Credential Request/new connection for this auth failure. If an already-created fresh pending request for the same app, recipient, account target, and required scope exists, return its `publicUri` instead of creating another duplicate during the same incident. Otherwise create exactly one new request.
+8. The user-facing answer must include the exact request `publicUri` auth link. If Make does not return a URL, state the exact `publicUriUnavailableReason` and the request status; do not collapse this into a vague "reauthorize" answer. For scope-based providers, include explicit connection `type` and explicit `scope`. For API-key, Basic, or other non-scope credential families, follow the credential paste-format rules instead of inventing scopes.
+9. After authorization, list connections again, match the resulting connection to the target identity, test it, and run `/scoped` when scope IDs are known.
+10. Bind according to the shell ownership rule: a newly authorized connection gets a newly created shell; patch an existing shell only when reusing a connection for the same automation and after the required write confirmation.
+11. Rerun the same request payload (`path`, `method`, `header`, `qs`, `body`) through the correctly bound shell. This proves that operation only; repeat scope/path validation for materially different operations.
+
+Do not keep guessing provider paths while the evidence points to connection identity, liveness, or scope. Path repair and authorization repair are separate loops.
+
+## Generic debugging matrix
+
+Scenario exists but `/run` returns no useful output:
+- check the output interface
+- check `scenario-service:ReturnData` mapping if used
+- verify `responsive: true` behavior and response shape
+- verify the output keys the downstream reader expects
+
+`400` or `422` from `/run`:
+- compare submitted `data` keys and types against `/api/v2/scenarios/{scenarioId}/interface`
+- verify required inputs and defaults
+
+Empty business data:
+- check the retrieval query or filter
+- check the target account/workspace identity
+- check the provider API endpoint and permissions
+
+Authentication or authorization error:
+- stop path guessing and use the Authorization Repair Playbook
+
+Wrong account/workspace data:
+- treat this as a connection identity mismatch and use the Authorization Repair Playbook
+
+Scope or permission error:
+- use the Authorization Repair Playbook; do not treat connection liveness as scope proof
+
+Existing shell points to an old connection:
+- use the Authorization Repair Playbook and preserve the new-connection/new-shell rule
+
+## Definition of Done
+
+Do not call retrieval complete just because the scenario exists. Done means:
+- target provider confirmed
+- target account/workspace/mailbox/tenant confirmed
+- retrieval target and operation confirmed
+- connection identity and scope verified
+- connection liveness verified by Make's connection test API
+- Credential Request completed if needed
+- resulting connection ID extracted and recorded
+- real Make scenario exists with `scenario-service:StartSubscenario`, the app-specific API-call module, and `scenario-service:ReturnData`
+- scenario-level input/output interface patched and verified
+- blueprint shows the correct app module and connection ID
+- `/run` with `responsive: true` returns real output data
+- the first real run proves the intended path, method, query, and body through the bound shell
+- retrieval returns records from the intended account/workspace
+- downstream normalization/reporting works if requested
+- schedule points to the final validated configuration if scheduling was requested

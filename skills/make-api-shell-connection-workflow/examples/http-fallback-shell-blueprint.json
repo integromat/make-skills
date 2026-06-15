@@ -1,0 +1,146 @@
+{
+    "name": "HTTP Fallback Shell - noAuth",
+    "flow": [
+        {
+            "id": 2,
+            "module": "scenario-service:StartSubscenario",
+            "version": 2,
+            "parameters": {},
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "restore": {},
+                "interface": [
+                    {
+                        "name": "url",
+                        "type": "text",
+                        "label": "URL",
+                        "required": true,
+                        "multiline": false
+                    },
+                    {
+                        "name": "method",
+                        "type": "text",
+                        "label": "Method",
+                        "required": true,
+                        "multiline": false
+                    },
+                    {
+                        "name": "headers",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Name"
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Headers",
+                        "required": false
+                    },
+                    {
+                        "name": "qs",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Name"
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Query Parameters",
+                        "required": false
+                    },
+                    {
+                        "name": "body",
+                        "type": "text",
+                        "label": "Body",
+                        "required": false,
+                        "multiline": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "module": "http:MakeRequest",
+            "version": 4,
+            "parameters": {
+                "tlsType": "",
+                "proxyKeychain": "",
+                "authenticationType": "noAuth"
+            },
+            "filter": null,
+            "mapper": {
+                "url": "{{2.url}}",
+                "method": "{{lower(2.method)}}",
+                "headers": "{{2.headers}}",
+                "contentType": "{{if(length(2.body) > 0; \"json\")}}",
+                "inputMethod": "jsonString",
+                "shareCookies": false,
+                "parseResponse": false,
+                "allowRedirects": true,
+                "queryParameters": "{{2.qs}}",
+                "stopOnHttpError": false,
+                "jsonStringBodyContent": "{{2.body}}",
+                "requestCompressedContent": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0
+                }
+            }
+        },
+        {
+            "id": 1,
+            "module": "scenario-service:ReturnData",
+            "version": 2,
+            "parameters": {},
+            "mapper": {
+                "data": "{{3.data}}",
+                "headers": "{{3.headers}}",
+                "statusCode": "{{3.statusCode}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0
+                },
+                "expect": [
+                    {
+                        "name": "data",
+                        "type": "any",
+                        "label": ""
+                    },
+                    {
+                        "name": "statusCode",
+                        "type": "any",
+                        "label": ""
+                    },
+                    {
+                        "name": "headers",
+                        "type": "any",
+                        "label": ""
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "version": 1
+    }
+}

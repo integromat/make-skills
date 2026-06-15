@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires a Make account with API access and permissions to create scenarios or credential requests. Works best in environments that can call Make APIs or Make MCP tools.
 metadata:
   author: Make
-  version: "0.1.7"
+  version: "0.3.0"
   homepage: https://www.make.com
   repository: https://github.com/integromat/make-skills
 ---
@@ -32,8 +32,10 @@ Read the file that matches the current task:
 | Discover the app, module, and connection type layers | [Discovery and Shells](./discovery-and-shells.md) |
 | Create, inspect, or resolve a credential request | [Connection Requests](./connection-requests.md) |
 | Choose and execute the post-connection retrieval path | [Retrieval Execution](./retrieval-execution.md) |
+| Repair provider authorization or scope failures after a shell run | [Retrieval Execution](./retrieval-execution.md#authorization-repair-playbook) |
 | Sanitize examples and prepare a public shareable version | [Sanitization and Sharing](./sanitization-and-sharing.md) |
 | Start from a generic blueprint template | [Example shell blueprint](./examples/generic-api-shell-blueprint.json) |
+| Provider has no Make app: generic HTTP shell with noAuth / API key / Basic auth / OAuth 2.0 | [HTTP Fallback Shells](./http-fallback-shells.md) |
 
 ## Fresh-agent operating sequence
 
@@ -45,14 +47,16 @@ When a fresh agent gets a request such as "get my unread emails", "pull my open 
    - ticketing: Jira vs Zendesk vs Linear vs other
 2. Resolve the target account, mailbox, workspace, project, or queue if the request is ambiguous.
 3. Resolve the active Make zone, organization, and team.
-4. Search the Make app catalog for the provider candidate using `GET /api/v2/imt/apps?organizationId=ORG_ID&teamId=TEAM_ID&scoredSearch=true`.
+4. Resolve the provider app deterministically. `GET /api/v2/imt/apps` ignores `search`, `limit`, and `scoredSearch` and always returns the full ~4k-app catalog, so never rely on server-side search. Match locally instead: search a curated top-apps catalog first (in helper environments, `search_apps(query=...)` does this); only when nothing matches there, fetch the full catalog once and filter it client-side, case-insensitively, over `name` and `label`. All query words score; without an exact phrase match the first query word must hit for a candidate to count, and the first ranked result is the recommended app.
+   - Only **Make-verified apps and the organization's own custom/SDK apps** may be auto-selected. Community apps (`communityApp-*`) are excluded from matching; custom apps (catalog prefix `app#*`) are allowed. Authoritative check: `GET /api/v2/imt/apps-meta` lists all verified and custom apps available to the organization (custom-app names appear there without the `app#` prefix). Builtin utility pseudo-apps (`builtin`, `util`, `gateway`, `regexp`) are not SaaS providers and must never surface as search results. If the provider only exists as a community app, treat it as "no app" and build a generic HTTP fallback shell instead — see [HTTP Fallback Shells](./http-fallback-shells.md).
 5. Inspect the chosen app with `GET /api/v2/imt/apps/{appName}/{version}` and record the exact API-call module slug and both connection type layers.
-6. Reuse an existing suitable connection if one already matches the app, account identity, and required scope.
+6. Reuse an existing suitable connection only after verifying details and liveness: `GET /api/v2/connections/{connectionId}` plus `POST /api/v2/connections/{connectionId}/test`.
 7. Reuse an existing shell only when reusing an existing suitable connection. If a new connection must be created, create a new shell for that new connection instead of patching an old shell onto a newly authorized account.
 8. Only if no suitable connection exists, create a credential request.
 9. After the connection decision is settled, create or patch the shell according to the reuse rule above and verify that the shell can run.
 10. Run the narrowest possible retrieval request first through the API-call shell.
 11. Expand into list/search -> detail -> normalization only after the first shell run proves the path works.
+12. If no Make app exists for the provider at all, build a generic HTTP fallback shell with `http:MakeRequest` instead of giving up — see [HTTP Fallback Shells](./http-fallback-shells.md).
 
 The agent should not jump straight from "user wants SaaS data" to "create a new connection" or "call a direct SDK" without walking this sequence.
 
@@ -87,17 +91,23 @@ If one of those items is missing and cannot be discovered safely, stop and ask o
    - shell provisioning
    - retrieval execution and output normalization
 10. Do not assume the generic three-module blueprint is automatically activatable for every app. Before activation, compare the middle module metadata with a real current blueprint or module export for the same app and version in the active workspace.
-11. For the generic API shell contract that uses `scenario-service:ReturnData` with ExpectDataAny, the final mapper must return the app module response body as `data: {{3.body}}`.
-12. Never replace that shell-contract default with `{{3}}` or `{{3.data}}` just because the full bundle looks tempting. The shell is meant to return the API response body, not the entire Make module bundle.
-13. Still inspect a real execution bundle for validation, but use that to confirm that `body` contains the intended payload or error object — not to redefine the generic shell contract.
-14. Resolve the active workspace zone before any team-scoped call. `GET /api/v2/users/me` and `GET /api/v2/imt/apps/...` can succeed on multiple zones, while `GET /api/v2/connections?teamId=...` or scenario endpoints on the wrong zone can fail with `403 Permission denied`.
-15. For the REST `/api/v2/connections` endpoint, filter with `type=...` or `type[]=...`. Do not assume query parameters such as `accountName=...` are honored just because an MCP tool uses `accountName` terminology.
-16. Do not ask the user to paste raw OAuth secrets, API keys, or passwords into chat. Use a credential request whenever a new connection must be created.
-17. If the user request is ambiguous, resolve the concrete provider and account first; if it is already explicit, do not ask again.
-18. If the Module 2 request method is `PUT`, `PATCH`, or `DELETE`, warn explicitly before execution. Treat those methods as mutating live SaaS operations, not passive retrieval.
-19. Do not assume `StartSubscenario.metadata.interface` is enough for scenario runs. After creating or updating an on-demand shell, explicitly set the scenario-level interface with `/api/v2/scenarios/{scenarioId}/interface` and verify it before the first run.
-20. Treat `/api/v2/scenarios/{scenarioId}/run` as the standard execution path for this shell family. Pass the business payload under `data` with keys that match the scenario interface exactly, and prefer `responsive: true` for validation runs.
-21. Shell reuse is app-specific, not just provider-family-specific. A shell built around one app module should not be repointed to another app module just because both belong to the same vendor suite.
+11. For the generic API shell contract that uses `scenario-service:ReturnData` with ExpectDataAny, the final mapper must return the app module response body as `data: {{MIDDLE_API_MODULE_ID.body}}`.
+12. In the generic example blueprint in this skill the middle API-call module id is `3`, so the example mapper is `data: {{3.body}}`. If the real blueprint uses different module ids, use the real middle module id instead. For example, a Make UI export may use StartSubscenario `2`, API-call module `5`, and ReturnData `4`, so the correct mapper is `data: {{5.body}}`.
+13. Never replace that shell-contract default with `{{MIDDLE_API_MODULE_ID}}` or `{{MIDDLE_API_MODULE_ID.data}}` just because the full bundle looks tempting. The shell is meant to return the API response body, not the entire Make module bundle.
+14. Still inspect a real execution bundle for validation, but use that to confirm that `body` contains the intended payload or error object — not to redefine the generic shell contract.
+15. Resolve the active workspace zone before any team-scoped call. `GET /api/v2/users/me` and `GET /api/v2/imt/apps/...` can succeed on multiple zones, while `GET /api/v2/connections?teamId=...` or scenario endpoints on the wrong zone can fail with `403 Permission denied`.
+16. For the REST `/api/v2/connections` endpoint, filter with `type=...` or `type[]=...`. Do not assume query parameters such as `accountName=...` are honored just because an MCP tool uses `accountName` terminology.
+17. Do not ask the user to paste raw OAuth secrets, API keys, or passwords into chat. Use a credential request whenever a new connection must be created. Pick the path by recipient: for the current Make user, the self-service endpoints (`actions/create`, `actions/create-by-credentials`) work on a wide range of plans; only requesting credentials from a different person (`requests/v2`) is the Enterprise/Partner feature gated by `license.credentialRequests` (see [Connection Requests](./connection-requests.md), "Choose the request path by recipient first"). When no request path works, guide the user through creating the connection in the scenario editor instead. In all flows state the exact credential paste format (Bearer prefix or raw key) — never assume the user knows it.
+18. If the user request is ambiguous, resolve the concrete provider and account first; if it is already explicit, do not ask again.
+19. If the Module 2 request method is `PUT`, `PATCH`, or `DELETE`, warn explicitly before execution. Treat those methods as mutating live SaaS operations, not passive retrieval.
+20. Do not assume `StartSubscenario.metadata.interface` is enough for scenario runs. After creating or updating an on-demand shell, explicitly set the scenario-level interface with `/api/v2/scenarios/{scenarioId}/interface` and verify it before the first run.
+21. Treat `/api/v2/scenarios/{scenarioId}/run` as the standard execution path for this shell family. Pass the business payload under `data` with keys that match the scenario interface exactly, and prefer `responsive: true` for validation runs.
+22. Expose query parameters as a first-class shell input named `qs`. Use `qs` for provider API query parameters such as Gmail search options, Drive `fields`, Drive `q`, Graph `$select`, pagination, or `supportsAllDrives`. If a caller provides a query string in `path`, normalize it into `qs` before running the shell.
+23. When moving blueprints between Make UI exports and Make scenario create/update APIs, normalize shape deliberately: UI/export artifacts may store the flow at `subflows[0].flow`, while scenario create/update payloads require a top-level `flow`. Do not send a raw UI export to create/update without normalization.
+24. Shell reuse is app-specific, not just provider-family-specific. A shell built around one app module should not be repointed to another app module just because both belong to the same vendor suite.
+25. Before reusing any existing connection or a shell that points to an existing connection, call Make's connection verification API: `POST /api/v2/connections/{connectionId}/test`. A response with `verified: true` is the liveness proof. A stale Credential Request status does not override a verified connection. Liveness is not proof that the provider will authorize every path, method, or scope; provider authorization is proven only by a successful shell run for the intended operation. On provider auth or scope errors, use the [Authorization Repair Playbook](./retrieval-execution.md#authorization-repair-playbook).
+26. When resuming after user authorization, reuse the saved Credential Request `requestId`; inspect the request, then list and verify connections. Do not create a new Credential Request while an active request for the same app/account is still being resolved.
+27. Treat a future `expire` timestamp as valid. Treat only a past expiry, revoked connection, failed verification, or provider auth error as invalid.
 
 ## App binding and connection-family matrix
 
@@ -131,6 +141,7 @@ Expose these shell inputs through StartSubscenario:
 - `path`
 - `method`
 - `header`
+- `qs`
 - `body`
 
 Use the discovered middle module as the only app-specific part of the shell.
@@ -143,6 +154,7 @@ It receives:
 - `path`
 - `method`
 - `header`
+- `qs`
 - `body`
 
 It forwards those values into the app-specific Make API-call module.
@@ -156,9 +168,11 @@ Therefore the shell contract is:
 
 ```json
 {
-  "data": "{{3.body}}"
+  "data": "{{MIDDLE_API_MODULE_ID.body}}"
 }
 ```
+
+In this skill's generic example blueprint, `MIDDLE_API_MODULE_ID` is `3`, so the example value is `{{3.body}}`. In a real Make export, always inspect the module ids and use the actual API-call module id.
 
 That contract is generic across SaaS providers. It applies whether the middle module fronts Gmail, Outlook, HubSpot, Jira, or another provider-specific Make API-call module.
 
@@ -177,10 +191,11 @@ Complete these steps first:
 2. discover the exact app version and module slug
 3. determine both connection type layers
 4. look for an existing suitable connection for the correct account identity and scope
-5. look for an existing shell scenario that already fits the contract for that existing connection
-6. create or resolve the credential request only if reuse failed
-7. create a new shell if a new connection was created, or patch an existing shell only when reusing an existing connection
-8. verify that the shell runs with the chosen connection
+5. verify candidate connections with `POST /api/v2/connections/{connectionId}/test`
+6. look for an existing shell scenario that already fits the contract for that verified connection
+7. create or resolve the credential request only if reuse failed
+8. create a new shell if a new connection was created, or patch an existing shell only when reusing an existing connection
+9. verify that the shell runs with the chosen connection
 
 Deliverable at the end of Phase A:
 - a connection-ready API-call shell scenario
@@ -197,7 +212,7 @@ Do not treat a successful credential request as proof that the retrieval stage i
 
 Important:
 - the generic three-module API shell remains the only retrieval transport in this workflow family
-- keep the shell contract fixed as `data: {{3.body}}`
+- keep the shell contract fixed as `data: {{MIDDLE_API_MODULE_ID.body}}` where `MIDDLE_API_MODULE_ID` is the actual app API-call module id in the blueprint
 - do not switch to native retrieval/search/list modules as a fallback or optimization
 - if authorization fails because an existing connection is expired or invalid, do not try to re-auth that connection in place; go through the credential-request path and then create a new shell for the new connection
 
@@ -217,6 +232,7 @@ Use a run payload shaped like:
     "path": "...",
     "method": "GET",
     "header": [],
+    "qs": [],
     "body": null
   },
   "responsive": true
