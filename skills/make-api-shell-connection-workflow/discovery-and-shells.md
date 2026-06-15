@@ -97,6 +97,10 @@ error such as Slack's `not_authed`. Verify the binding right after create or
 update by re-reading the blueprint, and bind the connection in the same write
 that creates the module, not in a later repair step.
 
+Blueprint validation, interface deployment, activation, and connection liveness
+are setup proofs. Provider authorization for a specific operation is proven
+only by a successful shell run through the bound connection.
+
 ### Activation gate
 
 `POST /scenarios/{scenarioId}/run` on a created-but-inactive scenario fails
@@ -355,7 +359,7 @@ Verify connection liveness:
 Verify whether required scopes are present, when scope IDs are known:
 - `POST /api/v2/connections/{connectionId}/scoped`
 
-Use `/test` before reusing a connection or a shell that already points at one. A response with `verified: true` is the Make-side proof that the saved provider credentials are still valid. If a Credential Request detail is stale or still says `pending`, a verified connection still wins.
+Use `/test` before reusing a connection or a shell that already points at one. A response with `verified: true` is the Make-side proof that the saved provider credentials are still live. It is not proof that every provider path, method, or scope is authorized. If a Credential Request detail is stale or still says `pending`, a verified connection still wins.
 
 ## Base URL and zone
 
