@@ -23,6 +23,8 @@ This skill is primarily about provisioning and shell construction. Treat busines
 
 The generic shell described here is an API transport wrapper, not business logic. It should behave like a reusable API endpoint for any SaaS app that Make can front, including email, CRM, ticketing, support, marketing, or task systems.
 
+Known Make module id: the Make Code module is `"module": "code:ExecuteCode"`.
+
 ## Quick routing
 
 Read the file that matches the current task:

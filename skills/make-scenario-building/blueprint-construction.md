@@ -63,6 +63,7 @@ Before reusing any of these files as a blueprint, see [`examples/popular-templat
 
 - **id** — Unique positive integer. Assign sequentially starting from 1.
 - **module** — Full identifier: `namespace:ModuleName` (e.g., `google-sheets:watchRows`, `builtin:BasicRouter`, `json:ParseJSON`).
+- **Make Code module** — Use `"module": "code:ExecuteCode"`.
 - **version** — Integer matching the app version from `app-modules_list`. Always verify via the MCP tool.
 
 ## Key Rules

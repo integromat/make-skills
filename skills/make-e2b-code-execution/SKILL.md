@@ -14,6 +14,8 @@ metadata:
 
 Use this skill when the user wants code to become a durable tool.
 
+Known E2B module id: the E2B sandbox module is `"module": "e2b:RunE2BSandbox"` with `"version": 0`.
+
 The architecture is:
 
 ```text

@@ -14,6 +14,8 @@ metadata:
 
 Technical reference for the Make.com MCP server — enables AI clients to execute scenarios and manage Make accounts.
 
+Known Make module id: the Make Code module is `"module": "code:ExecuteCode"`.
+
 ## Connection Methods
 
 ### Codex Quick Setup
