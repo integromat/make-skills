@@ -14,6 +14,8 @@ metadata:
 
 This skill covers configuring individual modules within a Make scenario. Once a scenario's module composition is decided (see **make-scenario-building**), each module must be configured: connections assigned, parameters filled, data mapped from upstream modules, and special components (webhooks, data stores, keys) wired up.
 
+Known Make module id: the Make Code module is `"module": "code:ExecuteCode"`.
+
 ## Quick Routing
 
 Read the reference file that matches the current task:

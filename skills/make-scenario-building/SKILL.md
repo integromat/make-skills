@@ -14,6 +14,7 @@ metadata:
 
 This skill guides building a scenario in Make. A scenario is an automated workflow composed of modules connected together. Before building anything, Phase 1 below MUST be completed.
 
+Known Make module id: the Make Code module is `"module": "code:ExecuteCode"`.
 
 ## Phase 1: Understand the Business Need & Identify Modules
 
