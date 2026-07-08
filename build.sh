@@ -26,6 +26,7 @@ SKILLS=(
     "make-scenario-building"
     "make-module-configuring"
     "make-mcp-reference"
+    "make-connected-code-hosting"
 )
 
 echo "Building make-skills distribution packages v${VERSION}..."

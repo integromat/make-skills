@@ -1,0 +1,44 @@
+{
+  "name": "Connected Code on-demand smoke",
+  "flow": [
+    {
+      "id": 1,
+      "module": "connected-code:ExecuteConnectedCode",
+      "version": 1,
+      "parameters": {
+        "connectionType": "http",
+        "httpBaseUrl": "https://api.example.test",
+        "credentialType": "keychain:apikeyauth",
+        "credential": "__USER_SELECTS_HTTP_CREDENTIAL__"
+      },
+      "mapper": {
+        "language": "javascript",
+        "inputFormat": "editor",
+        "codeEditorJavascript": "const response = await connection.fetch('/items', { method: 'GET', query: { limit: input.limit || 10 } });\nconst text = await response.text();\nif (!response.ok) throw new Error(`HTTP request failed ${response.status}: ${text.slice(0, 300)}`);\nreturn JSON.parse(text);",
+        "input": [
+          { "name": "limit", "value": 10 }
+        ],
+        "dependencies": []
+      },
+      "metadata": {
+        "designer": { "x": 0, "y": 0 }
+      }
+    }
+  ],
+  "metadata": {
+    "instant": false,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": { "orphans": [] }
+  }
+}

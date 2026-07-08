@@ -12,6 +12,7 @@ Give your AI coding agent deep Make expertise — for building workflow automati
 | **make-module-configuring** | Module configuration workflow — parameter filling, connections, mapping, webhooks, data stores, IML expressions, validation |
 | **make-mcp-reference** | MCP server reference — configuration, OAuth/token auth, scopes, troubleshooting |
 | **make-api-shell-connection-workflow** | Reusable Make API-call shell provisioning — app discovery, connection request/reuse, interface setup, shell execution, SaaS retrieval transport |
+| **make-connected-code-hosting** | Connected Code hosting workflow — code-first Make scenarios for schedules, webhooks, SaaS connections, HTTP fallback, and verification |
 
 ## Prerequisites
 
@@ -48,8 +49,9 @@ Download individual skills as zip files and upload to your project:
 | Module Configuring | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-module-configuring.zip) |
 | MCP Reference | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-mcp-reference.zip) |
 | API Shell + Connection Workflow | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-api-shell-connection-workflow.zip) |
+| Connected Code Hosting | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-connected-code-hosting.zip) |
 
-Or download the [complete bundle](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-skills.zip) with all 4 skills + MCP config.
+Or download the [complete bundle](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-skills.zip) with all 5 skills + MCP config.
 
 ### Codex
 
@@ -72,7 +74,7 @@ codex mcp login make
 npx skills add integromat/make-skills
 ```
 
-Installs all four skills into your agent's skills directory. Works with any agent that supports the [Open Agent Skills](https://skills.sh) protocol — Cursor, GitHub Copilot, Windsurf, Cline, and [40+ others](https://skills.sh). Technical setup required.
+Installs all five skills into your agent's skills directory. Works with any agent that supports the [Open Agent Skills](https://skills.sh) protocol — Cursor, GitHub Copilot, Windsurf, Cline, and [40+ others](https://skills.sh). Technical setup required.
 
 ### Manual Installation (Any Agent)
 

@@ -1,0 +1,42 @@
+{
+  "name": "Connected Code scheduled Postgres smoke",
+  "flow": [
+    {
+      "id": 1,
+      "module": "connected-code:ExecuteConnectedCode",
+      "version": 1,
+      "parameters": {
+        "connectionType": "postgres",
+        "__IMTCONN__": "__USER_SELECTS_POSTGRES_CONNECTION__"
+      },
+      "mapper": {
+        "language": "javascript",
+        "inputFormat": "editor",
+        "codeEditorJavascript": "const result = await connection.sql.query('select now() as checked_at, $1::text as label', [input.label || 'connected-code']);\nreturn { ok: true, rows: result.rows, rowCount: result.rowCount };",
+        "input": [
+          { "name": "label", "value": "scheduled-smoke" }
+        ],
+        "dependencies": []
+      },
+      "metadata": {
+        "designer": { "x": 0, "y": 0 }
+      }
+    }
+  ],
+  "metadata": {
+    "instant": false,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": { "orphans": [] }
+  }
+}

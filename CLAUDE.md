@@ -25,6 +25,8 @@ skills/
     retrieval-execution.md
     sanitization-and-sharing.md
     examples/generic-api-shell-blueprint.json
+  make-connected-code-hosting/  # Connected Code hosting workflow for code-first scenarios
+    SKILL.md
   make-mcp-reference/      # MCP config & troubleshooting (1 reference file)
     SKILL.md
     references/transport-details.md
@@ -44,9 +46,10 @@ skills/
 
 ## Skills
 
-Four auto-activated skills guide scenario building end-to-end. They divide responsibilities:
+Five auto-activated skills guide scenario building end-to-end. They divide responsibilities:
 
 - **make-api-shell-connection-workflow** handles reusable Make API-call shell provisioning and Make-first SaaS retrieval routing
+- **make-connected-code-hosting** handles code-first Make scenarios using Connected Code for schedules, webhooks, SaaS connections, HTTP fallback, and user-managed connection handoff
 - **make-scenario-building** decides WHICH modules to use and WHY (scenario architecture)
 - **make-module-configuring** handles HOW to configure each module (parameters, connections, mapping)
 - **make-mcp-reference** covers MCP infrastructure (connection methods, scopes, troubleshooting)
@@ -56,6 +59,12 @@ Four auto-activated skills guide scenario building end-to-end. They divide respo
 Reusable API-call shell workflow: provider/app resolution, connection reuse vs credential request, shell creation/patching, explicit interface setup, run validation, and SaaS retrieval via the shell contract.
 
 References: 4 files (discovery-and-shells, connection-requests, retrieval-execution, sanitization-and-sharing) plus 1 example blueprint
+
+### make-connected-code-hosting
+
+Connected Code hosting workflow: default to `connected-code:ExecuteConnectedCode` for custom business logic, keep normal Make modules for triggers/scheduling/webhooks/control/delivery, use app search to choose the Connected Code App/connection surface, and stop after blueprint generation with a user-managed connection handoff when the connection is not ready.
+
+This is the preferred path for requests such as "host this on Make", "run this every morning", "make a webhook around this code", or "use a SaaS/API/database from code".
 
 ### make-mcp-reference
 

@@ -49,6 +49,10 @@
       {
         "name": "make-mcp-reference",
         "path": "./skills/make-mcp-reference"
+      },
+      {
+        "name": "make-connected-code-hosting",
+        "path": "./skills/make-connected-code-hosting"
       }
     ]
   },

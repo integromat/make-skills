@@ -1,0 +1,59 @@
+{
+  "name": "Webhook to Connected Code normalize",
+  "flow": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": {
+        "hook": "__USER_CREATES_WEBHOOK__",
+        "maxResults": 1
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": { "x": 0, "y": 0 },
+        "expect": [
+          { "name": "text", "type": "text", "label": "Text" },
+          { "name": "channel", "type": "text", "label": "Channel" },
+          { "name": "metadata", "type": "collection", "label": "Metadata", "spec": [] }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "module": "connected-code:ExecuteConnectedCode",
+      "version": 1,
+      "parameters": {},
+      "mapper": {
+        "language": "javascript",
+        "inputFormat": "editor",
+        "codeEditorJavascript": "const text = String(input.text || '').trim();\nif (!text) throw new Error('Missing required webhook field: text');\nreturn { ok: true, text, channel: String(input.channel || 'default').trim().toLowerCase(), metadata: input.metadata || {}, receivedAt: new Date().toISOString() };",
+        "input": [
+          { "name": "text", "value": "{{1.text}}" },
+          { "name": "channel", "value": "{{1.channel}}" },
+          { "name": "metadata", "value": "{{1.metadata}}" }
+        ],
+        "dependencies": []
+      },
+      "metadata": {
+        "designer": { "x": 300, "y": 0 }
+      }
+    }
+  ],
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": { "orphans": [] }
+  }
+}
