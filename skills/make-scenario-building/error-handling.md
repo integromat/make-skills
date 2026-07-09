@@ -78,7 +78,7 @@ The **Throw** module intentionally raises an error in the scenario flow. Use it 
 ```
 ... → AI Agent → Router
   ├─ Route 1 [filter: result is not empty]: ReturnData
-  └─ Route 2 [filter: result is empty]: Throw Error ("AI agent returned no result")
+  └─ Route 2 [filter: result is empty]: Throw error ("AI agent returned no result")
 ```
 
 ### Exponential Backoff
