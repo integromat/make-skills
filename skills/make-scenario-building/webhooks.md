@@ -69,6 +69,7 @@ Trigger: Webhooks - Custom webhook → Router
 - **Webhook expiration.** Make automatically deactivates webhooks not connected to any scenario for more than 5 days (120 hours). Deactivated webhooks return a 410 Gone status code.
 - **Parallel vs sequential processing.** By default, webhook scenarios process requests in parallel (concurrently). Enable sequential processing in scenario settings to force Make to wait for the previous execution to complete before starting the next one.
 - **Error behavior.** Immediate (webhook) scenarios stop immediately on error. Scheduled scenarios stop after 3 unsuccessful attempts.
+- **Returning data to the HTTP caller.** A webhook-triggered scenario's flow output (e.g. `scenario-service:ReturnData`) is invisible to the system that called the webhook URL — that caller only ever gets a generic `Accepted` acknowledgement. `ReturnData` only reaches *synchronous* callers (a scenario invoked via `StartSubscenario`/`CallSubscenario` or the Run-scenario API). If the external system needs the scenario's result in its HTTP response body, end the flow with a **`Webhooks > Webhook response`** module (`gateway:WebhookRespond`) instead. Don't assume a `SUCCESS` run status means the caller received any data — verify by inspecting the actual response the caller gets (e.g. curl the webhook URL), not just the execution status.
 
 
 ## Official Documentation
