@@ -69,7 +69,17 @@ Make categorizes errors into types. Understanding which type you're dealing with
 
 ### Throw Module
 
-The **Throw** module intentionally raises an error in the scenario flow. Use it for validation — e.g., if data doesn't meet expected criteria, throw an error to trigger an upstream error handler or halt the scenario.
+The **Throw** module intentionally raises an error in the scenario flow. Use it for validation — e.g., if data doesn't meet expected criteria, throw an error to trigger an upstream error handler or halt the scenario. Two variants, both from the `builtin` app:
+- `builtin:ThrowError` ("Throw error") — stops the scenario execution with `status: 3` (error).
+- `builtin:ThrowWarning` ("Throw warning") — records a warning but lets the scenario continue.
+
+**Guarding a final output module.** When a scenario ends in `scenario-service:ReturnData` or `gateway:WebhookRespond`, a module upstream can complete without error yet still produce an empty or malformed value (e.g., an AI Agent module answering nothing useful for a given input) — the run still reports success because nothing actually crashed. To make that case surface as a real, catchable failure instead of a silent success, route through a Router with two filtered branches immediately before the output module — one continuing normally, the other throwing:
+
+```
+... → AI Agent → Router
+  ├─ Route 1 [filter: result is not empty]: ReturnData
+  └─ Route 2 [filter: result is empty]: Throw Error ("AI agent returned no result")
+```
 
 ### Exponential Backoff
 
