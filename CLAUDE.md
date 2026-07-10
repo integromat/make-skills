@@ -148,8 +148,14 @@ Edit `.mcp.json`. The `make` server uses HTTP transport to Make's hosted endpoin
 
 ### Releasing a new version
 
-1. Run `npm run release` — bumps version in `package.json`, `plugin.json`, `marketplace.json`, and all `skills/*/SKILL.md` frontmatter, then runs `build.sh`
-2. Publish versioned artifacts: `gh release create v${VERSION} dist/*-v${VERSION}.zip`
+Releases are automated via the org-managed **release-please** workflow (`.github/workflows/release-please.yml`, generated from mono `libs/github-resources/src/repositories/make-skills.ts`); there is no local release step. The flow:
+
+1. Merge conventional-commit PRs (`feat:`, `fix:`, …) to `main`. PR titles are linted as Conventional Commits by the org `validate-pr.yml` (also mono-generated), which release-please relies on. release-please opens/updates a **Release PR** that bumps the version across `package.json`, `package-lock.json`, both `plugin.json` files, `marketplace.json`, and each published `skills/*/SKILL.md` frontmatter (via the `# x-release-please-version` annotation), and regenerates `CHANGELOG.md`.
+2. Merge the Release PR when ready. release-please creates the tag + GitHub Release, which fires `.github/workflows/build-release-assets.yml`: it runs `build.sh` and uploads the zips as release assets (both `<name>-v<ver>.zip` and the stable `<name>.zip` alias).
+
+The version-bump targets beyond `package.json` live in `actions-toolkit.config.mjs` (`releasePlease.extraFiles`). Zips are never committed — `dist/` is built ad-hoc in CI. Download links resolve via `https://github.com/integromat/make-skills/releases/latest/download/<name>.zip`.
+
+Which skills ship is controlled by `skills.publish.json` (single source of truth) — both `build.sh` (zips + bundle) and `actions-toolkit.config.mjs` (SKILL.md bump targets) derive from it. `skills.internal.json` holds skills back. `scripts/check-skill-manifests.mjs` (run in CI via `manifest-check.yml`) fails if a skill folder is left unclassified or `package.json` `agents.skills[]` drifts from the publish list. To add a skill: add it to `skills.publish.json` and `package.json` `agents.skills[]`, and add the `# x-release-please-version` annotation to its `SKILL.md` version line.
 
 ## Key Conventions
 

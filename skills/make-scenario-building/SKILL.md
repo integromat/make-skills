@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires a Make.com account with permissions to create scenarios. Works with any agent that supports MCP (Claude Code, Cursor, GitHub Copilot, etc.).
 metadata:
   author: Make
-  version: "0.1.7"
+  version: "0.1.7" # x-release-please-version
   homepage: https://www.make.com
   repository: https://github.com/integromat/make-skills
 ---

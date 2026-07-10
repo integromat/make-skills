@@ -1,0 +1,24 @@
+name: Manifest check
+
+# Fails the build if the skill lists that must stay in sync disagree, or if a
+# skill folder in skills/ is not consciously classified as published/internal.
+# This turns silent drift (a new skill added but forgotten in the manifests)
+# into a loud, blocking failure.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node scripts/check-skill-manifests.mjs

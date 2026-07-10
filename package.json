@@ -30,7 +30,8 @@
     "ai-agents"
   ],
   "scripts": {
-    "release": "commit-and-tag-version && bash build.sh"
+    "build": "bash build.sh",
+    "check:skills": "node scripts/check-skill-manifests.mjs"
   },
   "agents": {
     "skills": [
@@ -49,10 +50,11 @@
       {
         "name": "make-mcp-reference",
         "path": "./skills/make-mcp-reference"
+      },
+      {
+        "name": "make-e2b-code-execution",
+        "path": "./skills/make-e2b-code-execution"
       }
     ]
-  },
-  "devDependencies": {
-    "commit-and-tag-version": "12.7.1"
   }
 }

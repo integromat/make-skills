@@ -1,0 +1,42 @@
+name: Build release assets
+
+# Builds the distribution zips ad-hoc and attaches them to a GitHub Release.
+#
+# The release itself is created by the org-managed release-please workflow
+# (.github/workflows/release-please.yml, generated from mono). Because that
+# workflow authenticates as a GitHub App, the release it publishes DOES fire
+# this `release: published` event (unlike releases made with the default
+# GITHUB_TOKEN, which don't trigger further workflows).
+#
+# Uploads both <name>-v<ver>.zip and the stable <name>.zip alias that
+# /releases/latest/download/<name>.zip resolves to.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to (re)build and upload assets for
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-assets:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+
+      - name: Build distribution zips
+        run: bash build.sh
+
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "$TAG" dist/*.zip --clobber
