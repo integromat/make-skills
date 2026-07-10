@@ -119,6 +119,7 @@ If `RpcGetModels` succeeds, prefer the returned list. If it fails, pick from the
 - **AI provider is locked at creation.** Once an agent is created with a provider (OpenAI, Anthropic, Gemini, Make AI Provider), it cannot be changed. To switch providers, create a new agent.
 - **Agent deletion is permanent.** Deleting an agent breaks all `Run an agent` modules that reference it. Verify no active scenarios depend on the agent before deleting.
 - **Agents are team-shared.** Like connections, agents are visible to all team members. For a private agent, use a team where you're the only member.
+- **Webhook-triggered agent flows need a response module.** If the scenario starts with `Webhook` (as in the Flowchart Notation example above) and the caller needs the agent's answer back in the HTTP response, end the flow with a `Webhooks > Webhook response` module — `ReturnData`/scenario-output-style modules don't reach a raw webhook caller. See [Webhooks Gotchas](./webhooks.md#gotchas).
 
 ## Official Documentation
 

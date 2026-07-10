@@ -72,7 +72,7 @@ Once the use case is clear, map it to Make modules using the MCP tools available
 3. **Get app documentation.** For each app, call `app_documentation_get` using the exact `appName` value returned by `apps_recommend` (do not abbreviate or modify it). This returns detailed capabilities and module descriptions. Call once per app, not per module.
 
 4. **Select modules.** Pick the specific modules needed:
-   - **Trigger module** — what starts the scenario (e.g., Watch New Rows, Webhook, Schedule)
+   - **Trigger module** — what starts the scenario (e.g., Watch New Rows, Webhook, Schedule). Instant/webhook triggers are generally preferred when available — they're faster and use fewer operations (see [Webhooks Gotchas](./webhooks.md#gotchas)) — but they're significantly harder to verify end-to-end after deployment, see "Webhook Scenarios: Verifying via `scenarios_run` Is Unreliable" below. Weigh that tradeoff explicitly: use a webhook trigger when the user needs real-time delivery or the source system only offers webhooks; otherwise, if a polling "Watch..." module or Schedule is available and verifiability matters more than the operations/latency savings, prefer that instead.
    - **Action modules** — what the scenario does (e.g., Create Record, Send Message, Update Row)
    - **Utility modules** — if needed for data transformation, iteration, aggregation, routing, or error handling
 
@@ -233,6 +233,8 @@ Run the scenario and confirm it succeeds before handing off to the user.
 2. **Check the result.** Call `executions_list` for the scenario, then `executions_get` on the most recent execution. Inspect the `status` field:
    - `1` = success — proceed to Step 7.
    - `3` = error — continue to step 3.
+   - **`status: 1` alone is not proof the scenario produced correct data.** A module can complete without throwing and still hand downstream steps an empty or wrong value (e.g., an AI Agent module legitimately returning nothing for a given input) — Make's execution status reflects "did anything crash," not "is this output right." Inspect the actual output content before telling the user it worked; see the [Throw Module guard pattern](./error-handling.md#throw-module) for converting bad-data cases into real failures instead of silent successes.
+   - **If the first module is a webhook, `scenarios_run` does not reliably verify it in either direction.** See "Webhook Scenarios: Verifying via `scenarios_run` Is Unreliable" in Common App Gotchas before trusting this step's result for a webhook-triggered scenario.
 
 3. **Diagnose the failure.** Read `error.message` and `error.causeModule` from the execution result. Common runtime issues that pass schema validation:
    - Mapped fields resolving to `undefined` or `null` at runtime (e.g., `{{2.mimeType}}` when the upstream module produced no output for that field)
@@ -324,6 +326,15 @@ Only applies to select-mode. Map-mode accepts the raw ID.
 ### Webhook Scenarios: Scheduling Type
 
 When the first module is a webhook (`gateway:CustomWebHook` or any instant trigger), always use `{"type": "immediately"}` for scheduling. Using `"indefinitely"` causes scenario activation to fail with "Invalid interval." See Step 4 above.
+
+### Webhook Scenarios: Verifying via `scenarios_run` Is Unreliable
+
+For a scenario whose first module is a webhook, `scenarios_run` does not faithfully exercise the real trigger path in either direction — treat both its input and its output as unavailable/unverified for this trigger type:
+
+- **Input.** The `data` you pass to `scenarios_run` is injected directly as the trigger module's output bundle, bypassing the webhook's actual request parsing (JSON-body/query-string merging, header/method capture, data-structure validation). A payload that works via `scenarios_run` may not match what a real HTTP POST produces, and vice versa.
+- **Output.** The scenario's declared output (`scenario-service:ReturnData` / the interface configured via `scenarios_set-interface`) is **not** surfaced in the `scenarios_run` response for a webhook-triggered scenario — even on a genuinely clean run, `outputs` comes back empty/absent, every time. This is separate from `Webhooks > Webhook response` (`gateway:WebhookRespond`), whose response only ever reaches a real inbound HTTP caller, never `scenarios_run` — see [Webhooks](./webhooks.md#gotchas).
+
+**To actually verify a webhook-triggered scenario end-to-end, don't have the agent fetch and relay the webhook URL.** A webhook URL is a bearer credential — whoever has it can invoke the scenario, and it's returned unredacted by `hooks_get`/`hooks_list` (unlike connection credentials, which are hidden from MCP entirely). Point the user at where to find it themselves (the scenario's trigger module in the Make UI, or their own `hooks_get` call outside this session) and have *them* send the real request (e.g. `curl`), rather than the agent retrieving it and echoing it back through this conversation.
 
 ### Gmail / Google Email: `accountName` Is `"google-email"`, Not `"google"`
 
