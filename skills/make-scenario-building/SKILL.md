@@ -87,6 +87,19 @@ If a tool is not found by exact name, search for similarly named tools on the Ma
 - **App version** (exact version as returned by the tool)
 - **Module name** (exact technical name/slug of each module you plan to use)
 
+### Step 2.1: Select the Custom-Code Execution Surface
+
+When the use case requires custom code or API behavior that normal modules do not express cleanly:
+
+1. Load `make-connected-code-hosting` and run its execution-surface availability gate.
+2. If `connected-code:ExecuteConnectedCode` resolves in the active workspace, use Connected Code for the custom logic.
+3. If Connected Code is available but the provider is absent from its service-App catalog, evaluate the Connected Code HTTP App before leaving Connected Code.
+4. If Connected Code is unavailable for custom code, discover and verify the normal Make Code module (`code:ExecuteCode`) and use it when its current interface supports the task.
+5. If Connected Code is unavailable for provider API transport, route to `make-api-shell-connection-workflow`.
+6. `make-e2b-code-execution` is deprecated and removed. Do not provide E2B setup or workaround guidance in this repository.
+
+Record the selected route and evidence in the Scenario Plan. The choice is part of module composition and must be shown to the user before confirmation.
+
 ### Step 2.5: Look Up Reference Templates
 
 Once apps and modules are identified, search the Make public template library for similar scenarios. Studying an existing template's blueprint reveals canonical module versions, mapper shapes, and aggregator/feeder bindings that aren't visible from `app-module_get` alone.
@@ -155,6 +168,8 @@ Once the user confirms, produce a **Scenario Plan** summary to carry into subseq
 
 **Use case:** <one paragraph summary>
 **Trigger type:** <schedule | webhook | manual | event-based>
+**Execution surface:** <normal modules | connected-code | make-api-shell>
+**Availability evidence:** <module discovery result or not applicable>
 
 ### Modules
 

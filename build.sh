@@ -23,6 +23,7 @@ trap cleanup EXIT
 
 SKILLS=(
     "make-api-shell-connection-workflow"
+    "make-connected-code-hosting"
     "make-scenario-building"
     "make-module-configuring"
     "make-mcp-reference"
@@ -57,7 +58,10 @@ _CLEANUP_DIRS+=("$TMPDIR")
 BUNDLE="$TMPDIR/make-skills"
 mkdir -p "$BUNDLE"
 cp -r "$REPO_ROOT/.claude-plugin" "$BUNDLE/.claude-plugin"
-cp -r "$REPO_ROOT/skills" "$BUNDLE/skills"
+mkdir -p "$BUNDLE/skills"
+for skill in "${SKILLS[@]}"; do
+    cp -r "$REPO_ROOT/skills/$skill" "$BUNDLE/skills/$skill"
+done
 cp "$REPO_ROOT/.mcp.json" "$BUNDLE/.mcp.json"
 cp "$REPO_ROOT/README.md" "$BUNDLE/README.md"
 cp "$REPO_ROOT/LICENSE" "$BUNDLE/LICENSE"

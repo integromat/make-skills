@@ -69,22 +69,12 @@ Always include the exact expected format in the credential-request
 
 | Provider / type | What to paste |
 |---|---|
-| HTTP app, API Key Auth keychain | Fields: Key, Placement, Name. Provider expects `Authorization: Bearer <key>` -> Key = `Bearer <key>` (literal prefix + space), Placement = header, Name = `Authorization`. Provider uses a plain key header (e.g. `X-API-Key`) -> Key = raw key, Name = header name. |
+| HTTP app, API Key Auth keychain | Fields: Key, Placement, Name. Provider expects `Authorization: Bearer TOKEN_VALUE` -> Key = `Bearer TOKEN_VALUE` (literal prefix + space), Placement = header, Name = `Authorization`. Provider uses a plain key header (e.g. `X-API-Key`) -> Key = raw key, Name = header name. |
 | Daytona (HTTP app keychain) | Key = `Bearer <daytona-key>`, Placement = header, Name = `Authorization` |
-| e2b app connection | raw API Key starting with `e2b_` — no `Bearer ` prefix, no quotes, and NOT the `sk_e2b_...` Access Token (app sends `X-API-Key` itself; any value not starting with `e2b_` fails with `401: authorization header is malformed`) |
 | Basic auth keychain | username/password exactly as issued, no encoding |
 
 When the provider is unknown, say explicitly which of the two API-key
 conventions applies after checking the provider's API docs.
-
-If a pasted value keeps failing after UI edits (verified live with the e2b
-connection — multiple UI re-saves did not fix a malformed key), write it
-programmatically instead: `GET /connections/{id}/editable-data-schema` lists
-the writable fields, then `POST /connections/{id}/set-data` (e.g.
-`{"apiKey": "..."}`) updates the connection guaranteed whitespace-free.
-Verify with a real module run, not just `/connections/{id}/test` — the test
-endpoint can report `verified: true` for basic-type connections even when the
-stored secret is wrong.
 
 ## Decision ladder
 

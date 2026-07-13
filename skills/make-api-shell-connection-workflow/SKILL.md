@@ -23,6 +23,8 @@ This skill is primarily about provisioning and shell construction. Treat busines
 
 The generic shell described here is an API transport wrapper, not business logic. It should behave like a reusable API endpoint for any SaaS app that Make can front, including email, CRM, ticketing, support, marketing, or task systems.
 
+This skill also receives explicit fallback handoffs from `make-connected-code-hosting`. When that skill proves that `connected-code:ExecuteConnectedCode` is unavailable in the active workspace, accept the handoff and begin here at provider/app resolution. Do not bounce the request back to Connected Code, and do not require another user confirmation merely because the execution surface changed. Preserve the availability evidence in the final report.
+
 Known Make module id: the Make Code module is `"module": "code:ExecuteCode"`.
 
 ## Quick routing

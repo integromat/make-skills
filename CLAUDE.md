@@ -25,6 +25,16 @@ skills/
     retrieval-execution.md
     sanitization-and-sharing.md
     examples/generic-api-shell-blueprint.json
+  make-connected-code-hosting/  # Connected Code + normal Make Code fallback + API transport
+    SKILL.md
+    execution-surface-routing.md
+    connected-code-contract.md
+    connection-examples-index.md
+    connection-patterns.md
+    trigger-and-blueprint-patterns.md
+    verification-and-live-tests.md
+    references/connected-code-helpers/  # Complete vendored helper corpus + source manifest
+    examples/
   make-mcp-reference/      # MCP config & troubleshooting (1 reference file)
     SKILL.md
     references/transport-details.md
@@ -44,9 +54,10 @@ skills/
 
 ## Skills
 
-Four auto-activated skills guide scenario building end-to-end. They divide responsibilities:
+Five distributed auto-activated skills guide scenario building end-to-end. They divide responsibilities:
 
 - **make-api-shell-connection-workflow** handles reusable Make API-call shell provisioning and Make-first SaaS retrieval routing
+- **make-connected-code-hosting** handles Connected Code availability discovery, normal Make Code fallback, secure code/connection patterns, schedules/webhooks, and provider API-shell transport
 - **make-scenario-building** decides WHICH modules to use and WHY (scenario architecture)
 - **make-module-configuring** handles HOW to configure each module (parameters, connections, mapping)
 - **make-mcp-reference** covers MCP infrastructure (connection methods, scopes, troubleshooting)
@@ -56,6 +67,21 @@ Four auto-activated skills guide scenario building end-to-end. They divide respo
 Reusable API-call shell workflow: provider/app resolution, connection reuse vs credential request, shell creation/patching, explicit interface setup, run validation, and SaaS retrieval via the shell contract.
 
 References: 4 files (discovery-and-shells, connection-requests, retrieval-execution, sanitization-and-sharing) plus 1 example blueprint
+
+### make-connected-code-hosting
+
+Connected Code-first hosting workflow: verify `connected-code:ExecuteConnectedCode` in the active workspace, use current one-binder connection metadata, author code through scoped `connection.fetch`, SQL, or generic Email helpers, and verify on-demand before enabling schedules/webhooks. If Connected Code is unavailable, discover and verify the normal Make Code module for custom code; hand off to `make-api-shell-connection-workflow` only for provider API transport.
+
+The complete `MAKESEB/connected-code-helpers` corpus is vendored under `references/connected-code-helpers/` with a source commit and hash manifest. Run `npm run validate:connected-code` after changes.
+
+`make-e2b-code-execution` is deprecated and removed. Do not include E2B setup or workaround guidance in this repository.
+
+Refresh that corpus only from a clean helper checkout:
+
+```bash
+node skills/make-connected-code-hosting/scripts/sync-connected-code-helpers.mjs /path/to/connected-code-helpers
+npm run validate:connected-code
+```
 
 ### make-mcp-reference
 

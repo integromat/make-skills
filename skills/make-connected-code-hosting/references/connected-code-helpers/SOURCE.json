@@ -1,0 +1,75 @@
+{
+  "sourceRepository": "https://github.com/MAKESEB/connected-code-helpers",
+  "sourceCommit": "171f59da75e1efe419dc8af65fe0912f13f7d3f3",
+  "sourceFileCount": 17,
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "6ae4185e1312b532d9e5708c17bb8d3a5b22b534341b3aa8571c0ad8ae151b12"
+    },
+    {
+      "path": "docs/connection-reference.md",
+      "sha256": "faa7acd031a23e023e8096e2444f9086cf539dd2c2e34c27a81cd0a30e976fec"
+    },
+    {
+      "path": "examples/baserow-account.js",
+      "sha256": "45e7b400dcda659f74f56c04623ae0e9803d6f4a10b97dbfe5ec4628af83da54"
+    },
+    {
+      "path": "examples/cerebras-models.js",
+      "sha256": "7d84a2f55afc2f767871974d90cbc2e7aeea5477c2701d2f4ac8628e3ee63a13"
+    },
+    {
+      "path": "examples/email-search.js",
+      "sha256": "c5583dfc6be2d6576545b8c44d559558b4f4dccac39ae45c0568b77d47b7a281"
+    },
+    {
+      "path": "examples/email-send.js",
+      "sha256": "8d0e928d0771fcf95c7c5c58de8ec34af196dc7500a92904390b21493480724e"
+    },
+    {
+      "path": "examples/gmail-list-unread.js",
+      "sha256": "7ce9af30f2ae645ddec21139b58577040c37d3ffc337deff91676cf36af4e3d3"
+    },
+    {
+      "path": "examples/gmail-send.js",
+      "sha256": "539deba4ed17e6ea11d07277e64c3d441a694ebdbd637ee28769331c385394f7"
+    },
+    {
+      "path": "examples/google-oauth.js",
+      "sha256": "d2eb292ec46e1086700b3a91e1deec076889e9ab6b72ad4fa503d97328743259"
+    },
+    {
+      "path": "examples/http-api-key-bearer-template.js",
+      "sha256": "b47cb6876a9587081f0147c059a01c18474fd8045a0f462a65d58b0976c24f8d"
+    },
+    {
+      "path": "examples/http-api-key-manual-header.js",
+      "sha256": "205929e21aec788a5db6be279cc3f2459fe48dd747bf69656831198f85690986"
+    },
+    {
+      "path": "examples/http-api-key.js",
+      "sha256": "2dc4d70b103c51b0860adfaab17e02bf294f25a88a3d6722c319ae266c2acf43"
+    },
+    {
+      "path": "examples/microsoft-oauth.js",
+      "sha256": "0fc50466bf7ecc128ae6a93bcabd35877d229671ab08b5dc284352270553611b"
+    },
+    {
+      "path": "examples/mysql-query.js",
+      "sha256": "8de8146e2850485a5e2de6c47c5c580b5552530dcaf222818e3d444d92c91d54"
+    },
+    {
+      "path": "examples/postgres-query.js",
+      "sha256": "a3cbc4abcf03b4cd7895e83b8de2481e7b8467380136d553535c4de9d9c83a32"
+    },
+    {
+      "path": "examples/sage-accounting-businesses.js",
+      "sha256": "563800ba889b1df9e3f5e2cbf4c2ce9d7f7d8f0e8aa4975e92c268880bcef85e"
+    },
+    {
+      "path": "examples/sage-intacct-query.js",
+      "sha256": "a99e05718ced3239e6bb6f78a082ef444334c8792ef765ef691b9280d53867a4"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "name": "make-marketplace",
-  "description": "Design, build, and deploy Make.com automation scenarios using expert skills — directly from Claude Code",
+  "description": "Design and deploy Make scenarios, Connected Code automations, API-call shells, and MCP workflows from Claude Code",
   "owner": {
     "name": "Make",
     "email": "support@make.com",
@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "make-skills",
-      "description": "Expert skills for API-call shells, scenario architecture, module configuration, and MCP troubleshooting",
+      "description": "Expert skills for Connected Code, API-call shells, scenario architecture, module configuration, and MCP troubleshooting",
       "version": "0.1.7",
       "source": "./",
       "author": {
@@ -25,6 +25,7 @@
         "integration",
         "workflow",
         "blueprint",
+        "connected-code",
         "no-code"
       ],
       "homepage": "https://www.make.com",

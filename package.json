@@ -23,6 +23,7 @@
     "integration",
     "workflow",
     "blueprint",
+    "connected-code",
     "no-code",
     "claude-code",
     "cursor",
@@ -30,13 +31,18 @@
     "ai-agents"
   ],
   "scripts": {
-    "release": "commit-and-tag-version && bash build.sh"
+    "release": "commit-and-tag-version && bash build.sh",
+    "validate:connected-code": "node scripts/validate-connected-code-skill.mjs"
   },
   "agents": {
     "skills": [
       {
         "name": "make-api-shell-connection-workflow",
         "path": "./skills/make-api-shell-connection-workflow"
+      },
+      {
+        "name": "make-connected-code-hosting",
+        "path": "./skills/make-connected-code-hosting"
       },
       {
         "name": "make-scenario-building",
