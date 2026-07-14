@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires the make-api-shell-connection-workflow skill, a Make API token owned by the runtime provider, and an E2B runner endpoint owned by infrastructure when hosted execution is requested.
 metadata:
   author: Make
-  version: "0.2.1"
+  version: "0.2.1" # x-release-please-version
   homepage: https://www.make.com
   repository: https://github.com/integromat/make-skills
 ---

@@ -146,10 +146,17 @@ Construct blueprint JSON -> `validate_blueprint_schema` -> `scenarios_create`
 
 Edit `.mcp.json`. The `make` server uses HTTP transport to Make's hosted endpoint at `https://mcp.make.com`.
 
-### Releasing a new version
+### Branching & releasing (gitflow)
 
-1. Run `npm run release` — bumps version in `package.json`, `plugin.json`, `marketplace.json`, and all `skills/*/SKILL.md` frontmatter, then runs `build.sh`
-2. Publish versioned artifacts: `gh release create v${VERSION} dist/*-v${VERSION}.zip`
+`main` is the GitHub default branch and must only ever hold **released** commits: the git-based distribution channels (Claude Code / Codex plugins, `npx skills add`) resolve the default-branch HEAD, so every fresh install of "the current version" gets whatever is on `main`. All development therefore happens on **`develop`**; `main` advances only at release time, by fast-forward.
+
+- **Work:** open PRs against **`develop`** (not `main`). Use **squash merges** so `develop` keeps a linear history — the release step fast-forwards `main` to a released tag, and `main`'s ruleset requires linear history. PR titles are linted as Conventional Commits by the org `validate-pr.yml` (mono-generated), which release-please relies on.
+- **Release cut:** release-please runs on `develop` (org-managed `.github/workflows/release-please.yml`, generated from mono `libs/github-resources/src/repositories/make-skills.ts`, with `releasePleaseWorkflow: { branch: 'develop' }`; the matching `releasePlease.targetBranch: 'develop'` in `actions-toolkit.config.mjs` points the toolkit at `develop`). It opens/updates a **Release PR** on `develop` that bumps the version across `package.json`, `package-lock.json`, both `plugin.json` files, `marketplace.json`, and each published `skills/*/SKILL.md` frontmatter (via the `# x-release-please-version` annotation), and regenerates `CHANGELOG.md`.
+- **Promote:** merge the Release PR on `develop`. release-please (authenticating as a GitHub App) creates the tag + GitHub Release, which fires `.github/workflows/build-release-assets.yml`. That workflow, in order: (1) `build.sh` → uploads zips as Release assets, (2) deploys GitHub Pages from the tag, (3) **fast-forwards `main` to the tag** (App token) — so `main` moves last and only once assets exist.
+
+The version-bump targets beyond `package.json` live in `actions-toolkit.config.mjs` (`releasePlease.extraFiles`). Zips are never committed — `dist/` is built ad-hoc in CI and attached to the Release. Download links resolve via `https://github.com/integromat/make-skills/releases/latest/download/<name>.zip`.
+
+Which skills ship is controlled by `skills.publish.json` (single source of truth) — both `build.sh` (zips + bundle) and `actions-toolkit.config.mjs` (SKILL.md bump targets) derive from it. `skills.internal.json` holds skills back. `scripts/check-skill-manifests.mjs` (run in CI via `manifest-check.yml`) fails if a skill folder is left unclassified or `package.json` `agents.skills[]` drifts from the publish list. To add a skill: add it to `skills.publish.json` and `package.json` `agents.skills[]`, and add the `# x-release-please-version` annotation to its `SKILL.md` version line.
 
 ## Key Conventions
 

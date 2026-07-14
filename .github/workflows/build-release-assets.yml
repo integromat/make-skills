@@ -1,0 +1,85 @@
+name: Build release assets
+
+# On a published Release: attach zips, deploy Pages from the tag, then fast-forward
+# `main` to the tag last — so `main` only advances once assets have built.
+# Fires because release-please publishes the Release as a GitHub App (the default
+# GITHUB_TOKEN would not trigger this event).
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to (re)build, deploy, and fast-forward main to
+        required: true
+
+jobs:
+  build-assets:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+
+      - name: Build distribution zips
+        run: bash build.sh
+
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "$TAG" dist/*.zip --clobber
+
+  deploy-pages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # Shared with static.yml so Pages deployments never overlap.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - id: deployment
+        uses: actions/deploy-pages@v5
+
+  fast-forward-main:
+    needs: [build-assets, deploy-pages]
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      # App token bypasses main's PR-review ruleset and can push to it.
+      - name: Get Release app token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PEM }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      # Fast-forward only (no --force): rejected if main isn't an ancestor.
+      - name: Fast-forward main to the released tag
+        run: git push origin "HEAD:refs/heads/main"
