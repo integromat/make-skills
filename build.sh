@@ -7,7 +7,7 @@
 #   dist/<name>-v<ver>.zip   — versioned, uploaded as a GitHub Release asset
 #
 # Both are produced here and attached to the release by CI
-# (.github/workflows/release.yml). The stable alias is what the
+# (.github/workflows/build-release-assets.yml). The stable alias is what the
 # /releases/latest/download/<name>.zip permalink resolves to. dist/ is
 # gitignored — nothing here is committed.
 #

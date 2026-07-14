@@ -2,11 +2,9 @@
 name: Deploy static content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
+  # Pages is deployed from the released tag by build-release-assets.yml
+  # (fast-forwarding main would otherwise double-deploy). Kept here for manual
+  # redeploys of the docs site from the current default branch.
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages

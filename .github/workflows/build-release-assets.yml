@@ -1,15 +1,23 @@
 name: Build release assets
 
-# Builds the distribution zips ad-hoc and attaches them to a GitHub Release.
+# Runs after a GitHub Release is published, then promotes it:
+#   1. build-assets      — build the distribution zips and attach them to the Release
+#   2. deploy-pages      — deploy the docs site (GitHub Pages) from the released tag
+#   3. fast-forward-main — fast-forward `main` to the released tag
 #
-# The release itself is created by the org-managed release-please workflow
-# (.github/workflows/release-please.yml, generated from mono). Because that
-# workflow authenticates as a GitHub App, the release it publishes DOES fire
-# this `release: published` event (unlike releases made with the default
+# Gitflow: release-please runs on `develop` and publishes the Release; `main` stays
+# the GitHub default branch that distribution channels (Claude Code / Codex plugins,
+# `npx skills add`) resolve, so it must only ever hold released, version-consistent
+# commits. `main` is advanced here, LAST, and only once the zips + Pages have built —
+# so `main` never points at a release whose assets failed to build.
+#
+# The Release is created by the org-managed release-please workflow (generated from
+# mono). Because that workflow authenticates as a GitHub App, the Release it publishes
+# DOES fire this `release: published` event (unlike releases made with the default
 # GITHUB_TOKEN, which don't trigger further workflows).
 #
-# Uploads both <name>-v<ver>.zip and the stable <name>.zip alias that
-# /releases/latest/download/<name>.zip resolves to.
+# Zips are attached as Release assets (never committed); /releases/latest/download/<name>.zip
+# resolves to the stable <name>.zip alias.
 
 on:
   release:
@@ -17,15 +25,14 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Existing release tag to (re)build and upload assets for
+        description: Existing release tag to (re)build, deploy, and fast-forward main to
         required: true
-
-permissions:
-  contents: write
 
 jobs:
   build-assets:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       TAG: ${{ github.event.release.tag_name || inputs.tag }}
     steps:
@@ -40,3 +47,57 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload "$TAG" dist/*.zip --clobber
+
+  deploy-pages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # Share the Pages concurrency group with static.yml so deployments never overlap.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - id: deployment
+        uses: actions/deploy-pages@v5
+
+  fast-forward-main:
+    needs: [build-assets, deploy-pages]
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      # Mint the release GitHub App token: it bypasses the default-branch PR-review
+      # ruleset ('always'), and App-authored pushes trigger downstream workflows.
+      - name: Get Release app token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PEM }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      # Push the tagged commit to main. This is a fast-forward only (no --force), so
+      # it is rejected if main is not an ancestor — a loud signal that someone wrote
+      # to main directly. `protect-branches` allows fast-forwards; requiredLinearHistory
+      # is satisfied because develop is kept linear (squash merges).
+      - name: Fast-forward main to the released tag
+        run: git push origin "HEAD:refs/heads/main"

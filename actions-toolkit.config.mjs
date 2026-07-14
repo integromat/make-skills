@@ -20,6 +20,7 @@ const publish = JSON.parse(
 const config = {
   releasePlease: {
     releaseType: 'node',
+    targetBranch: 'develop',
     extraFiles: [
       { type: 'json', path: '.claude-plugin/plugin.json', jsonpath: '$.version' },
       { type: 'json', path: 'plugins/make-skills-codex/.codex-plugin/plugin.json', jsonpath: '$.version' },
