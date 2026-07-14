@@ -228,6 +228,8 @@ Newly created scenarios are **inactive** by default. Call `scenarios_activate` b
 
 Run the scenario and confirm it succeeds before handing off to the user.
 
+> Use the headless tools throughout this loop — `scenarios_run`, `executions_list`, `executions_get` — never their `show_*` counterparts (`show_scenarios_list`, `show_executions_list`, `show_execution_result`). The `show_*` tools render an interactive UI in the chat and exist only for when the user explicitly wants a run or its history displayed; calling them during automated diagnose-fix-retry iteration pops unnecessary UI on every pass. `scenarios_run`'s response already includes `status`/`outputs` once the run finishes, so no follow-up call is needed just to see the outcome — the checks below are for reading execution history and diagnosing failures, not for re-fetching what `scenarios_run` already returned.
+
 1. **Execute.** Call `scenarios_run` to trigger an immediate run.
 
 2. **Check the result.** Call `executions_list` for the scenario, then `executions_get` on the most recent execution. Inspect the `status` field:

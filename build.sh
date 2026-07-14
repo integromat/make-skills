@@ -18,6 +18,15 @@
 
 set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+
+# jq parses skills.publish.json below; fail early with a clear message rather
+# than an opaque error at the process-substitution read (jq is not preinstalled
+# on fresh macOS).
+command -v jq >/dev/null 2>&1 || {
+    echo "Error: jq is required but not installed (e.g. 'brew install jq')." >&2
+    exit 1
+}
+
 DIST_DIR="$REPO_ROOT/dist"
 VERSION=$(grep '"version"' "$REPO_ROOT/.claude-plugin/plugin.json" | head -1 | sed 's/.*: *"\([^"]*\)".*/\1/')
 
