@@ -1,23 +1,9 @@
 name: Build release assets
 
-# Runs after a GitHub Release is published, then promotes it:
-#   1. build-assets      — build the distribution zips and attach them to the Release
-#   2. deploy-pages      — deploy the docs site (GitHub Pages) from the released tag
-#   3. fast-forward-main — fast-forward `main` to the released tag
-#
-# Gitflow: release-please runs on `develop` and publishes the Release; `main` stays
-# the GitHub default branch that distribution channels (Claude Code / Codex plugins,
-# `npx skills add`) resolve, so it must only ever hold released, version-consistent
-# commits. `main` is advanced here, LAST, and only once the zips + Pages have built —
-# so `main` never points at a release whose assets failed to build.
-#
-# The Release is created by the org-managed release-please workflow (generated from
-# mono). Because that workflow authenticates as a GitHub App, the Release it publishes
-# DOES fire this `release: published` event (unlike releases made with the default
-# GITHUB_TOKEN, which don't trigger further workflows).
-#
-# Zips are attached as Release assets (never committed); /releases/latest/download/<name>.zip
-# resolves to the stable <name>.zip alias.
+# On a published Release: attach zips, deploy Pages from the tag, then fast-forward
+# `main` to the tag last — so `main` only advances once assets have built.
+# Fires because release-please publishes the Release as a GitHub App (the default
+# GITHUB_TOKEN would not trigger this event).
 
 on:
   release:
@@ -54,7 +40,7 @@ jobs:
       contents: read
       pages: write
       id-token: write
-    # Share the Pages concurrency group with static.yml so deployments never overlap.
+    # Shared with static.yml so Pages deployments never overlap.
     concurrency:
       group: pages
       cancel-in-progress: false
@@ -80,8 +66,7 @@ jobs:
     env:
       TAG: ${{ github.event.release.tag_name || inputs.tag }}
     steps:
-      # Mint the release GitHub App token: it bypasses the default-branch PR-review
-      # ruleset ('always'), and App-authored pushes trigger downstream workflows.
+      # App token bypasses main's PR-review ruleset and can push to it.
       - name: Get Release app token
         id: app-token
         uses: actions/create-github-app-token@v1
@@ -95,9 +80,6 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
 
-      # Push the tagged commit to main. This is a fast-forward only (no --force), so
-      # it is rejected if main is not an ancestor — a loud signal that someone wrote
-      # to main directly. `protect-branches` allows fast-forwards; requiredLinearHistory
-      # is satisfied because develop is kept linear (squash merges).
+      # Fast-forward only (no --force): rejected if main isn't an ancestor.
       - name: Fast-forward main to the released tag
         run: git push origin "HEAD:refs/heads/main"

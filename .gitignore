@@ -2,7 +2,5 @@
 .claude/settings.local.json
 node_modules/
 
-# Build artifacts are never committed — build.sh produces them ad-hoc in CI and
-# attaches them to a GitHub Release (build-release-assets.yml). Downloads resolve
-# via /releases/latest/download/<name>.zip.
+# Built ad-hoc in CI and attached to the GitHub Release, never committed.
 dist/
