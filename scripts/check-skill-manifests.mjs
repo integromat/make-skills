@@ -25,6 +25,20 @@ const errors = [];
 const asSet = (arr) => new Set(arr);
 const sorted = (s) => [...s].sort();
 const diff = (a, b) => sorted(a).filter((x) => !b.has(x));
+const findDuplicates = (arr) => [...new Set(arr.filter((s, i) => arr.indexOf(s) !== i))];
+
+// 0. neither list may contain duplicate entries — a Set-based check further down would
+// silently absorb them, but build.sh iterates the raw array and would zip/bundle the
+// skill twice.
+for (const [name, arr] of [
+  ['skills.publish.json', publish],
+  ['skills.internal.json', internal],
+]) {
+  const duplicates = findDuplicates(arr);
+  if (duplicates.length) {
+    errors.push(`Duplicate entries in ${name}: ${duplicates.join(', ')}`);
+  }
+}
 
 const publishSet = asSet(publish);
 const internalSet = asSet(internal);

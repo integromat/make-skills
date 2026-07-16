@@ -28,7 +28,7 @@ command -v jq >/dev/null 2>&1 || {
 }
 
 DIST_DIR="$REPO_ROOT/dist"
-VERSION=$(grep '"version"' "$REPO_ROOT/.claude-plugin/plugin.json" | head -1 | sed 's/.*: *"\([^"]*\)".*/\1/')
+VERSION=$(jq -r '.version' "$REPO_ROOT/.claude-plugin/plugin.json")
 
 # Skills to publish — single source of truth
 # (read loop rather than mapfile for portability with macOS bash 3.2)
