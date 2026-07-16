@@ -44,13 +44,13 @@ Download individual skills as zip files and upload to your project:
 
 | Skill | Download |
 |-------|----------|
-| Scenario Building | [Download](https://github.com/integromat/make-skills/releases/latest/download/make-scenario-building.zip) |
-| Module Configuring | [Download](https://github.com/integromat/make-skills/releases/latest/download/make-module-configuring.zip) |
-| MCP Reference | [Download](https://github.com/integromat/make-skills/releases/latest/download/make-mcp-reference.zip) |
-| API Shell + Connection Workflow | [Download](https://github.com/integromat/make-skills/releases/latest/download/make-api-shell-connection-workflow.zip) |
-| E2B Code Execution | [Download](https://github.com/integromat/make-skills/releases/latest/download/make-e2b-code-execution.zip) |
+| Scenario Building | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-building.zip) |
+| Module Configuring | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-module-configuring.zip) |
+| MCP Reference | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-mcp-reference.zip) |
+| API Shell + Connection Workflow | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-api-shell-connection-workflow.zip) |
+| E2B Code Execution | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-e2b-code-execution.zip) |
 
-Or download the [complete bundle](https://github.com/integromat/make-skills/releases/latest/download/make-skills.zip) with all skills + MCP config.
+Or download the [complete bundle](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-skills.zip) with all skills + MCP config.
 
 ### Codex
 
