@@ -2,14 +2,15 @@
 # Build script for make-skills distribution packages
 # Creates zip files for Claude Desktop/Claude.ai (individual skills) and Claude Code (bundle)
 #
-# Artifact strategy (build ad-hoc, never committed):
-#   dist/<name>.zip          — stable alias, uploaded as a GitHub Release asset
-#   dist/<name>-v<ver>.zip   — versioned, uploaded as a GitHub Release asset
+# Artifact strategy:
+#   dist/<name>.zip          — stable alias, committed (download links point at
+#                              raw.githubusercontent until the first GitHub
+#                              Release exists) and uploaded as a Release asset
+#   dist/<name>-v<ver>.zip   — versioned, gitignored, uploaded as a Release
+#                              asset only
 #
 # Both are produced here and attached to the release by CI
-# (.github/workflows/build-release-assets.yml). The stable alias is what the
-# /releases/latest/download/<name>.zip permalink resolves to. dist/ is
-# gitignored — nothing here is committed.
+# (.github/workflows/build-release-assets.yml).
 #
 # The set of skills packaged into individual zips AND into the bundle is the
 # single source of truth in skills.publish.json. A skill folder present in

@@ -2,5 +2,7 @@
 .claude/settings.local.json
 node_modules/
 
-# Built ad-hoc in CI and attached to the GitHub Release, never committed.
-dist/
+# Stable-alias zips are committed so raw.githubusercontent download links work
+# until the first GitHub Release exists; versioned zips are built ad-hoc in CI
+# and attached to the Release only.
+dist/*-v*.zip
