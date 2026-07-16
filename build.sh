@@ -2,17 +2,40 @@
 # Build script for make-skills distribution packages
 # Creates zip files for Claude Desktop/Claude.ai (individual skills) and Claude Code (bundle)
 #
-# Artifact strategy:
-#   dist/<name>.zip          — stable aliases, committed to main for raw downloads
-#   dist/<name>-v<ver>.zip   — versioned, gitignored, attached to GitHub Releases
+# Artifact strategy (build ad-hoc, never committed):
+#   dist/<name>.zip          — stable alias, uploaded as a GitHub Release asset
+#   dist/<name>-v<ver>.zip   — versioned, uploaded as a GitHub Release asset
 #
-# After building, publish versioned artifacts to a release:
-#   gh release create v${VERSION} dist/*-v${VERSION}.zip
+# Both are produced here and attached to the release by CI
+# (.github/workflows/build-release-assets.yml). The stable alias is what the
+# /releases/latest/download/<name>.zip permalink resolves to. dist/ is
+# gitignored — nothing here is committed.
+#
+# The set of skills packaged into individual zips AND into the bundle is the
+# single source of truth in skills.publish.json. A skill folder present in
+# skills/ but absent from that list is NOT published (enforced by
+# scripts/check-skill-manifests.mjs).
 
 set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+
+# jq parses skills.publish.json below; fail early with a clear message rather
+# than an opaque error at the process-substitution read (jq is not preinstalled
+# on fresh macOS).
+command -v jq >/dev/null 2>&1 || {
+    echo "Error: jq is required but not installed (e.g. 'brew install jq')." >&2
+    exit 1
+}
+
 DIST_DIR="$REPO_ROOT/dist"
-VERSION=$(grep '"version"' "$REPO_ROOT/.claude-plugin/plugin.json" | head -1 | sed 's/.*: *"\([^"]*\)".*/\1/')
+VERSION=$(jq -r '.version' "$REPO_ROOT/.claude-plugin/plugin.json")
+
+# Skills to publish — single source of truth
+# (read loop rather than mapfile for portability with macOS bash 3.2)
+SKILLS=()
+while IFS= read -r _skill; do
+    [ -n "$_skill" ] && SKILLS+=("$_skill")
+done < <(jq -r '.[]' "$REPO_ROOT/skills.publish.json")
 
 # Cleanup temp dirs on exit/error/interrupt
 _CLEANUP_DIRS=()
@@ -20,13 +43,6 @@ cleanup() {
   for d in "${_CLEANUP_DIRS[@]}"; do rm -rf "$d" 2>/dev/null; done
 }
 trap cleanup EXIT
-
-SKILLS=(
-    "make-api-shell-connection-workflow"
-    "make-scenario-building"
-    "make-module-configuring"
-    "make-mcp-reference"
-)
 
 echo "Building make-skills distribution packages v${VERSION}..."
 echo ""
@@ -49,7 +65,7 @@ for skill in "${SKILLS[@]}"; do
     cp "$DIST_DIR/${skill}-v${VERSION}.zip" "$DIST_DIR/${skill}.zip"
 done
 
-# Build complete bundle (for Claude Code)
+# Build complete bundle (for Claude Code) — only published skills
 echo "Building complete bundle..."
 
 TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/make-skills.XXXXXX")
@@ -57,7 +73,10 @@ _CLEANUP_DIRS+=("$TMPDIR")
 BUNDLE="$TMPDIR/make-skills"
 mkdir -p "$BUNDLE"
 cp -r "$REPO_ROOT/.claude-plugin" "$BUNDLE/.claude-plugin"
-cp -r "$REPO_ROOT/skills" "$BUNDLE/skills"
+mkdir -p "$BUNDLE/skills"
+for skill in "${SKILLS[@]}"; do
+    cp -r "$REPO_ROOT/skills/$skill" "$BUNDLE/skills/$skill"
+done
 cp "$REPO_ROOT/.mcp.json" "$BUNDLE/.mcp.json"
 cp "$REPO_ROOT/README.md" "$BUNDLE/README.md"
 cp "$REPO_ROOT/LICENSE" "$BUNDLE/LICENSE"

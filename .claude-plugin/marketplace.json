@@ -11,7 +11,11 @@
       "name": "make-skills",
       "description": "Expert skills for API-call shells, scenario architecture, module configuration, and MCP troubleshooting",
       "version": "0.1.7",
-      "source": "./",
+      "source": {
+        "source": "github",
+        "repo": "integromat/make-skills",
+        "ref": "latest"
+      },
       "author": {
         "name": "Make",
         "url": "https://www.make.com"
