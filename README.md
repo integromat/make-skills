@@ -148,7 +148,7 @@ For Claude Code: run `claude --debug` for detailed MCP connection logs.
 
 ## Contributing
 
-Open pull requests against the **`develop`** branch — that's where all work lands. `main` is the released branch that plugin installs track, and it advances only when a release is cut (release-please runs on `develop`, then `main` is fast-forwarded to the tag). Use squash merges and Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …).
+Open pull requests against **`main`** — that's the trunk. Use squash merges and Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …), since release-please relies on them. A separate `latest` branch is fast-forwarded to each released tag; the Claude Code plugin installs its content from there, so `main` can carry reviewed-but-unreleased commits without affecting that channel. Codex and `npx skills add` still track `main` HEAD directly.
 
 ## License
 
