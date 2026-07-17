@@ -12,6 +12,11 @@ metadata:
 
 # Make Connected Code Hosting
 
+> **Current API documentation gate**
+> Before writing any `connection.fetch(...)` API call, retrieve current docs/specs for the exact API, app, version, and operation.
+> Query Context7 first; if it has no authoritative match, search online and prefer official provider docs or OpenAPI specs.
+> Verify the base URL/scope, path/method, auth/scopes, parameters/body, pagination, and response/error shape; record the sources used.
+
 Use this skill when a user asks an AI coding agent to turn custom automation logic into a Make scenario. Keep Make as the control plane, put custom business logic in Connected Code when the app is available, and use Make connections or keychains rather than raw secrets in code.
 
 Connected Code is the preferred execution surface, not an assumption. Confirm that the active workspace exposes the `connected-code` app and `connected-code:ExecuteConnectedCode` module before generating a blueprint. If the app or module is unavailable, use the normal Make Code module (`code:ExecuteCode`) for custom code after verifying its current interface. Use `make-api-shell-connection-workflow` only for provider API transport.
