@@ -119,7 +119,8 @@ while IFS= read -r -d '' f; do
     /<!-- variant:mcp-only-start -->/ { next }
     /<!-- variant:mcp-only-end -->/   { next }
     { if (cli_depth == 0) print }
-  ' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
+  ' "$f" > "$f.tmp"
+  mv "$f.tmp" "$f"
 done < <(find "$DEST" -type f -name '*.md' -print0)
 
 # Delete any cli-*.md file anywhere inside a skill tree, not just under references/,

@@ -32,6 +32,10 @@ fi
 if ! grep -q 'Fallback text used in both variants' "$OUTDIR/skills/example/SKILL.md"; then
   fail "mcp-only block was incorrectly removed"
 fi
+# variant:mcp-only marker lines themselves must be gone
+if grep -q 'variant:mcp-only' "$OUTDIR/skills/example/SKILL.md"; then
+  fail "mcp-only marker lines were not removed"
+fi
 # Always-visible content must remain
 if ! grep -q 'Always visible' "$OUTDIR/skills/example/SKILL.md"; then
   fail "Always-visible content missing"
