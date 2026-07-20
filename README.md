@@ -17,7 +17,7 @@ Skills work with two interchangeable interfaces; whichever is available is used,
 - **Make CLI** (recommended) — `brew install integromat/tap/make-cli` then `make-cli login`. Works with any agent that has shell/Bash access (Claude Code, Cursor, Windsurf, Cline, …).
 - **Make MCP server** — configure `https://mcp.make.com` in the agent. Required for agents without shell access (Claude Desktop, claude.ai).
 
-Both expose the same tool set — the CLI is generated from the same `MakeMCPTools` SDK definition that backs the MCP server. See the `make-interface-reference` skill for detection order, install, and syntax mapping.
+Both are based on the same `MakeMCPTools` SDK definitions, but the CLI wraps only a subset of the MCP tools and some workflows may still require REST/curl fallbacks. See the `make-interface-reference` skill for detection order, install, and syntax mapping.
 
 ## Prerequisites
 

@@ -73,8 +73,9 @@ fi
 mkdir "$DEST"
 cp -r "$SRC/." "$DEST/"
 
-# Check marker balance across all SKILL.md files. Fails fast on an end marker
-# without a matching start so we catch malformed ordering, not just net counts.
+# Check marker balance across all Markdown files being processed. Fails fast on
+# an end marker without a matching start so we catch malformed ordering, not
+# just net counts.
 check_balance() {
   local file="$1"
   awk '

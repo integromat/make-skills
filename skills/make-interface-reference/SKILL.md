@@ -29,7 +29,7 @@ Run this check once at the start of any Make-related task and remember the resul
 **If the MCP server isn't connected and the agent has shell access, check for the CLI.** Run `command -v make-cli` (Bash).
 
 - Found? Run `make-cli whoami` to verify authentication.
-  - Success → use the **CLI path** for this session — it avoids a network round-trip per call. Consult `references/cli-tool-invocation-mapping.md` when a tool isn't wrapped as a direct subcommand.
+  - Success → use the **CLI path** for this session — it uses local shell invocation and avoids the hosted MCP server / MCP tool-calling layer, which can reduce MCP overhead. Consult `references/cli-tool-invocation-mapping.md` when a tool isn't wrapped as a direct subcommand.
   - Authentication failure → tell the user: "The Make CLI is installed but not authenticated. Run `make-cli login`, or I can use the MCP server instead if it is configured."
 - Not found → tell the user: "I need either the Make MCP server or the Make CLI. Easiest: configure the Make MCP server at `https://mcp.make.com`. Alternative: install the CLI with `brew install integromat/tap/make-cli` (or `npm install -g @makehq/cli`) then run `make-cli login`."
 <!-- variant:cli-end -->

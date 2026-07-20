@@ -143,14 +143,14 @@ Edit `.mcp.json`. The `make` server uses HTTP transport to Make's hosted endpoin
 
 `build.sh` produces MCP-only ZIPs in `dist/` by running `scripts/strip-variants.sh` on a copy of `skills/` before zipping. The source tree (`skills/`) is the full CLI+MCP variant, consumed directly by plugin install and `npx skills add`.
 
-Marker pairs in SKILL.md files:
+Marker pairs in Markdown files:
 
 - `<!-- variant:cli-start -->...<!-- variant:cli-end -->` — CLI-specific content. Visible in source; stripped from ZIPs.
 - `<!-- variant:mcp-only-start -->...<!-- variant:mcp-only-end -->` — short fallback text (kept in both variants; only the marker lines are removed by the stripper).
 
 File-level: `references/cli-*.md` files are deleted when building ZIPs. MCP-related reference files are always kept.
 
-The stripper fails the build if any SKILL.md has unbalanced variant markers. Run `bash scripts/test-strip-variants.sh` to verify the stripper itself.
+The stripper fails the build if any `.md` file in the stripped tree has unbalanced variant markers. Run `bash scripts/test-strip-variants.sh` to verify the stripper itself.
 
 When adding CLI-only content, wrap it in `variant:cli-*` markers. Prefer keeping `variant:mcp-only-*` blocks short (a sentence or two) since they are visible to plugin/npx consumers alongside CLI content.
 
