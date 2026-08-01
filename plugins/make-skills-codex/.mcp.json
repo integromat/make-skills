@@ -1,1 +1,9 @@
-../../.mcp.json
+{
+	"mcpServers": {
+		"make": {
+			"type": "http",
+			"url": "https://mcp.make.com",
+			"oauth_resource": "https://mcp.make.com"
+		}
+	}
+}
