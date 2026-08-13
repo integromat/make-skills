@@ -45,7 +45,7 @@
 			"module": "ai-local-agent:RunLocalAIAgent",
 			"version": 0,
 			"parameters": {
-				"makeConnectionId": 14613
+				"makeConnectionId": 1
 			},
 			"mapper": {
 				"defaultModel": "gpt-5.4",
@@ -68,7 +68,7 @@
 				"restore": {
 					"parameters": {
 						"makeConnectionId": {
-							"label": "Maiak Token",
+							"label": "OpenAI Token",
 							"data": {
 								"scoped": "true",
 								"connection": "openai-gpt-3"
@@ -248,13 +248,13 @@
 							"module": "discord:createMessage",
 							"version": 2,
 							"parameters": {
-								"__IMTCONN__": 11867
+								"__IMTCONN__": 1
 							},
 							"mapper": {
 								"select": "channel",
 								"content": "{{2.content}}",
 								"message_reference": {},
-								"channelId": "1224642245806788641"
+								"channelId": "234567890123456789"
 							},
 							"metadata": {
 								"designer": {
@@ -264,7 +264,7 @@
 								"restore": {
 									"parameters": {
 										"__IMTCONN__": {
-											"label": "DomiZ's Discord (Make (team1278341651986911253))",
+											"label": "My Discord (Make (team123456789012345678))",
 											"data": {
 												"scoped": "true",
 												"connection": "discord"

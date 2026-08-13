@@ -38,13 +38,13 @@ The agent module uses `makeConnectionId` in **parameters** (not `__IMTCONN__`). 
 
 ```json
 "parameters": {
-    "makeConnectionId": 14613
+    "makeConnectionId": 1
 },
 "metadata": {
     "restore": {
         "parameters": {
             "makeConnectionId": {
-                "label": "Maiak Token",
+                "label": "OpenAI Token",
                 "data": {
                     "scoped": "true",
                     "connection": "openai-gpt-3"
@@ -147,13 +147,13 @@ Tool modules that need connections use `__IMTCONN__` in `parameters` (same as no
     "id": 4,
     "module": "discord:createMessage",
     "parameters": {
-        "__IMTCONN__": 11867
+        "__IMTCONN__": 1
     },
     "metadata": {
         "restore": {
             "parameters": {
                 "__IMTCONN__": {
-                    "label": "DomiZ's Discord (Make (team1278341651986911253))",
+                    "label": "My Discord (Make (team123456789012345678))",
                     "data": {
                         "scoped": "true",
                         "connection": "discord"
