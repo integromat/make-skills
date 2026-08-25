@@ -158,7 +158,7 @@ for the full flow (StartSubscenario -> http:MakeRequest -> ReturnData). The
 middle module for the keychain variants differs only in `parameters`, e.g.:
 
 ```json
-{"tlsType": "", "proxyKeychain": "", "authenticationType": "apiKey", "apiKeyKeychain": 182303}
+{"tlsType": "", "proxyKeychain": "", "authenticationType": "apiKey", "apiKeyKeychain": 1}
 ```
 
 Creation rules that differ from app API-call shells:
