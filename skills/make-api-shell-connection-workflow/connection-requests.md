@@ -100,7 +100,7 @@ Prefer the most current supported path first, then fall back only when needed.
 4. Use older legacy request paths only when the workspace clearly still depends on them.
 
 Important branching rule:
-- if the workspace returns a policy or permission denial such as `403 Permission denied` or a message indicating credential requests are not enabled for the target user/workspace, stop retrying request endpoints and switch to the guided connection flow above
+- a policy denial on the external-recipient V2 endpoint does not automatically rule out self-service credential requests; if the connection type and provider scopes are known, try `POST /api/v2/credential-requests/actions/create-by-credentials` before switching to guided connection setup
 - do not keep retrying equivalent credential-request endpoints when the failure is clearly policy-based rather than endpoint-shape-based
 - only fall back to another endpoint when the evidence suggests API-version mismatch, route availability, or request-shape incompatibility
 - if authorization fails because an existing connection is expired, revoked, or otherwise invalid, do not try to re-auth that connection in place; use the credential-request path to create a fresh connection
@@ -286,6 +286,13 @@ Handling rule:
 This is the standard self-service choice for API-call shells: it is not
 gated like the external request flow, and it encodes the connection type and
 scope explicitly instead of deriving them from modules.
+
+Reference: `POST /api/v2/credential-requests/actions/create-by-credentials`
+(<https://developers.make.com/api-documentation/api-reference/credential-requests#post-credential-requests-actions-create>).
+
+If the required provider scopes are not already known, look them up in the
+provider's current API documentation before creating the request; do not guess
+or copy scopes from another service in the same vendor suite.
 
 Example body with placeholders:
 ```json
