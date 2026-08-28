@@ -12,6 +12,11 @@ metadata:
 
 # Make API Shell + Connection Workflow
 
+> **Current API documentation gate**
+> Before drafting or executing a provider API call, retrieve current docs/specs for the exact API, app, module, version, and operation.
+> Query Context7 first; if it has no authoritative match, search online and prefer official provider docs or OpenAPI specs.
+> Verify the base URL, path/method, auth/scopes, parameters/body, pagination, and response/error shape; record the sources used.
+
 Use this skill for one specific workflow family:
 - discover the correct Make app and app-specific API-call module
 - reuse or build a reusable shell scenario with StartSubscenario, one app API-call module, and ReturnData
