@@ -2,5 +2,6 @@
   "make-scenario-reference",
   "make-scenario-explore",
   "make-scenario-building",
-  "make-scenario-operations"
+  "make-scenario-operations",
+  "make-api-shell"
 ]

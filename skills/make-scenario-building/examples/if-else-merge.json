@@ -1,0 +1,81 @@
+{
+  "teamId": 1101,
+  "name": "Ticket triage → route by priority, then log",
+  "scheduling": { "type": "immediately" },
+  "modules": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "root": "main",
+      "config": {}
+    },
+    {
+      "id": 2,
+      "module": "builtin:BasicIfElse",
+      "version": 1,
+      "follows": 1,
+      "config": {}
+    },
+    {
+      "id": 3,
+      "module": "slack:CreateMessage",
+      "version": 4,
+      "parent": {
+        "moduleId": 2,
+        "kind": "branch",
+        "index": 0,
+        "label": "Urgent",
+        "conditions": [[ { "a": "{{1.priority}}", "o": "text:equal", "b": "urgent" } ]],
+        "mergesTo": 5
+      },
+      "config": {
+        "parameters": { "__IMTCONN__": 30512 },
+        "mapper": { "channel": "C0ONCALLXXX", "text": "URGENT ticket {{1.id}}: {{1.subject}}" }
+      }
+    },
+    {
+      "id": 4,
+      "module": "slack:CreateMessage",
+      "version": 4,
+      "parent": {
+        "moduleId": 2,
+        "kind": "branch",
+        "index": 1,
+        "label": "Everything else",
+        "mergesTo": 5
+      },
+      "config": {
+        "parameters": { "__IMTCONN__": 30512 },
+        "mapper": { "channel": "C0SUPPORTXX", "text": "New ticket {{1.id}}: {{1.subject}}" }
+      }
+    },
+    {
+      "id": 5,
+      "module": "builtin:BasicMerge",
+      "version": 1,
+      "follows": 2,
+      "config": {}
+    },
+    {
+      "id": 6,
+      "module": "google-sheets:addRow",
+      "version": 2,
+      "follows": 5,
+      "label": "Log every ticket",
+      "config": {
+        "parameters": { "__IMTCONN__": 18243 },
+        "mapper": {
+          "from": "drive",
+          "mode": "select",
+          "spreadsheetId": "1qruXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "sheetId": "Tickets",
+          "includesHeaders": true,
+          "insertDataOption": "INSERT_ROWS",
+          "valueInputOption": "USER_ENTERED",
+          "values": { "0": "{{now}}", "1": "{{1.id}}", "2": "{{1.priority}}", "3": "{{1.subject}}" }
+        }
+      }
+    }
+  ]
+}

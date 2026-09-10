@@ -25,7 +25,7 @@
   "interface": {
     "displayName": "Make",
     "shortDescription": "Build Make scenarios with expert skills",
-    "longDescription": "Four auto-activated skills that guide Make scenario design end-to-end: provisioning reusable API-call shells, choosing which modules to use and why, configuring each module, and troubleshooting the Make MCP connection. Works together with the hosted Make MCP server to discover apps, configure modules, manage connections and webhooks, and deploy scenarios. If Codex does not register the MCP server automatically after install, run `codex mcp add make --url https://mcp.make.com` and then `codex mcp login make`.",
+    "longDescription": "Five auto-activated skills that guide work with Make scenarios end-to-end: the shared tool conventions, orienting in an account and explaining existing scenarios, creating and editing scenarios (discovery, connections, flow control, error handling, subscenarios, AI agents), running and debugging them, and building reusable API-call shells. Works together with Make's hosted scenario-management MCP server. If Codex does not register the MCP server automatically after install, run `codex mcp add make --url https://mcp.make.com/v2` and then `codex mcp login make`.",
     "developerName": "Make",
     "category": "Productivity",
     "capabilities": [
@@ -38,8 +38,8 @@
     "defaultPrompt": [
       "Build a Make scenario that sends a Slack message when a new row is added to Google Sheets.",
       "Design a Make scenario that summarizes daily emails and posts the summary to Notion.",
-      "Create a reusable Make API-call shell for a SaaS app connection.",
-      "Help me configure a Make HTTP module to call my API with OAuth."
+      "Explain what my \"Invoice sync\" scenario does and whether its connections are healthy.",
+      "Get my unread Gmail messages through a reusable Make API-call shell."
     ],
     "brandColor": "#6D00CC",
     "composerIcon": "./assets/icon.png",

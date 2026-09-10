@@ -4,11 +4,11 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-**make-skills** provides expert skills for designing, building, and deploying Make automation scenarios. Distributed as both a Claude Code plugin and as Open Agent Skills (compatible with 40+ AI agents via `npx skills add integromat/make-skills`). Published by Make under MIT license.
+**make-skills** provides expert skills for building, explaining, running and debugging Make automation scenarios. Distributed as both a Claude Code plugin and as Open Agent Skills (compatible with 40+ AI agents via `npx skills add integromat/make-skills`). Published by Make under MIT license.
 
 The skills connect to the remote Make MCP server:
 
-- **`make`** — Make's hosted MCP server at `https://mcp.make.com`. Provides tools for app discovery, module configuration, connections, webhooks, data stores, and scenario lifecycle. Authenticated via OAuth (default) or MCP token.
+- **`make`** — Make's scenario-management MCP server at `https://mcp.make.com/v2`. Tools are named `{subject}_{action}` (`environment_get`, `scenario_get`, `module_spec`, …) and the surface is gated by one all-or-nothing scope bundle. Authenticated via OAuth.
 
 ## Repository Structure
 
@@ -18,133 +18,52 @@ The skills connect to the remote Make MCP server:
   marketplace.json         # Marketplace metadata
 .mcp.json                  # MCP server configuration (remote Make server)
 skills/
-  make-api-shell-connection-workflow/  # API-call shell provisioning + retrieval transport (4 reference files)
+  make-scenario-reference/   # Shared conventions — load first
     SKILL.md
-    discovery-and-shells.md
-    connection-requests.md
-    retrieval-execution.md
-    sanitization-and-sharing.md
-    examples/generic-api-shell-blueprint.json
-  make-mcp-reference/      # MCP config & troubleshooting (1 reference file)
+  make-scenario-explore/     # Orienting, listing, explaining, health checks
     SKILL.md
-    references/transport-details.md
-  make-module-configuring/  # Module configuration workflow (11 reference files)
+  make-scenario-building/    # Creating and editing scenarios
     SKILL.md
-    general-principles.md, connections.md, mapping.md, webhooks.md,
-    data-stores.md, data-structures.md, keys.md, filtering.md,
-    iml-expressions.md, aggregators.md, ai-agents.md
-  make-scenario-building/   # Scenario design methodology (18 reference files)
+    references/              # mapping, iml-functions, flow-control, error-handling,
+                             # subscenarios, ai-agents, app-gotchas
+    examples/                # complete scenario_create calls per pattern
+  make-scenario-operations/  # Running, activating, debugging runs and webhooks
     SKILL.md
-    blueprint-construction.md, connections.md, webhooks.md,
-    scheduling-and-triggers.md, routing.md, branching.md, merging.md,
-    filtering.md, iterations.md, aggregations.md, mapping.md,
-    error-handling.md, data-stores.md, subscenarios.md, bundles.md,
-    ai-agents.md, quick-patterns.md, CONTRIBUTING.md
+  make-api-shell/            # Reusable API-call / HTTP shell as a retrieval transport
+    SKILL.md
+    references/http-fallback.md
+    examples/
 ```
 
 ## Skills
 
-Four auto-activated skills guide scenario building end-to-end. They divide responsibilities:
+Five auto-activated skills, split by use case:
 
-- **make-api-shell-connection-workflow** handles reusable Make API-call shell provisioning and Make-first SaaS retrieval routing
-- **make-scenario-building** decides WHICH modules to use and WHY (scenario architecture)
-- **make-module-configuring** handles HOW to configure each module (parameters, connections, mapping)
-- **make-mcp-reference** covers MCP infrastructure (connection methods, scopes, troubleshooting)
+- **make-scenario-reference** — what every tool assumes: scopes, `content` remarks are instructions, the structure-vs-configuration split, one call = one save, the refusal contract, "state a guess before acting on it". Every other skill says to read it first.
+- **make-scenario-explore** — `environment_get` → `scenario_list` → `scenario_get` → `scenario_module_get`, and how to read the structural fields for a non-technical user.
+- **make-scenario-building** — the build and edit workflows (`app_find` → `module_spec` → connections → `module_field_resolve` → `scenario_create` / `scenario_patch`), the decisions the tools leave to the model, and on-demand references for everything past a straight line.
+- **make-scenario-operations** — `scenario_run` by trigger kind, activation, the execution list → get → inspect → module-get chain, webhook learning and inspection.
+- **make-api-shell** — a three-module on-demand scenario (`StartSubscenario` → *Make an API Call* → `ReturnData`) or its `http:MakeRequest` fallback, built once per provider and connection and run through `scenario_run`.
 
-### make-api-shell-connection-workflow
+## Writing skills for this surface
 
-Reusable API-call shell workflow: provider/app resolution, connection reuse vs credential request, shell creation/patching, explicit interface setup, run validation, and SaaS retrieval via the shell contract.
-
-References: 4 files (discovery-and-shells, connection-requests, retrieval-execution, sanitization-and-sharing) plus 1 example blueprint
-
-### make-mcp-reference
-
-MCP server configuration, OAuth vs token auth, scopes, troubleshooting connection issues. Activated when users ask about MCP setup, tokens, OAuth, or connection errors.
-
-Reference: `references/transport-details.md`
-
-### make-module-configuring
-
-5-phase module configuration workflow: read interface (`app-module_get`), resolve RPCs, fill parameters, validate (`validate_module_configuration`), get app docs. Covers connections, mapping, webhooks, data stores, data structures, keys, filtering, IML expressions, and aggregators.
-
-References: 11 files (general-principles, connections, mapping, webhooks, data-stores, data-structures, keys, filtering, iml-expressions, aggregators, ai-agents)
-
-### make-scenario-building
-
-Scenario design methodology: understand business need, discover apps/modules, select module composition, construct blueprint, deploy. Covers blueprint construction, routing, branching, merging, filtering, iterations, aggregations, error handling, scheduling, webhooks, data stores, subscenarios, bundles, AI agents, and provider disambiguation.
-
-References: 18 files (see repository structure above)
-
-## Key MCP Tools
-
-### Remote Make server (`make`)
-
-**Discovery:**
-- `apps_recommend` — Find relevant Make apps for a use case (one app per call)
-- `app_modules_list` — List modules for an app (triggers, actions, searches)
-- `app_documentation_get` — Get detailed app documentation
-
-**Module configuration:**
-- `app-module_get` — Get module interface/schema (use `outputFormat: "instructions"`)
-- `rpc_execute` — Resolve dynamic field options (dropdowns, resource lists)
-- `validate_module_configuration` — Validate module config before committing
-
-**Connections & keys:**
-- `connections_list` — List existing connections (filter by `accountName`, not app name)
-- `credential_requests_create` — Start OAuth flow for new connection
-- `credential_requests_get` — Poll for credential request completion
-- `keys_list` — List API keys
-
-**Components:**
-- `hooks_create` / `hooks_list` — Create and list webhooks
-- `data-structures_create` / `data-structures_list` — Create and list data structures
-- `data-stores_create` / `data-stores_list` — Create and list data stores
-
-**Lifecycle:**
-- `scenarios_create` — Create a scenario from a blueprint
-- `scenario_scheduling_update` — Configure scenario scheduling
-
-## Important Patterns
-
-**App discovery chain:**
-`apps_recommend` -> `app_modules_list` -> `app_documentation_get`
-
-**Module config chain:**
-`app-module_get` (instructions format) -> `rpc_execute` (resolve dynamic fields) -> `validate_module_configuration`
-
-**Component creation order:**
-data structures -> webhooks -> connections -> keys -> data stores (dependencies flow left to right)
-
-**Credential flow:**
-`credential_requests_create` (returns auth URL) -> user completes auth -> poll `credential_requests_get` -> get connection ID
-
-**Blueprint flow:**
-Construct blueprint JSON -> `validate_blueprint_schema` -> `scenarios_create`
-
-**Router vs If-Else decision:**
-- **If-Else + Merge**: Mutually exclusive branches that converge. Use when only one branch should fire per bundle and downstream modules are shared (e.g., "if slack, send Slack; else send WhatsApp; then update the row").
-- **Router**: Multiple routes can fire, cannot merge back. Use when branches are independent endpoints or multiple can be true simultaneously.
-
-**Connection type gotcha:**
-`connections_list` type filter uses `accountName`, not the Make app name. Google Sheets, Calendar, and Drive all use `accountName: "google"`. Slack uses `"slack2"`, Notion uses `"notion2"` or `"notion3"`. Best practice: list without filter, then match by `accountName`.
-
-**Scenario URL format:**
-`https://<zone>.make.com/<teamId>/scenarios/<scenarioId>` (uses team ID, not organization ID)
+- **Less is more.** The MCP server performs well with no skill loaded; a skill nudges and sequences. Tool-specific facts (what a field means, which values it takes) belong in the tool's own description or schema in the server repo, not here — a skill should not repeat what `tools/list` already says.
+- **SKILL.md is workflows.** Numbered steps and the decisions the tools cannot make. Concepts go in `references/`, complete calls in `examples/`.
+- **Say when to load a reference.** Each reference link states the trigger that makes it worth reading, so an agent does not load error-handling guidance for a notification scenario.
+- **Only what the surface can do.** Do not port guidance for capabilities the `/v2` server does not implement (data stores, custom IML functions, data structures, DLQ retry).
+- Skill descriptions use third person; the body avoids second person; target 500–5000 words per SKILL.md.
 
 ## Working with This Repository
 
 ### Adding a new skill
 
-1. Create `skills/<skill-name>/SKILL.md` with YAML frontmatter (`name`, `description`)
-2. Add reference files in the same directory (no `references/` subdirectory required, but supported)
-3. Skill descriptions must use third person ("This skill should be used when...")
-4. Skill body should avoid second person ("you should/need/must/can")
-5. Target 500-5000 words
-6. Add optional Open Agent Skills frontmatter: `license`, `compatibility`, `metadata` (with `author`, `version`, `homepage`, `repository`)
+1. Create `skills/<skill-name>/SKILL.md` with YAML frontmatter (`name`, `description`, `metadata.version` with the `# x-release-please-version` annotation).
+2. Add reference files under `references/` and examples under `examples/`.
+3. Add the skill to `skills.publish.json` and to `package.json` `agents.skills[]` (`npm run check:skills` fails otherwise).
 
 ### Modifying MCP configuration
 
-Edit `.mcp.json`. The `make` server uses HTTP transport to Make's hosted endpoint at `https://mcp.make.com`.
+Edit `.mcp.json`. The `make` server uses HTTP transport to Make's hosted endpoint at `https://mcp.make.com/v2`.
 
 ### Branching & releasing (trunk-based)
 
@@ -156,12 +75,12 @@ The Claude Code plugin marketplace pins plugin *content* to `latest` (`.claude-p
 - **Release cut:** release-please runs on `main` (org-managed `.github/workflows/release-please.yml`, generated from mono `libs/github-resources/src/repositories/make-skills.ts` via stock `releasePleaseWorkflow: true`). It opens/updates a **Release PR** that bumps the version across `package.json`, `package-lock.json`, both `plugin.json` files, `marketplace.json`, and each published `skills/*/SKILL.md` frontmatter (via the `# x-release-please-version` annotation), and regenerates `CHANGELOG.md`.
 - **Promote:** merge the Release PR. release-please (authenticating as a GitHub App) creates the tag + GitHub Release, which fires `.github/workflows/build-release-assets.yml`. That workflow, in order: (1) `build.sh` → uploads zips as Release assets, (2) deploys GitHub Pages from the tag, (3) **fast-forwards `latest` to the tag** (App token; creates the branch on the first release).
 
-The version-bump targets beyond `package.json` live in `actions-toolkit.config.mjs` (`releasePlease.extraFiles`). Zips are never committed — `dist/` is built ad-hoc in CI and attached to the Release. Download links resolve via `https://github.com/integromat/make-skills/releases/latest/download/<name>.zip` (a GitHub Release API alias, unrelated to the `latest` git branch).
+The version-bump targets beyond `package.json` live in `actions-toolkit.config.mjs` (`releasePlease.extraFiles`). Stable-alias zips (`dist/<name>.zip`) are committed so raw download links work before the first release; versioned zips are built ad-hoc in CI and attached to the Release. Download links resolve via `https://github.com/integromat/make-skills/releases/latest/download/<name>.zip` (a GitHub Release API alias, unrelated to the `latest` git branch).
 
-Which skills ship is controlled by `skills.publish.json` (single source of truth) — both `build.sh` (zips + bundle) and `actions-toolkit.config.mjs` (SKILL.md bump targets) derive from it. `skills.internal.json` holds skills back. `scripts/check-skill-manifests.mjs` (run in CI via `manifest-check.yml`) fails if a skill folder is left unclassified or `package.json` `agents.skills[]` drifts from the publish list. To add a skill: add it to `skills.publish.json` and `package.json` `agents.skills[]`, and add the `# x-release-please-version` annotation to its `SKILL.md` version line.
+Which skills ship is controlled by `skills.publish.json` (single source of truth) — both `build.sh` (zips + bundle) and `actions-toolkit.config.mjs` (SKILL.md bump targets) derive from it. `skills.internal.json` holds skills back. `scripts/check-skill-manifests.mjs` (run in CI via `manifest-check.yml`) fails if a skill folder is left unclassified or `package.json` `agents.skills[]` drifts from the publish list.
 
 ## Key Conventions
 
 - All file paths in scripts must use `${CLAUDE_PLUGIN_ROOT}` — never hardcode absolute paths.
-- No secrets (API keys, tokens) in committed files.
-- OAuth is the default auth; MCP token auth is for granular team/scenario filtering.
+- No secrets (API keys, tokens) in committed files. Example JSON uses placeholder ids only.
+- OAuth is the only auth on the `/v2` server.

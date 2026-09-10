@@ -50,6 +50,10 @@
       {
         "name": "make-scenario-reference",
         "path": "./skills/make-scenario-reference"
+      },
+      {
+        "name": "make-api-shell",
+        "path": "./skills/make-api-shell"
       }
     ]
   }

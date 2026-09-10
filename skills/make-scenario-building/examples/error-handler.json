@@ -1,0 +1,56 @@
+{
+  "teamId": 1101,
+  "name": "Sync new rows to CRM with retry on failure",
+  "scheduling": { "type": "indefinitely", "interval": 900 },
+  "modules": [
+    {
+      "id": 1,
+      "module": "google-sheets:watchRows",
+      "version": 2,
+      "root": "main",
+      "config": {
+        "parameters": {
+          "__IMTCONN__": 18243,
+          "from": "drive",
+          "mode": "select",
+          "spreadsheetId": "1qruXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "sheetId": "Signups",
+          "includesHeaders": true,
+          "tableFirstRow": "A1:Z1",
+          "limit": 20
+        },
+        "data": { "epochType": "now", "epochId": null, "lastDate": "2026-09-10T08:00:00.000Z", "lastId": null }
+      }
+    },
+    {
+      "id": 2,
+      "module": "hubspotcrm:createContact",
+      "version": 2,
+      "follows": 1,
+      "config": {
+        "parameters": { "__IMTCONN__": 41230 },
+        "mapper": { "email": "{{1.`1`}}", "firstname": "{{1.`0`}}" }
+      }
+    },
+    {
+      "id": 10,
+      "module": "slack:CreateMessage",
+      "version": 4,
+      "parent": { "moduleId": 2, "kind": "errorHandler" },
+      "label": "Alert on CRM failure",
+      "config": {
+        "parameters": { "__IMTCONN__": 30512 },
+        "mapper": { "channel": "C0ALERTSXXX", "text": "CRM sync failed for {{1.`1`}} — will retry." }
+      }
+    },
+    {
+      "id": 11,
+      "module": "builtin:Break",
+      "version": 1,
+      "follows": 10,
+      "config": {
+        "mapper": { "retry": true, "count": 3, "interval": 15 }
+      }
+    }
+  ]
+}

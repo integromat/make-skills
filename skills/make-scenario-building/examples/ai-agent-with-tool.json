@@ -1,0 +1,64 @@
+{
+  "teamId": 1101,
+  "name": "Weather assistant (webhook → agent → response)",
+  "scheduling": { "type": "immediately" },
+  "modules": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "root": "main",
+      "config": {}
+    },
+    {
+      "id": 2,
+      "module": "ai-local-agent:RunLocalAIAgent",
+      "version": 1,
+      "follows": 1,
+      "label": "Weather assistant",
+      "config": {
+        "parameters": { "makeConnectionId": 50021 },
+        "mapper": {
+          "systemPrompt": "You are a concise weather assistant. When the user asks about the weather in a place, call the weather tool with that place and answer in one sentence. If no place is mentioned, ask for one.",
+          "message": "{{1.message}}",
+          "threadId": "{{1.conversationId}}"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "weather:ActionGetCurrentWeather",
+      "version": 1,
+      "parent": {
+        "moduleId": 2,
+        "kind": "tool",
+        "index": 0,
+        "label": "Get current weather",
+        "description": "Returns the current weather for a city. Use it whenever the user asks about weather somewhere."
+      },
+      "config": {
+        "mapper": { "type": "name", "city": "{{2.city}}" },
+        "restore": {
+          "expect": {
+            "type": { "label": "City name" },
+            "city": {
+              "extra": {
+                "aiHelp": "City name, optionally with country, e.g. \"London, UK\".",
+                "aiInstruction": "Take the place the user mentioned in their message."
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "module": "gateway:WebhookRespond",
+      "version": 1,
+      "follows": 2,
+      "config": {
+        "mapper": { "status": 200, "body": "{{2.response}}" }
+      }
+    }
+  ]
+}
