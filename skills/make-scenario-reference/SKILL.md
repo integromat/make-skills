@@ -1,6 +1,6 @@
 ---
 name: make-scenario-reference
-description: Load this first when working with Make tools named environment_get, scenario_*, app_find, module_spec, module_options_get, module_field_resolve, or connection_*. Covers the conventions every tool on the surface shares — scopes, the data/remark contract, the structure-vs-configuration split, the one-save write model, and what the surface deliberately cannot do.
+description: Load when a Make scenario tool answers 403, refuses a write for a reason you cannot explain, or no tool seems to cover the request — the shared conventions of environment_get, scenario_*, app_find, module_spec, module_field_resolve and connection_*.
 metadata:
   version: "0.1.7" # x-release-please-version
 ---
@@ -8,8 +8,9 @@ metadata:
 # Make scenario-management tools — reference
 
 This is Make's scenario-management tool surface. The tool descriptions say what each tool does; this skill
-says what they all assume. Revisit it whenever a task seems to need a capability none of the companion skills
-covers — the answer is often "this surface refuses that on purpose".
+says what they all assume. The companion skills carry the four rules a routine task needs; come here when a
+tool refuses something, answers 403, or a request seems to need a capability no tool covers — the answer is
+often "this surface refuses that on purpose".
 
 ## Naming
 

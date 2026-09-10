@@ -1,6 +1,6 @@
 ---
 name: make-scenario-operations
-description: Use when running a scenario on demand, switching one on or off, reviewing or debugging past executions, or investigating a webhook that does not seem to receive data. Covers scenario_run, scenario_activate, scenario_deactivate, scenario_execution_list(_show), scenario_execution_get(_show), scenario_execution_inspect, scenario_execution_module_get, scenario_trigger_learn, and scenario_trigger_inspect. Not for creating or editing (make-scenario-building) or explaining structure (make-scenario-explore). Read make-scenario-reference first.
+description: Use when running a scenario, switching it on or off, reviewing or debugging executions, or investigating a webhook that receives nothing. Not for creating, editing or explaining a scenario.
 metadata:
   version: "0.1.7" # x-release-please-version
 ---
@@ -10,6 +10,11 @@ metadata:
 Everything after a scenario exists: running it, switching it on or off, and the run → inspect → drill-down
 chain for a failure. Know `trigger.kind` (from `scenario_get`) before calling `scenario_run` — its behavior
 depends on it entirely.
+
+**Ground rules.** A 403 means the whole connection must be re-authorized with every permission — never one
+tool. A `content` remark on a result is an instruction, not decoration. Say what you resolved an ambiguous
+value to before the call that acts on it. The refusal contract and the rest: `make-scenario-reference`, when
+something is refused or no tool seems to fit.
 
 ## Running: `scenario_run`
 

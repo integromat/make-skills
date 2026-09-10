@@ -8,7 +8,7 @@ Give your AI coding agent deep Make expertise — for building, explaining, runn
 
 | Skill | What it does |
 |-------|-------------|
-| **make-scenario-reference** | Load first — the conventions every tool shares: scopes, the data/remark contract, structure vs configuration, the one-save write model, and what the surface refuses to author |
+| **make-scenario-reference** | The conventions every tool shares — scopes, the data/remark contract, structure vs configuration, the one-save write model, and what the surface refuses to author — for when a tool answers 403 or refuses something |
 | **make-scenario-explore** | Orienting in an account — organizations, teams, listing scenarios, explaining what one does, connection health, account-wide checks |
 | **make-scenario-building** | Creating and editing scenarios — app and module discovery, connections, resolving account-dependent values, flow control, error handling, subscenarios, AI agents; with references and complete examples |
 | **make-scenario-operations** | Running, activating and deactivating, reviewing and debugging executions, investigating a webhook |

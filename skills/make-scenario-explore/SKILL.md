@@ -1,6 +1,6 @@
 ---
 name: make-scenario-explore
-description: Use when orienting inside a user's Make account — listing organizations, teams and scenarios, explaining what an existing scenario does, checking connection health, or auditing several scenarios for problems. Covers environment_get, scenario_list(_show), scenario_folder_list, scenario_get, and scenario_module_get. Not for creating or editing (make-scenario-building) or running and debugging (make-scenario-operations). Read make-scenario-reference first.
+description: Use when orienting in a Make account — listing organizations, teams and scenarios, explaining what an existing scenario does, checking connection health, auditing several scenarios. Not for creating, editing, running or debugging.
 metadata:
   version: "0.1.7" # x-release-please-version
 ---
@@ -9,6 +9,11 @@ metadata:
 
 The read-only path from "what does this account have" to "explain this scenario" — the entry point of almost
 every conversation, and the tool of choice for a non-technical question about an automation.
+
+**Ground rules.** A 403 means the whole connection must be re-authorized with every permission — never one
+tool. A `content` remark on a result is an instruction, not decoration. Say what you resolved an ambiguous
+value to before the call that acts on it. The refusal contract and the rest: `make-scenario-reference`, when
+something is refused or no tool seems to fit.
 
 ## Start with `environment_get`
 
