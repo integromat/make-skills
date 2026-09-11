@@ -25,7 +25,7 @@
   "interface": {
     "displayName": "Make",
     "shortDescription": "Build Make scenarios with expert skills",
-    "longDescription": "Four auto-activated skills that guide Make scenario design end-to-end: provisioning reusable API-call shells, choosing which modules to use and why, configuring each module, and troubleshooting the Make MCP connection. Works together with the hosted Make MCP server to discover apps, configure modules, manage connections and webhooks, and deploy scenarios. If Codex does not register the MCP server automatically after install, run `codex mcp add make --url https://mcp.make.com` and then `codex mcp login make`.",
+    "longDescription": "Five auto-activated skills that guide Make scenario design end-to-end: provisioning reusable API-call shells, choosing which modules to use and why, configuring each module, running generated code through Make-managed E2B execution, and troubleshooting the Make MCP connection. Works together with the hosted Make MCP server to discover apps, configure modules, manage connections and webhooks, and deploy scenarios. If Codex does not register the MCP server automatically after install, run `codex mcp add make --url https://mcp.make.com` and then `codex mcp login make`.",
     "developerName": "Make",
     "category": "Productivity",
     "capabilities": [
@@ -43,6 +43,7 @@
     ],
     "brandColor": "#6D00CC",
     "composerIcon": "./assets/icon.png",
-    "logo": "./assets/logo.png"
+    "logo": "./assets/logo.png",
+    "screenshots": []
   }
 }

@@ -86,6 +86,20 @@ cp "$REPO_ROOT/CLAUDE.md" "$BUNDLE/CLAUDE.md"
 # Stable alias
 cp "$DIST_DIR/make-skills-v${VERSION}.zip" "$DIST_DIR/make-skills.zip"
 
+# Build Codex/ChatGPT plugin bundle (symlinked skills/assets/.mcp.json materialized)
+# Note: the official `codex plugin pack` command additionally generates plugin.lock.json
+# with per-skill integrity hashes; run it on this materialized folder before submission.
+echo "Building Codex plugin bundle..."
+
+TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/make-skills.XXXXXX")
+_CLEANUP_DIRS+=("$TMPDIR")
+CODEX_BUNDLE="$TMPDIR/make-skills-codex"
+mkdir -p "$CODEX_BUNDLE"
+cp -RL "$REPO_ROOT/plugins/make-skills-codex/." "$CODEX_BUNDLE/"
+(cd "$TMPDIR" && zip -rq "$DIST_DIR/make-skills-codex-v${VERSION}.zip" "make-skills-codex/" -x "*.DS_Store")
+# Stable alias
+cp "$DIST_DIR/make-skills-codex-v${VERSION}.zip" "$DIST_DIR/make-skills-codex.zip"
+
 # Results
 echo ""
 echo "Build complete! Files in dist/:"
@@ -101,3 +115,8 @@ echo "Complete bundle (Claude Code):"
 SIZE=$(du -h "$DIST_DIR/make-skills-v${VERSION}.zip" | cut -f1)
 echo "  make-skills-v${VERSION}.zip  ${SIZE}"
 echo "  make-skills.zip  (stable alias)"
+echo ""
+echo "Codex/ChatGPT plugin bundle:"
+SIZE=$(du -h "$DIST_DIR/make-skills-codex-v${VERSION}.zip" | cut -f1)
+echo "  make-skills-codex-v${VERSION}.zip  ${SIZE}"
+echo "  make-skills-codex.zip  (stable alias)"
