@@ -8,15 +8,19 @@ This file provides guidance to Claude Code when working with this repository.
 
 The skills connect to the remote Make MCP server:
 
-- **`make`** — Make's scenario-management MCP server at `https://mcp.make.com/v2`. Tools are named `{subject}_{action}` (`environment_get`, `scenario_get`, `module_spec`, …) and the surface is gated by one all-or-nothing scope bundle. Authenticated via OAuth.
+- **`make`** — Make's scenario-management MCP server (platform endpoints: `https://mcp.make.com/claude`, `/cursor`, `/openai`). Tools are named `{subject}_{action}` (`environment_get`, `scenario_get`, `module_spec`, …) and the surface is gated by one all-or-nothing scope bundle. Authenticated via OAuth.
 
 ## Repository Structure
 
 ```
 .claude-plugin/
-  plugin.json              # Plugin manifest (name, version, description)
-  marketplace.json         # Marketplace metadata
-.mcp.json                  # MCP server configuration (remote Make server)
+  marketplace.json         # Claude Code marketplace manifest (repo root)
+.cursor-plugin/
+  marketplace.json         # Cursor Team Marketplace manifest (repo root)
+plugins/
+  make-skills-claude/      # Claude Code plugin (.claude-plugin/, .mcp.json)
+  make-skills-cursor/      # Cursor plugin (.cursor-plugin/, mcp.json)
+  make-skills-codex/       # OpenAI Codex plugin (.codex-plugin/, .mcp.json)
 skills/
   make-scenario-reference/   # Shared conventions — load first
     SKILL.md
@@ -43,7 +47,7 @@ Five auto-activated skills, split by use case:
 - **make-scenario-explore** — `environment_get` → `scenario_list` → `scenario_get` → `scenario_module_get`, and how to read the structural fields for a non-technical user.
 - **make-scenario-building** — the build and edit workflows (`app_find` → `module_spec` → connections → `module_field_resolve` → `scenario_create` / `scenario_patch`), the decisions the tools leave to the model, and on-demand references for everything past a straight line.
 - **make-scenario-operations** — `scenario_run` by trigger kind, activation, the execution list → get → inspect → module-get chain, webhook learning and inspection.
-- **make-api-shell** — a three-module on-demand scenario (`StartSubscenario` → *Make an API Call* → `ReturnData`) or its `http:MakeRequest` fallback, built once per provider and connection and run through `scenario_run`.
+- **make-api-shell** — a three-module on-demand scenario (`StartSubscenario` → _Make an API Call_ → `ReturnData`) or its `http:MakeRequest` fallback, built once per provider and connection and run through `scenario_run`.
 
 ## Writing skills for this surface
 
@@ -63,16 +67,16 @@ Five auto-activated skills, split by use case:
 
 ### Modifying MCP configuration
 
-Edit `.mcp.json`. The `make` server uses HTTP transport to Make's hosted endpoint at `https://mcp.make.com/v2`.
+Edit each plugin's MCP config under `plugins/` — Claude: `make-skills-claude/.mcp.json` (`https://mcp.make.com/claude`), Cursor: `make-skills-cursor/mcp.json` (`/cursor`), Codex: `make-skills-codex/.mcp.json` (`/openai`).
 
 ### Branching & releasing (trunk-based)
 
 `main` is the GitHub default branch, the trunk, and the working branch — all PRs land there directly. A separate **`latest`** branch is fast-forwarded to each released tag and stays reserved for that — don't push to it directly.
 
-The Claude Code plugin marketplace pins plugin *content* to `latest` (`.claude-plugin/marketplace.json`'s `source: { source: "github", repo: "integromat/make-skills", ref: "latest" }`), so that channel only ever installs released code; marketplace metadata (name/description/version) still comes from `main` HEAD, which is cosmetic.
+The Claude Code plugin marketplace pins plugin _content_ to `latest` (`.claude-plugin/marketplace.json`'s `source: { source: "git-subdir", url: "integromat/make-skills", path: "plugins/make-skills-claude", ref: "latest" }`), so that channel only ever installs released code; marketplace metadata (name/description/version) still comes from `main` HEAD, which is cosmetic. The Codex plugin dir and `npx skills add` via the bare `owner/repo` shorthand still resolve `main` HEAD directly, so they can pick up reviewed-but-unreleased commits between releases — an accepted gap for those two channels.
 
 - **Work:** open PRs against **`main`**, squash merge. PR titles are linted as Conventional Commits by the org `validate-pr.yml` (mono-generated), which release-please relies on.
-- **Release cut:** release-please runs on `main` (org-managed `.github/workflows/release-please.yml`, generated from mono `libs/github-resources/src/repositories/make-skills.ts` via stock `releasePleaseWorkflow: true`). It opens/updates a **Release PR** that bumps the version across `package.json`, `package-lock.json`, both `plugin.json` files, `marketplace.json`, and each published `skills/*/SKILL.md` frontmatter (via the `# x-release-please-version` annotation), and regenerates `CHANGELOG.md`.
+- **Release cut:** release-please runs on `main` (org-managed `.github/workflows/release-please.yml`, generated from mono `libs/github-resources/src/repositories/make-skills.ts` via stock `releasePleaseWorkflow: true`). It opens/updates a **Release PR** that bumps the version across `package.json`, `package-lock.json`, the Claude, Cursor, and Codex plugin manifests, `marketplace.json`, and each published `skills/*/SKILL.md` frontmatter (via the `# x-release-please-version` annotation), and regenerates `CHANGELOG.md`.
 - **Promote:** merge the Release PR. release-please (authenticating as a GitHub App) creates the tag + GitHub Release, which fires `.github/workflows/build-release-assets.yml`. That workflow, in order: (1) `build.sh` → uploads zips as Release assets, (2) deploys GitHub Pages from the tag, (3) **fast-forwards `latest` to the tag** (App token; creates the branch on the first release).
 
 The version-bump targets beyond `package.json` live in `actions-toolkit.config.mjs` (`releasePlease.extraFiles`). Stable-alias zips (`dist/<name>.zip`) are committed so raw download links work before the first release; versioned zips are built ad-hoc in CI and attached to the Release. Download links resolve via `https://github.com/integromat/make-skills/releases/latest/download/<name>.zip` (a GitHub Release API alias, unrelated to the `latest` git branch).

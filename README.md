@@ -65,18 +65,27 @@ claude mcp add --transport http make https://mcp.make.com/v2
 
 Add the server to the agent's MCP configuration file:
 
-```json
-{
-  "mcpServers": {
-    "make": {
-      "type": "http",
-      "url": "https://mcp.make.com/v2"
-    }
-  }
-}
+| Platform     | MCP URL                       |
+| ------------ | ----------------------------- |
+| Claude Code  | `https://mcp.make.com/claude` |
+| Cursor       | `https://mcp.make.com/cursor` |
+| OpenAI Codex | `https://mcp.make.com/openai` |
+
+The Claude plugin at `plugins/make-skills-claude/` ships `.mcp.json` with the Claude endpoint. Manual registration:
+
+```bash
+claude mcp add --transport http make https://mcp.make.com/claude
+claude mcp list
 ```
 
-On first use, you'll authenticate through Make's OAuth consent screen. The server asks for one bundle of permissions and works only when every one of them is granted — if a tool answers with a permission error, reconnect and grant everything it asks for.
+On first use, authenticate through Make's OAuth consent screen. The server asks for one bundle of permissions and works only when every one of them is granted — if a tool answers with a permission error, reconnect and grant everything it asks for.
+
+Codex manual setup:
+
+```bash
+codex mcp add make --url https://mcp.make.com/openai
+codex mcp login make
+```
 
 ## Troubleshooting
 

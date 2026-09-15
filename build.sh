@@ -29,7 +29,7 @@ command -v jq >/dev/null 2>&1 || {
 }
 
 DIST_DIR="$REPO_ROOT/dist"
-VERSION=$(jq -r '.version' "$REPO_ROOT/.claude-plugin/plugin.json")
+VERSION=$(jq -r '.version' "$REPO_ROOT/plugins/make-skills-claude/.claude-plugin/plugin.json")
 
 # Skills to publish — single source of truth
 # (read loop rather than mapfile for portability with macOS bash 3.2)
@@ -73,12 +73,12 @@ TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/make-skills.XXXXXX")
 _CLEANUP_DIRS+=("$TMPDIR")
 BUNDLE="$TMPDIR/make-skills"
 mkdir -p "$BUNDLE"
-cp -r "$REPO_ROOT/.claude-plugin" "$BUNDLE/.claude-plugin"
+cp -r "$REPO_ROOT/plugins/make-skills-claude/.claude-plugin" "$BUNDLE/.claude-plugin"
 mkdir -p "$BUNDLE/skills"
 for skill in "${SKILLS[@]}"; do
     cp -r "$REPO_ROOT/skills/$skill" "$BUNDLE/skills/$skill"
 done
-cp "$REPO_ROOT/.mcp.json" "$BUNDLE/.mcp.json"
+cp "$REPO_ROOT/plugins/make-skills-claude/.mcp.json" "$BUNDLE/.mcp.json"
 cp "$REPO_ROOT/README.md" "$BUNDLE/README.md"
 cp "$REPO_ROOT/LICENSE" "$BUNDLE/LICENSE"
 cp "$REPO_ROOT/CLAUDE.md" "$BUNDLE/CLAUDE.md"

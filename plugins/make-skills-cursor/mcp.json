@@ -2,7 +2,7 @@
 	"mcpServers": {
 		"make": {
 			"type": "http",
-			"url": "https://mcp.make.com/openai"
+			"url": "https://mcp.make.com/cursor"
 		}
 	}
 }

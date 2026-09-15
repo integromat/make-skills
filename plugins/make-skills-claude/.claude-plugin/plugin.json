@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "make-skills",
+  "displayName": "Make",
+  "version": "0.1.7",
+  "description": "Expert skills for designing, building, and deploying Make.com automation scenarios — for Claude Code and other AI agents",
+  "author": {
+    "name": "Make",
+    "email": "support@make.com",
+    "url": "https://www.make.com"
+  },
+  "homepage": "https://www.make.com",
+  "repository": "https://github.com/integromat/make-skills",
+  "license": "MIT",
+  "keywords": [
+    "make",
+    "mcp",
+    "automation",
+    "scenarios",
+    "integration",
+    "workflow",
+    "blueprint",
+    "no-code"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
+}
