@@ -1,0 +1,27 @@
+{
+  "name": "make",
+  "displayName": "Make",
+  "version": "0.1.7",
+  "description": "Expert skills for Make scenario building, exploration, operations, and tool reference",
+  "author": {
+    "name": "Make",
+    "email": "support@make.com"
+  },
+  "homepage": "https://www.make.com",
+  "repository": "https://github.com/integromat/make-skills",
+  "license": "MIT",
+  "keywords": [
+    "make",
+    "mcp",
+    "automation",
+    "scenarios",
+    "integration",
+    "workflow",
+    "blueprint",
+    "no-code"
+  ],
+  "category": "Productivity",
+  "logo": "./assets/logo.png",
+  "skills": "./skills/",
+  "mcpServers": "./mcp.json"
+}

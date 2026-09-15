@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "make-marketplace",
   "description": "Design, build, and deploy Make.com automation scenarios using expert skills — directly from Claude Code",
   "owner": {
@@ -8,13 +9,15 @@
   },
   "plugins": [
     {
-      "name": "make-skills",
-      "description": "Expert skills for exploring, building, running and debugging Make scenarios, plus reusable API-call shells",
+      "name": "make",
+      "displayName": "Make",
+      "description": "Expert skills for Make scenario building, exploration, operations, and tool reference",
       "version": "0.1.7",
       "source": {
-        "source": "github",
-        "repo": "integromat/make-skills",
-        "ref": "latest"
+        "source": "git-subdir",
+        "url": "integromat/make-skills",
+        "path": "plugins/make-skills-claude",
+        "ref": "v2"
       },
       "author": {
         "name": "Make",
@@ -33,7 +36,19 @@
       ],
       "homepage": "https://www.make.com",
       "repository": "https://github.com/integromat/make-skills",
-      "license": "MIT"
+      "license": "MIT",
+      "strict": true,
+      "commands": {
+        "docs": {
+          "description": "Look up Make product or developer documentation",
+          "argumentHint": "[topic]",
+          "content": "Look up $ARGUMENTS in the Make documentation.\n\nFetch from `https://help.make.com` for product and scenario topics, and `https://developers.make.com` for app, SDK, and API topics. Prefer the Make MCP tools (`app_find`, `module_spec`) when the question is about a specific app or module — reach for the docs only when the tools do not cover it.\n\nAnswer with the relevant excerpt plus the source URL.\n",
+          "allowedTools": [
+            "WebFetch(domain:help.make.com)",
+            "WebFetch(domain:developers.make.com)"
+          ]
+        }
+      }
     }
   ]
 }

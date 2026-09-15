@@ -25,7 +25,7 @@ Give your AI coding agent deep Make expertise — for building, explaining, runn
 ```bash
 claude
 /plugin marketplace add integromat/make-skills
-/plugin install make-skills@make-marketplace
+/plugin install make@make-marketplace
 ```
 
 Skills and MCP server load automatically — nothing to configure manually.
@@ -35,7 +35,7 @@ Skills and MCP server load automatically — nothing to configure manually.
 ```bash
 git clone https://github.com/integromat/make-skills.git
 claude
-/plugin add /path/to/make-skills
+/plugin add /path/to/make-skills/plugins/make-skills-claude
 ```
 
 ### Claude Cowork / Claude Chat
@@ -58,7 +58,7 @@ Or download the [complete bundle](https://raw.githubusercontent.com/integromat/m
 codex plugin marketplace add integromat/make-skills
 ```
 
-Then open the plugin directory, select the **Make** marketplace, and install `make-skills`.
+Then open the plugin directory, select the **Make** marketplace, and install `make`.
 
 If the MCP server is not registered automatically after install, add it manually:
 
@@ -89,20 +89,29 @@ Copy the `skills/` directory into your agent's skills folder:
 
 ## MCP Server Setup
 
-The skills target Make's scenario-management MCP server. Add it to your agent's MCP configuration:
+Platform-specific OAuth endpoints:
 
-```json
-{
-  "mcpServers": {
-    "make": {
-      "type": "http",
-      "url": "https://mcp.make.com/v2"
-    }
-  }
-}
+| Platform | MCP URL |
+|----------|---------|
+| Claude Code | `https://mcp.make.com/claude` |
+| Cursor | `https://mcp.make.com/cursor` |
+| OpenAI Codex | `https://mcp.make.com/openai` |
+
+The Claude plugin at `plugins/make-skills-claude/` ships `.mcp.json` with the Claude endpoint. Manual registration:
+
+```bash
+claude mcp add --transport http make https://mcp.make.com/claude
+claude mcp list
 ```
 
-On first use, you'll authenticate through Make's OAuth consent screen. The server asks for one bundle of permissions and works only when every one of them is granted — if a tool answers with a permission error, reconnect and grant everything it asks for.
+On first use, authenticate through Make's OAuth consent screen. The server asks for one bundle of permissions and works only when every one of them is granted — if a tool answers with a permission error, reconnect and grant everything it asks for.
+
+Codex manual setup:
+
+```bash
+codex mcp add make --url https://mcp.make.com/openai
+codex mcp login make
+```
 
 ## Troubleshooting
 
@@ -116,7 +125,7 @@ For Claude Code: run `claude --debug` for detailed MCP connection logs.
 
 ## Contributing
 
-Open pull requests against **`main`** — that's the trunk. Use squash merges and Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …), since release-please relies on them. A separate `latest` branch is fast-forwarded to each released tag; the Claude Code plugin installs its content from there, so `main` can carry reviewed-but-unreleased commits without affecting that channel. Codex and `npx skills add` still track `main` HEAD directly.
+Open pull requests against **`main`** — that's the trunk. Use squash merges and Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …), since release-please relies on them. A separate `latest` branch is fast-forwarded to each released tag. The Claude Code marketplace plugin content is pinned to the **`v2`** branch (`ref` in `.claude-plugin/marketplace.json`); switch that to `latest` when you want installs to track released tags only. Codex and `npx skills add` still resolve `main` HEAD directly. For Cursor Team Marketplace, import this repo and track branch **`v2`** (branch is not set in `.cursor-plugin/marketplace.json`).
 
 ## License
 

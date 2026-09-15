@@ -1,0 +1,18 @@
+{
+  "name": "make-marketplace",
+  "owner": {
+    "name": "Make",
+    "email": "support@make.com"
+  },
+  "metadata": {
+    "description": "Design, build, and deploy Make.com automation scenarios using expert skills in Cursor",
+    "pluginRoot": "plugins"
+  },
+  "plugins": [
+    {
+      "name": "make",
+      "source": "plugins/make-skills-cursor",
+      "description": "Expert skills for Make scenario building, exploration, operations, and tool reference"
+    }
+  ]
+}

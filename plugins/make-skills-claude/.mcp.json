@@ -2,7 +2,7 @@
 	"mcpServers": {
 		"make": {
 			"type": "http",
-			"url": "https://mcp.make.com/v2"
+			"url": "https://mcp.make.com/claude"
 		}
 	}
 }

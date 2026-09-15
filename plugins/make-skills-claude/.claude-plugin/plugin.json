@@ -1,5 +1,7 @@
 {
-  "name": "make-skills",
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "make",
+  "displayName": "Make",
   "version": "0.1.7",
   "description": "Expert skills for designing, building, and deploying Make.com automation scenarios — for Claude Code and other AI agents",
   "author": {
@@ -20,8 +22,6 @@
     "blueprint",
     "no-code"
   ],
-  "allowedTools": [
-    "WebFetch(domain:help.make.com)",
-    "WebFetch(domain:developers.make.com)"
-  ]
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
 }
