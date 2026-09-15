@@ -20,8 +20,6 @@ Give your AI coding agent deep Make expertise — for building, explaining, runn
 
 There are two pieces, and both are needed: the **skills** (the expertise) and the **MCP server** (the tools the skills drive).
 
-### 1. Install the skills
-
 Download the skills, then either upload them to your agent (Claude Cowork, Claude Chat, and similar) or unzip them into its skills directory:
 
 | Skill                    | Download                                                                                                  |
@@ -48,7 +46,17 @@ Skills directories, for agents that read skills from disk:
 
 The skills target Make's scenario-management MCP server at `https://mcp.make.com/v2`, over HTTP.
 
-**Codex**
+Or download the [complete bundle](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-skills.zip) with all skills + MCP config.
+
+### Codex
+
+```bash
+codex plugin marketplace add integromat/make-skills
+```
+
+Then open the plugin directory, select the **Make** marketplace, and install `make`.
+
+If the MCP server is not registered automatically after install, add it manually:
 
 ```bash
 codex mcp add make --url https://mcp.make.com/v2
@@ -97,7 +105,7 @@ codex mcp login make
 
 ## Contributing
 
-Open pull requests against **`main`** — that's the trunk. Use squash merges and Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …), since release-please relies on them. A separate `latest` branch is fast-forwarded to each released tag, so `main` can carry reviewed-but-unreleased commits.
+Open pull requests against **`main`** — that's the trunk. Use squash merges and Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …), since release-please relies on them. A separate `latest` branch is fast-forwarded to each released tag. The Claude Code marketplace plugin content is pinned to the **`v2`** branch (`ref` in `.claude-plugin/marketplace.json`); switch that to `latest` when you want installs to track released tags only. Codex and `npx skills add` still resolve `main` HEAD directly. For Cursor Team Marketplace, import this repo and track branch **`v2`** (branch is not set in `.cursor-plugin/marketplace.json`).
 
 ## License
 

@@ -5,7 +5,7 @@
   },
   "plugins": [
     {
-      "name": "make-skills",
+      "name": "make",
       "interface": {
         "displayName": "Make Skills"
       },

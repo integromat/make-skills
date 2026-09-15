@@ -10,7 +10,7 @@
   },
   "plugins": [
     {
-      "name": "make-skills",
+      "name": "make",
       "source": "plugins/make-skills-cursor",
       "description": "Expert skills for Make scenario building, exploration, operations, and tool reference"
     }

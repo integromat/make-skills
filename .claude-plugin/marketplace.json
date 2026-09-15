@@ -9,7 +9,7 @@
   },
   "plugins": [
     {
-      "name": "make-skills",
+      "name": "make",
       "displayName": "Make",
       "description": "Expert skills for Make scenario building, exploration, operations, and tool reference",
       "version": "0.1.7",
@@ -17,7 +17,7 @@
         "source": "git-subdir",
         "url": "integromat/make-skills",
         "path": "plugins/make-skills-claude",
-        "ref": "latest"
+        "ref": "v2"
       },
       "author": {
         "name": "Make",
