@@ -1,8 +1,6 @@
 # Make Skills for AI Coding Agents
 
-Give your AI coding agent deep Make expertise — for building, explaining, running and debugging Make scenarios through Make's scenario-management MCP server. Works with Claude Code and Codex via dedicated plugins, and with Cursor, GitHub Copilot, Windsurf, Cline, and [40+ other agents](https://skills.sh) via the [Open Agent Skills](https://skills.sh) protocol.
-
-> **Recommended:** The Claude Code plugin gives the best experience — skills and MCP server load automatically, with no manual setup.
+Give your AI coding agent deep Make expertise — for building, explaining, running and debugging Make scenarios through Make's scenario-management MCP server. Works with any agent that reads skill folders and speaks MCP — Claude Code, Codex, Cursor, GitHub Copilot, Windsurf, Cline, and others.
 
 ## Skills
 
@@ -20,64 +18,18 @@ Give your AI coding agent deep Make expertise — for building, explaining, runn
 
 ## Installation
 
-### Claude Code Plugin ⭐ Recommended
+There are two pieces, and both are needed: the **skills** (the expertise) and the **MCP server** (the tools the skills drive).
+
+### 1. Install the skills
+
+**By hand — copy the folders**
+
+Clone the repository and copy the contents of `skills/` into your agent's skills folder:
 
 ```bash
-claude
-/plugin marketplace add integromat/make-skills
-/plugin install make-skills@make-marketplace
+git clone --branch v2 https://github.com/integromat/make-skills.git
+cp -r make-skills/skills/* <your-agent-skills-directory>/
 ```
-
-Skills and MCP server load automatically — nothing to configure manually.
-
-### Claude Code Plugin (Manual)
-
-```bash
-git clone https://github.com/integromat/make-skills.git
-claude
-/plugin add /path/to/make-skills
-```
-
-### Claude Cowork / Claude Chat
-
-Download individual skills as zip files and upload to your project:
-
-| Skill | Download |
-|-------|----------|
-| Scenario Reference | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-reference.zip) |
-| Scenario Explore | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-explore.zip) |
-| Scenario Building | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-building.zip) |
-| Scenario Operations | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-operations.zip) |
-| API Shell | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-api-shell.zip) |
-
-Or download the [complete bundle](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-skills.zip) with all skills + MCP config.
-
-### Codex
-
-```bash
-codex plugin marketplace add integromat/make-skills
-```
-
-Then open the plugin directory, select the **Make** marketplace, and install `make-skills`.
-
-If the MCP server is not registered automatically after install, add it manually:
-
-```bash
-codex mcp add make --url https://mcp.make.com/v2
-codex mcp login make
-```
-
-### Cursor, GitHub Copilot, Windsurf, Cline, and others (via Open Agent Skills)
-
-```bash
-npx skills add integromat/make-skills
-```
-
-Installs all five skills into your agent's skills directory. Works with any agent that supports the [Open Agent Skills](https://skills.sh) protocol — Cursor, GitHub Copilot, Windsurf, Cline, and [40+ others](https://skills.sh). Technical setup required.
-
-### Manual Installation (Any Agent)
-
-Copy the `skills/` directory into your agent's skills folder:
 
 | Agent | Skills directory |
 |-------|-----------------|
@@ -87,9 +39,40 @@ Copy the `skills/` directory into your agent's skills folder:
 | Cline | `.cline/skills/` |
 | Generic | `.agents/skills/` |
 
-## MCP Server Setup
+**By upload — download zips**
 
-The skills target Make's scenario-management MCP server. Add it to your agent's MCP configuration:
+For agents that take skills as uploads (Claude Cowork, Claude Chat, and similar), download a skill and upload it to your project:
+
+| Skill | Download |
+|-------|----------|
+| Scenario Reference | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-reference.zip) |
+| Scenario Explore | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-explore.zip) |
+| Scenario Building | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-building.zip) |
+| Scenario Operations | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-operations.zip) |
+| API Shell | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-api-shell.zip) |
+
+Or download the [complete bundle](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-skills.zip) with all skills plus the MCP config.
+
+### 2. Add the MCP server
+
+The skills target Make's scenario-management MCP server at `https://mcp.make.com/v2`, over HTTP.
+
+**Claude Code**
+
+```bash
+claude mcp add --transport http make https://mcp.make.com/v2
+```
+
+**Codex**
+
+```bash
+codex mcp add make --url https://mcp.make.com/v2
+codex mcp login make
+```
+
+**Any agent with a JSON MCP config**
+
+Add the server to the agent's MCP configuration file:
 
 ```json
 {
@@ -116,7 +99,7 @@ For Claude Code: run `claude --debug` for detailed MCP connection logs.
 
 ## Contributing
 
-Open pull requests against **`main`** — that's the trunk. Use squash merges and Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …), since release-please relies on them. A separate `latest` branch is fast-forwarded to each released tag; the Claude Code plugin installs its content from there, so `main` can carry reviewed-but-unreleased commits without affecting that channel. Codex and `npx skills add` still track `main` HEAD directly.
+Open pull requests against **`main`** — that's the trunk. Use squash merges and Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …), since release-please relies on them. A separate `latest` branch is fast-forwarded to each released tag, so `main` can carry reviewed-but-unreleased commits.
 
 ## License
 
