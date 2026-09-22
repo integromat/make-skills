@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-**make-skills** provides expert skills for building, explaining, running and debugging Make automation scenarios. Distributed as both a Claude Code plugin and as Open Agent Skills (compatible with 40+ AI agents via `npx skills add integromat/make-skills`). Published by Make under MIT license.
+**make-skills** provides expert skills for building, explaining, running and debugging Make automation scenarios. Installed by copying the skill folders into an agent's skills directory or by uploading the per-skill zips, and paired with the Make MCP server. Published by Make under MIT license.
 
 The skills connect to the remote Make MCP server:
 
@@ -69,7 +69,7 @@ Edit `.mcp.json`. The `make` server uses HTTP transport to Make's hosted endpoin
 
 `main` is the GitHub default branch, the trunk, and the working branch — all PRs land there directly. A separate **`latest`** branch is fast-forwarded to each released tag and stays reserved for that — don't push to it directly.
 
-The Claude Code plugin marketplace pins plugin *content* to `latest` (`.claude-plugin/marketplace.json`'s `source: { source: "github", repo: "integromat/make-skills", ref: "latest" }`), so that channel only ever installs released code; marketplace metadata (name/description/version) still comes from `main` HEAD, which is cosmetic. The Codex plugin dir and `npx skills add` via the bare `owner/repo` shorthand still resolve `main` HEAD directly, so they can pick up reviewed-but-unreleased commits between releases — an accepted gap for those two channels.
+The Claude Code plugin marketplace pins plugin *content* to `latest` (`.claude-plugin/marketplace.json`'s `source: { source: "github", repo: "integromat/make-skills", ref: "latest" }`), so that channel only ever installs released code; marketplace metadata (name/description/version) still comes from `main` HEAD, which is cosmetic.
 
 - **Work:** open PRs against **`main`**, squash merge. PR titles are linted as Conventional Commits by the org `validate-pr.yml` (mono-generated), which release-please relies on.
 - **Release cut:** release-please runs on `main` (org-managed `.github/workflows/release-please.yml`, generated from mono `libs/github-resources/src/repositories/make-skills.ts` via stock `releasePleaseWorkflow: true`). It opens/updates a **Release PR** that bumps the version across `package.json`, `package-lock.json`, both `plugin.json` files, `marketplace.json`, and each published `skills/*/SKILL.md` frontmatter (via the `# x-release-please-version` annotation), and regenerates `CHANGELOG.md`.
