@@ -4,13 +4,13 @@ Give your AI coding agent deep Make expertise — for building, explaining, runn
 
 ## Skills
 
-| Skill | What it does |
-|-------|-------------|
-| **make-scenario-reference** | The conventions every tool shares — scopes, the data/remark contract, structure vs configuration, the one-save write model, and what the surface refuses to author — for when a tool answers 403 or refuses something |
-| **make-scenario-explore** | Orienting in an account — organizations, teams, listing scenarios, explaining what one does, connection health, account-wide checks |
-| **make-scenario-building** | Creating and editing scenarios — app and module discovery, connections, resolving account-dependent values, flow control, error handling, subscenarios, AI agents; with references and complete examples |
-| **make-scenario-operations** | Running, activating and deactivating, reviewing and debugging executions, investigating a webhook |
-| **make-api-shell** | A reusable API-call or HTTP shell scenario used as a retrieval transport into a SaaS account (email, CRM, tickets) |
+| Skill                        | What it does                                                                                                                                                                                                          |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **make-scenario-reference**  | The conventions every tool shares — scopes, the data/remark contract, structure vs configuration, the one-save write model, and what the surface refuses to author — for when a tool answers 403 or refuses something |
+| **make-scenario-explore**    | Orienting in an account — organizations, teams, listing scenarios, explaining what one does, connection health, account-wide checks                                                                                   |
+| **make-scenario-building**   | Creating and editing scenarios — app and module discovery, connections, resolving account-dependent values, flow control, error handling, subscenarios, AI agents; with references and complete examples              |
+| **make-scenario-operations** | Running, activating and deactivating, reviewing and debugging executions, investigating a webhook                                                                                                                     |
+| **make-api-shell**           | A reusable API-call or HTTP shell scenario used as a retrieval transport into a SaaS account (email, CRM, tickets)                                                                                                    |
 
 ## Prerequisites
 
@@ -22,52 +22,43 @@ There are two pieces, and both are needed: the **skills** (the expertise) and th
 
 ### 1. Install the skills
 
-**By hand — copy the folders**
+Download the skills, then either upload them to your agent (Claude Cowork, Claude Chat, and similar) or unzip them into its skills directory:
 
-Clone the repository and copy the contents of `skills/` into your agent's skills folder:
+| Skill                    | Download                                                                                                  |
+| ------------------------ | --------------------------------------------------------------------------------------------------------- |
+| Bundle of all the skills | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-skills.zip)              |
+| Scenario Reference       | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-reference.zip)  |
+| Scenario Explore         | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-explore.zip)    |
+| Scenario Building        | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-building.zip)   |
+| Scenario Operations      | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-operations.zip) |
+| API Shell                | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-api-shell.zip)           |
 
-```bash
-git clone --branch v2 https://github.com/integromat/make-skills.git
-cp -r make-skills/skills/* <your-agent-skills-directory>/
-```
+Skills directories, for agents that read skills from disk:
 
-| Agent | Skills directory |
-|-------|-----------------|
-| Claude Code | `.claude/skills/` |
-| Cursor | `.cursor/skills/` |
-| Windsurf | `.windsurf/skills/` |
-| Cline | `.cline/skills/` |
-| Generic | `.agents/skills/` |
-
-**By upload — download zips**
-
-For agents that take skills as uploads (Claude Cowork, Claude Chat, and similar), download a skill and upload it to your project:
-
-| Skill | Download |
-|-------|----------|
-| Scenario Reference | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-reference.zip) |
-| Scenario Explore | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-explore.zip) |
-| Scenario Building | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-building.zip) |
-| Scenario Operations | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-operations.zip) |
-| API Shell | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-api-shell.zip) |
-
-Or download the [complete bundle](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-skills.zip) with all skills plus the MCP config.
+| Agent           | Skills directory    |
+| --------------- | ------------------- |
+| ChatGPT / Codex | `.codex/skills`     |
+| Claude Code     | `.claude/skills/`   |
+| Cursor          | `.cursor/skills/`   |
+| Windsurf        | `.windsurf/skills/` |
+| Cline           | `.cline/skills/`    |
+| Generic         | `.agents/skills/`   |
 
 ### 2. Add the MCP server
 
 The skills target Make's scenario-management MCP server at `https://mcp.make.com/v2`, over HTTP.
-
-**Claude Code**
-
-```bash
-claude mcp add --transport http make https://mcp.make.com/v2
-```
 
 **Codex**
 
 ```bash
 codex mcp add make --url https://mcp.make.com/v2
 codex mcp login make
+```
+
+**Claude Code**
+
+```bash
+claude mcp add --transport http make https://mcp.make.com/v2
 ```
 
 **Any agent with a JSON MCP config**
@@ -89,13 +80,11 @@ On first use, you'll authenticate through Make's OAuth consent screen. The serve
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| MCP server not connecting | Check network connectivity to Make servers |
-| Permission denied / 403 | Reconnect the Make MCP server and grant every requested permission |
+| Issue                              | Solution                                                                                                                                    |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| MCP server not connecting          | Check network connectivity to Make servers                                                                                                  |
+| Permission denied / 403            | Reconnect the Make MCP server and grant every requested permission                                                                          |
 | A tool refuses to create something | Read the refusal — the surface deliberately cannot author data stores, custom functions or data structures; create those in the Make editor |
-
-For Claude Code: run `claude --debug` for detailed MCP connection logs.
 
 ## Contributing
 
