@@ -41,8 +41,7 @@ call that acts on it. Details and the refusal contract: `make-scenario-reference
 
 ## Edit an existing scenario
 
-1. `scenario_get` for structure and `lastEdit`; `scenario_module_get` (`config: true`) only for the modules
-   you will change.
+1. `scenario_get` for structure and `lastEdit`; `scenario_module_get` only for the modules you will change.
 2. Adding modules: `app_find` and `module_spec(schemas: true)` as above; resolve `dynamic` paths against the
    module's current `config`.
 3. One `scenario_patch` with `expectedLastEdit` and every operation the change needs. Send only the `config`
