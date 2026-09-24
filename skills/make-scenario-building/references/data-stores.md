@@ -1,6 +1,6 @@
 ---
 name: data-stores
-description: Persisting state across runs (dedup, counters, shared lookups) with a data store, and typing a payload with a data structure. Load only when the design needs memory between runs or a fixed record/payload schema.
+description: Persisting state across runs (dedup, counters) with a scenario-owned data store, and typing a payload with a data structure. Load only when the design needs memory between runs or a fixed record/payload schema.
 ---
 
 # Data stores and data structures
@@ -14,12 +14,20 @@ running total?) or several scenarios share a lookup table. A one-off transform n
 
 ## Order of operations
 
-Dependencies run structure → store → scenario, so create in that order, and reuse before creating:
+Dependencies run structure → store → scenario, so create in that order.
 
-1. `data_structure_list` → `data_structure_get` on a plausible match. None fits → `data_structure_create`,
-   preferably from a real `sample` payload rather than a hand-written `spec`. Skip entirely for a store whose
-   records need no fixed shape.
-2. `data_store_list`. None fits → `data_store_create` with the structure's id and a modest `maxSizeMB`.
+**A new scenario gets its own new store.** A store another scenario writes to is that scenario's state:
+sharing it mixes records, breaks both dedup keys, and a later cleanup deletes data the other scenario needs.
+Reuse an existing store only when the user names it or explicitly asks to share one (a shared lookup, below).
+A store that merely looks similar by name or fields is not a match — the `data_store_list` check the tool
+descriptions suggest is for finding the store the user named and avoiding a duplicate name, not for picking
+one yourself.
+
+1. `data_structure_create`, preferably from a real `sample` payload rather than a hand-written `spec`. Skip
+   entirely for a store whose records need no fixed shape. Reuse a structure only when it belongs to the
+   store the user asked to share.
+2. `data_store_create` with the structure's id, a name that ties it to this scenario, and a modest
+   `maxSizeMB`.
 3. `app_find` for the operation ("add a record to a data store", "check if a record exists") → take the
    Data store module names from the result, never guess them → `module_spec(schemas: true)`.
 4. Put the store's id in the module's `datastore` parameter, in the same `scenario_create`/`scenario_patch`
@@ -33,7 +41,8 @@ State the store and structure names you picked or created before the scenario wr
   add the record with that key. Add *after* processing succeeds, or a failed run marks the item as seen.
 - **Counter / running total.** Get the record → compute the new value in the mapper → update the record.
   Not safe under parallel runs; set the scenario to sequential (`settings_set`) when the count must be exact.
-- **Shared lookup.** One scenario maintains the store; others only read it. Say which scenario owns writes.
+- **Shared lookup** — only on an explicit request. One scenario maintains the store; others only read it.
+  Say which scenario owns writes.
 - **Typed webhook payload.** A structure from a real sample, assigned to the webhook trigger with
   `scenario_patch`, gives later modules stable field names and (with `strict`) rejects malformed requests.
   Still learn one real request first when nobody has seen the payload — see the webhook section of the skill.
