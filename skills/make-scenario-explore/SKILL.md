@@ -35,8 +35,8 @@ the list rendered.
 `scenario_get` is **enough by itself**: every module in flow order, nesting via `parent` (router arms,
 if-else branches, error handlers, agent tools), filters, trigger and schedule, connection health, declared
 inputs and outputs. It omits each module's `config` on purpose — do not read that as incomplete, and do not
-fan `scenario_module_get` across every module. Call `scenario_module_get` (with `config: true`) only when a
-specific value is the question: which spreadsheet, what the message says, how a field is computed.
+fan `scenario_module_get` across every module. Call `scenario_module_get` only when a specific value is the
+question: which spreadsheet, what the message says, how a field is computed.
 
 How to read a few fields for a non-technical user:
 
