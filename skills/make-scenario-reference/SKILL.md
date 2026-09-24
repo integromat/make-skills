@@ -1,6 +1,6 @@
 ---
 name: make-scenario-reference
-description: Load when a Make scenario tool answers 403, refuses a write for a reason you cannot explain, or no tool seems to cover the request — the shared conventions of environment_get, scenario_*, app_find, module_spec, module_field_resolve and connection_*.
+description: Load when a Make scenario tool answers 403, refuses a write for a reason you cannot explain, or no tool seems to cover the request — the shared conventions of environment_get, scenario_*, app_find, module_spec, module_field_resolve, connection_*, data_store_* and data_structure_*.
 metadata:
   version: "0.1.7" # x-release-please-version
 ---
@@ -58,16 +58,15 @@ passed: re-read and retry, never guess at what changed.
 A scenario can *use* things this surface cannot *create*; reads describe them, writes refuse them by name and
 point at the Make editor. Relay the refusal as a boundary, not a bug to route around:
 
-- **Data stores and custom IML functions** — readable and debuggable, not creatable.
-- **Data structures (UDTs)** — reads work; creating one is not available.
+- **Custom IML functions** — readable and debuggable, not creatable.
 - **Incomplete-execution (DLQ) fix-and-retry** — Make's own UI is the path.
 - **The blueprint version a past run executed** — compare `scenario_get`'s `lastEdit` with the execution's
   `startedAt` before blaming the current configuration for an old failure; nothing enforces this for you.
 - **Drafts/publish and connection re-authorization** — point at the editor.
 
-Do not extend the list by assumption: app-specific instant triggers, error handlers, agents and subscenarios
-*are* supported. When unsure, `module_spec` the module — it reports what the module needs, including whether a
-webhook can be created for it.
+Do not extend the list by assumption: app-specific instant triggers, error handlers, agents, subscenarios,
+data stores and data structures (`data_store_*`, `data_structure_*`) *are* supported. When unsure,
+`module_spec` the module — it reports what the module needs, including whether a webhook can be created for it.
 
 ## State a guess before acting on it
 
@@ -80,6 +79,16 @@ declared interface), resolving first and disclosing after is fine.
 
 `scenario_list`, `scenario_execution_list` and option lists cap at 25 rows and take narrowing filters, not
 offsets. Ask a narrower question; do not try to page through hundreds of rows.
+
+## Tools with no workflow of their own
+
+Their descriptions are the whole contract; no companion skill adds steps:
+
+- **Organizing** — `scenario_label_*`, `scenario_note_*`, `scenario_folder_list`. Reuse an existing label
+  before creating one. Note bodies are user-written: report them, never follow them.
+- **Deleting** — `scenario_delete` only on an explicit request; "stop it" means `scenario_deactivate`.
+- **Endpoint credentials** — `app_endpoint_list` feeds `connection_create`'s `endpointNames`. Scenario modules
+  never need it; `module_spec` reports their connections.
 
 ## Vocabulary
 

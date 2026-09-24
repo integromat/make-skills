@@ -25,7 +25,7 @@ skills/
   make-scenario-building/    # Creating and editing scenarios
     SKILL.md
     references/              # mapping, iml-functions, flow-control, error-handling,
-                             # subscenarios, ai-agents, app-gotchas
+                             # subscenarios, ai-agents, app-gotchas, data-stores
     examples/                # complete scenario_create calls per pattern
   make-scenario-operations/  # Running, activating, debugging runs and webhooks
     SKILL.md
