@@ -30,6 +30,8 @@ call that acts on it. Details and the refusal contract: `make-scenario-reference
    hand over the link, `connection_get` when the user says they are done.
 6. `module_field_resolve` every `dynamic` path in `dependsOn` order, copying `value` into `config`. A polling
    trigger's start point is the `/data` path — ask "existing items or from now?" before resolving it.
+   (`module_options_get` is the same lookup keyed by `module_spec`'s `dynamicFields` and a `connectionId`;
+   use one or the other per field, not both.)
 7. Compose the flat list: your ids, one `root: "main"`, everything else `follows` or `parent`, one `config`
    per module, `filter` for a plain continue-or-stop gate. Google Sheets, Gmail, Make AI Tools or date math
    involved → [App gotchas](./references/app-gotchas.md) first.
@@ -72,6 +74,7 @@ the user sends one real request (or `scenario_trigger_learn` first) → `scenari
 | More than a straight line: routers, if-else + merge, multi-condition filters, iterating, aggregating | [Flow control](./references/flow-control.md) |
 | The scenario is on-demand, calls another scenario, or is called by one or by an agent | [Subscenarios](./references/subscenarios.md) |
 | Placing a Make AI Agent module with tools | [AI agents](./references/ai-agents.md) |
+| A run must remember earlier runs (dedup, counters), or a payload needs a fixed schema | [Data stores](./references/data-stores.md) |
 | The user asks for retries or fallbacks, or failure/data loss is unacceptable — most scenarios need none | [Error handling](./references/error-handling.md) |
 | Finalizing a Google Sheets, Gmail or Make AI Tools config, or a date expression | [App gotchas](./references/app-gotchas.md) |
 | A complete `scenario_create` call to pattern from | [Examples](./examples/README.md) |
