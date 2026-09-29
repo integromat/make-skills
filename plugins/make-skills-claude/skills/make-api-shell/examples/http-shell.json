@@ -1,0 +1,67 @@
+{
+  "teamId": 1101,
+  "name": "HTTP shell: Acme API (noAuth)",
+  "scheduling": { "type": "on-demand" },
+  "interface": {
+    "input": [
+      { "name": "url", "type": "url", "label": "URL", "required": true },
+      { "name": "method", "type": "text", "label": "Method", "required": true, "default": "GET" },
+      { "name": "headers", "type": "array", "label": "Headers",
+        "spec": [ { "name": "name", "type": "text" }, { "name": "value", "type": "text" } ] },
+      { "name": "qs", "type": "array", "label": "Query parameters",
+        "spec": [ { "name": "name", "type": "text" }, { "name": "value", "type": "text" } ] },
+      { "name": "body", "type": "text", "label": "Body (JSON text)", "multiline": true }
+    ],
+    "output": [
+      { "name": "data", "type": "any", "label": "Response body" },
+      { "name": "statusCode", "type": "integer", "label": "HTTP status" },
+      { "name": "headers", "type": "any", "label": "Response headers" }
+    ]
+  },
+  "modules": [
+    {
+      "id": 1,
+      "module": "scenario-service:StartSubscenario",
+      "version": 2,
+      "root": "main",
+      "config": {}
+    },
+    {
+      "id": 2,
+      "module": "http:MakeRequest",
+      "version": 4,
+      "follows": 1,
+      "label": "HTTP request",
+      "config": {
+        "parameters": { "authenticationType": "noAuth", "tlsType": "", "proxyKeychain": "" },
+        "mapper": {
+          "url": "{{1.url}}",
+          "method": "{{lower(1.method)}}",
+          "headers": "{{1.headers}}",
+          "queryParameters": "{{1.qs}}",
+          "contentType": "{{if(length(1.body) > 0; \"json\")}}",
+          "inputMethod": "jsonString",
+          "jsonStringBodyContent": "{{1.body}}",
+          "parseResponse": false,
+          "stopOnHttpError": false,
+          "allowRedirects": true,
+          "shareCookies": false,
+          "requestCompressedContent": true
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "scenario-service:ReturnData",
+      "version": 2,
+      "follows": 2,
+      "config": {
+        "mapper": {
+          "data": "{{2.data}}",
+          "statusCode": "{{2.statusCode}}",
+          "headers": "{{2.headers}}"
+        }
+      }
+    }
+  ]
+}

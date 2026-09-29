@@ -32,8 +32,7 @@
       "homepage": "https://www.make.com",
       "repository": "https://github.com/integromat/make-skills",
       "license": "MIT",
-      "strict": true,
-      "privacyPolicyUrl": "https://www.make.com/en/privacy-notice"
+      "strict": true
     }
   ]
 }

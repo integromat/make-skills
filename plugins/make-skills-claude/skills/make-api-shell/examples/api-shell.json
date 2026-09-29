@@ -1,0 +1,52 @@
+{
+  "teamId": 1101,
+  "name": "API shell: Gmail",
+  "scheduling": { "type": "on-demand" },
+  "interface": {
+    "input": [
+      { "name": "path", "type": "text", "label": "Path", "required": true },
+      { "name": "method", "type": "text", "label": "Method", "default": "GET" },
+      { "name": "header", "type": "any", "label": "Headers" },
+      { "name": "qs", "type": "any", "label": "Query parameters" },
+      { "name": "body", "type": "any", "label": "Body" }
+    ],
+    "output": [
+      { "name": "data", "type": "any", "label": "Response body" }
+    ]
+  },
+  "modules": [
+    {
+      "id": 1,
+      "module": "scenario-service:StartSubscenario",
+      "version": 2,
+      "root": "main",
+      "config": {}
+    },
+    {
+      "id": 2,
+      "module": "google-email:makeAnApiCall",
+      "version": 2,
+      "follows": 1,
+      "label": "Gmail API call",
+      "config": {
+        "parameters": { "__IMTCONN__": 27760 },
+        "mapper": {
+          "url": "{{1.path}}",
+          "method": "{{1.method}}",
+          "headers": "{{1.header}}",
+          "qs": "{{1.qs}}",
+          "body": "{{1.body}}"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "scenario-service:ReturnData",
+      "version": 2,
+      "follows": 2,
+      "config": {
+        "mapper": { "data": "{{2.body}}" }
+      }
+    }
+  ]
+}
