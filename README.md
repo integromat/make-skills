@@ -105,7 +105,7 @@ codex mcp login make
 
 ## Contributing
 
-Open pull requests against **`main`** — that's the trunk. Use squash merges and Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …), since release-please relies on them. A separate `latest` branch is fast-forwarded to each released tag. The Claude Code marketplace plugin content is pinned to the **`v2`** branch (`ref` in `.claude-plugin/marketplace.json`); switch that to `latest` when you want installs to track released tags only. Codex and `npx skills add` still resolve `main` HEAD directly. For Cursor Team Marketplace, import this repo and track branch **`v2`** (branch is not set in `.cursor-plugin/marketplace.json`).
+Open pull requests against **`main`** — that's the trunk. Use squash merges and Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …), since release-please relies on them. A separate `latest` branch is fast-forwarded to each released tag. The Claude Code marketplace entry uses a local `./plugins/make-skills-claude` source, so installs track the branch the marketplace is added from. Codex and `npx skills add` still resolve `main` HEAD directly. For Cursor Team Marketplace, import this repo and track branch **`v2`** (branch is not set in `.cursor-plugin/marketplace.json`).
 
 ## License
 
