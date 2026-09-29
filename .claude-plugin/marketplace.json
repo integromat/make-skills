@@ -42,13 +42,10 @@
         "docs": {
           "description": "Look up Make product or developer documentation",
           "argumentHint": "[topic]",
-          "content": "Look up $ARGUMENTS in the Make documentation.\n\nFetch from `https://help.make.com` for product and scenario topics, and `https://developers.make.com` for app, SDK, and API topics. Prefer the Make MCP tools (`app_find`, `module_spec`) when the question is about a specific app or module — reach for the docs only when the tools do not cover it.\n\nAnswer with the relevant excerpt plus the source URL.\n",
-          "allowedTools": [
-            "WebFetch(domain:help.make.com)",
-            "WebFetch(domain:developers.make.com)"
-          ]
+          "content": "Look up $ARGUMENTS in the Make documentation.\n\nFetch from `https://help.make.com` for product and scenario topics, and `https://developers.make.com` for app, SDK, and API topics. Prefer the Make MCP tools (`app_find`, `module_spec`) when the question is about a specific app or module — reach for the docs only when the tools do not cover it.\n\nAnswer with the relevant excerpt plus the source URL.\n"
         }
-      }
+      },
+      "privacyPolicyUrl": "https://www.make.com/en/privacy-notice"
     }
   ]
 }

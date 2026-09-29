@@ -23,5 +23,6 @@
     "no-code"
   ],
   "skills": "./skills/",
-  "mcpServers": "./.mcp.json"
+  "mcpServers": "./.mcp.json",
+  "privacyPolicyUrl": "https://www.make.com/en/privacy-notice"
 }
