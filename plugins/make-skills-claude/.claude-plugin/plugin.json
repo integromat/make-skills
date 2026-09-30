@@ -26,6 +26,6 @@
   "mcpServers": "./.mcp.json",
   "privacyPolicyUrl": "https://www.make.com/en/privacy-notice",
   "termsOfServiceUrl": "https://www.make.com/en/terms-and-conditions",
-  "supportUrl": "mailto:support@make.com",
-  "documentationUrl": "https://help.make.com"
+  "supportUrl": "https://help.make.com",
+  "documentationUrl": "https://apps.make.com/"
 }
