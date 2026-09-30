@@ -1,6 +1,6 @@
 name: Build release assets
 
-# On a published Release: attach zips, deploy Pages from the tag, then fast-forward
+# On a published Release: attach zips, then fast-forward
 # the `latest` branch to the tag last — so `latest` only advances once assets have
 # built. Fires because release-please publishes the Release as a GitHub App (the
 # default GITHUB_TOKEN would not trigger this event).
@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Existing release tag to (re)build, deploy, and fast-forward latest to
+        description: Existing release tag to (re)build and fast-forward latest to
         required: true
 
 jobs:
@@ -34,34 +34,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload "$TAG" dist/*.zip --clobber
 
-  deploy-pages:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    # Shared with static.yml so Pages deployments never overlap.
-    concurrency:
-      group: pages
-      cancel-in-progress: false
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    env:
-      TAG: ${{ github.event.release.tag_name || inputs.tag }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ env.TAG }}
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
-      - id: deployment
-        uses: actions/deploy-pages@v5
-
   fast-forward-latest:
-    needs: [build-assets, deploy-pages]
+    needs: [build-assets]
     runs-on: ubuntu-latest
     env:
       TAG: ${{ github.event.release.tag_name || inputs.tag }}
