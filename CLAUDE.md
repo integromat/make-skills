@@ -33,21 +33,16 @@ skills/
     examples/                # complete scenario_create calls per pattern
   make-scenario-operations/  # Running, activating, debugging runs and webhooks
     SKILL.md
-  make-api-shell/            # Reusable API-call / HTTP shell as a retrieval transport
-    SKILL.md
-    references/http-fallback.md
-    examples/
 ```
 
 ## Skills
 
-Five auto-activated skills, split by use case:
+Four auto-activated skills, split by use case:
 
 - **make-scenario-reference** — what every tool assumes: scopes, `content` remarks are instructions, the structure-vs-configuration split, one call = one save, the refusal contract, "state a guess before acting on it". Loaded on a 403, an unexplained refusal, or a request no tool covers; the three or four rules a routine task needs are inlined as a "Ground rules" block in each task skill instead.
 - **make-scenario-explore** — `environment_get` → `scenario_list` → `scenario_get` → `scenario_module_get`, and how to read the structural fields for a non-technical user.
 - **make-scenario-building** — the build and edit workflows (`app_find` → `module_spec` → connections → `module_field_resolve` → `scenario_create` / `scenario_patch`), the decisions the tools leave to the model, and on-demand references for everything past a straight line.
 - **make-scenario-operations** — `scenario_run` by trigger kind, activation, the execution list → get → inspect → module-get chain, webhook learning and inspection.
-- **make-api-shell** — a three-module on-demand scenario (`StartSubscenario` → _Make an API Call_ → `ReturnData`) or its `http:MakeRequest` fallback, built once per provider and connection and run through `scenario_run`.
 
 ## Writing skills for this surface
 

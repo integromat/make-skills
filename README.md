@@ -10,7 +10,6 @@ Give your AI coding agent deep Make expertise — for building, explaining, runn
 | **make-scenario-explore**    | Orienting in an account — organizations, teams, listing scenarios, explaining what one does, connection health, account-wide checks                                                                                   |
 | **make-scenario-building**   | Creating and editing scenarios — app and module discovery, connections, resolving account-dependent values, flow control, error handling, subscenarios, AI agents; with references and complete examples              |
 | **make-scenario-operations** | Running, activating and deactivating, reviewing and debugging executions, investigating a webhook                                                                                                                     |
-| **make-api-shell**           | A reusable API-call or HTTP shell scenario used as a retrieval transport into a SaaS account (email, CRM, tickets)                                                                                                    |
 
 ## Prerequisites
 
@@ -55,7 +54,6 @@ Upload the zips to your agent (Claude Cowork, Claude Chat, and similar) or unzip
 | Scenario Explore         | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-explore.zip)    |
 | Scenario Building        | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-building.zip)   |
 | Scenario Operations      | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-operations.zip) |
-| API Shell                | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-api-shell.zip)           |
 
 Skills directories, for agents that read skills from disk:
 

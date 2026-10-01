@@ -100,4 +100,3 @@ personal account/team" means that id; say "private space" back.
 - `make-scenario-explore` — orienting, listing, explaining an existing scenario, account-wide checks.
 - `make-scenario-building` — finding modules, connections, creating and editing scenarios.
 - `make-scenario-operations` — running, activating, and debugging runs and webhooks.
-- `make-api-shell` — a reusable API-call or HTTP scenario used as a retrieval transport into a SaaS account.

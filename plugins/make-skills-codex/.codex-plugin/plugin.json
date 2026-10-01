@@ -25,7 +25,7 @@
   "interface": {
     "displayName": "Make",
     "shortDescription": "Build Make scenarios with expert skills",
-    "longDescription": "Five auto-activated skills that guide work with Make scenarios end-to-end: the shared tool conventions, orienting in an account and explaining existing scenarios, creating and editing scenarios (discovery, connections, flow control, error handling, subscenarios, AI agents), running and debugging them, and building reusable API-call shells. Works together with Make's hosted scenario-management MCP server. If Codex does not register the MCP server automatically after install, run `codex mcp add make --url https://mcp.make.com/openai` and then `codex mcp login make`.",
+    "longDescription": "Four auto-activated skills that guide work with Make scenarios end-to-end: the shared tool conventions, orienting in an account and explaining existing scenarios, creating and editing scenarios (discovery, connections, flow control, error handling, subscenarios, AI agents), and running and debugging them. Works together with Make's hosted scenario-management MCP server. If Codex does not register the MCP server automatically after install, run `codex mcp add make --url https://mcp.make.com/openai` and then `codex mcp login make`.",
     "developerName": "Make",
     "category": "Productivity",
     "capabilities": [
@@ -38,8 +38,7 @@
     "defaultPrompt": [
       "Build a Make scenario that sends a Slack message when a new row is added to Google Sheets.",
       "Design a Make scenario that summarizes daily emails and posts the summary to Notion.",
-      "Explain what my \"Invoice sync\" scenario does and whether its connections are healthy.",
-      "Get my unread Gmail messages through a reusable Make API-call shell."
+      "Explain what my \"Invoice sync\" scenario does and whether its connections are healthy."
     ],
     "brandColor": "#6D00CC",
     "composerIcon": "./assets/icon.png",
