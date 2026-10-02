@@ -1,7 +1,7 @@
 {
   "name": "make",
   "version": "0.1.7",
-  "description": "Expert skills for designing, building, and deploying Make automation scenarios",
+  "description": "Turn recurring work you spot in Codex into Make automations and AI Agents that keep running in the cloud. Build, run, and manage them from Codex, connected to the apps and data they need. Everything stays visible in Make's visual landscape, so you can inspect and change it anytime.",
   "author": {
     "name": "Make",
     "email": "support@make.com",
@@ -25,7 +25,7 @@
   "interface": {
     "displayName": "Make",
     "shortDescription": "Build Make scenarios with expert skills",
-    "longDescription": "Four auto-activated skills that guide work with Make scenarios end-to-end: the shared tool conventions, orienting in an account and explaining existing scenarios, creating and editing scenarios (discovery, connections, flow control, error handling, subscenarios, AI agents), and running and debugging them. Works together with Make's hosted scenario-management MCP server. If Codex does not register the MCP server automatically after install, run `codex mcp add make --url https://mcp.make.com/openai` and then `codex mcp login make`.",
+    "longDescription": "Turn recurring work you spot in Codex into Make automations and AI Agents that keep running in the cloud. Build, run, and manage them from Codex, connected to the apps and data they need. Everything stays visible in Make's visual landscape, so you can inspect and change it anytime. If Codex does not register the MCP server automatically after install, run `codex mcp add make --url https://mcp.make.com/openai` and then `codex mcp login make`.",
     "developerName": "Make",
     "category": "Productivity",
     "capabilities": [
