@@ -18,10 +18,11 @@ The skills connect to the remote Make MCP server:
 .cursor-plugin/
   marketplace.json         # Cursor Team Marketplace manifest (repo root)
 plugins/
-  make-skills-claude/      # Claude Code plugin (.claude-plugin/, .mcp.json)
-  make-skills-cursor/      # Cursor plugin (.cursor-plugin/, mcp.json)
-  make-skills-codex/       # OpenAI Codex plugin (.codex-plugin/, .mcp.json)
-skills/
+  make-skills-codex/       # OpenAI Codex plugin (.codex-plugin/, .mcp.json) — SOURCE OF TRUTH
+    skills/ assets/        # edit skills HERE only
+  make-skills-claude/      # Claude Code plugin (.claude-plugin/, .mcp.json) — generated skills/ assets/
+  make-skills-cursor/      # Cursor plugin (.cursor-plugin/, mcp.json) — generated skills/ assets/
+skills/ assets/            # generated copy of the above (npx skills add, build.sh, zips)
   make-scenario-reference/   # Shared conventions — load first
     SKILL.md
   make-scenario-explore/     # Orienting, listing, explaining, health checks
@@ -56,9 +57,10 @@ Four auto-activated skills, split by use case:
 
 ### Adding a new skill
 
-1. Create `skills/<skill-name>/SKILL.md` with YAML frontmatter (`name`, `description`, `metadata.version` with the `# x-release-please-version` annotation).
+1. Create `plugins/make-skills-codex/skills/<skill-name>/SKILL.md` with YAML frontmatter (`name`, `description`, `metadata.version` with the `# x-release-please-version` annotation).
 2. Add reference files under `references/` and examples under `examples/`.
-3. Add the skill to `skills.publish.json` and to `package.json` `agents.skills[]` (`npm run check:skills` fails otherwise).
+3. Run `node scripts/sync-plugins.mjs`.
+4. Add the skill to `skills.publish.json` and to `package.json` `agents.skills[]` (`npm run check:skills` fails otherwise).
 
 ### Modifying MCP configuration
 
@@ -68,7 +70,7 @@ Edit each plugin's MCP config under `plugins/` — Claude: `make-skills-claude/.
 
 `main` is the GitHub default branch, the trunk, and the working branch — all PRs land there directly. A separate **`latest`** branch is fast-forwarded to each released tag and stays reserved for that — don't push to it directly.
 
-Each platform has its own plugin under `plugins/` (Claude, Cursor, Codex) and its own marketplace manifest at the repo root. The Claude marketplace uses a local `./plugins/make-skills-claude` source (real copies of `skills/` and `assets/`, kept in sync by `node scripts/sync-claude-plugin.mjs`; CI runs it with `--check`), so installs track the branch the marketplace is added from. Cursor and Codex plugins symlink `skills/` and `assets/`. All channels, plus `npx skills add` and the raw `dist/` download links, resolve `main` HEAD, so they can pick up reviewed-but-unreleased commits between releases — an accepted gap.
+Each platform has its own plugin under `plugins/` (Claude, Cursor, Codex) and its own marketplace manifest at the repo root. **Edit skills only in `plugins/make-skills-codex/skills` (and `assets`)**, then run `node scripts/sync-plugins.mjs`: it writes real copies (directory submissions skip symlinks) to the root `skills/` + `assets/`, the Claude plugin and the Cursor plugin. CI runs it with `--check`. Marketplaces use local plugin sources, so installs track the branch the marketplace is added from. All channels, plus `npx skills add` and the raw `dist/` download links, resolve `main` HEAD, so they can pick up reviewed-but-unreleased commits between releases — an accepted gap.
 
 - **Work:** open PRs against **`main`**, squash merge. PR titles are linted as Conventional Commits by the org `validate-pr.yml` (mono-generated), which release-please relies on.
 - **Release cut:** release-please runs on `main` (org-managed `.github/workflows/release-please.yml`, generated from mono `libs/github-resources/src/repositories/make-skills.ts` via stock `releasePleaseWorkflow: true`). It opens/updates a **Release PR** that bumps the version across `package.json`, `package-lock.json`, the Claude, Cursor, and Codex plugin manifests, `marketplace.json`, and each published `skills/*/SKILL.md` frontmatter (via the `# x-release-please-version` annotation), and regenerates `CHANGELOG.md`.

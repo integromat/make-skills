@@ -25,8 +25,9 @@ const config = {
       { type: 'json', path: 'plugins/make-skills-cursor/.cursor-plugin/plugin.json', jsonpath: '$.version' },
       { type: 'json', path: 'plugins/make-skills-codex/.codex-plugin/plugin.json', jsonpath: '$.version' },
       { type: 'json', path: '.claude-plugin/marketplace.json', jsonpath: '$.plugins[0].version' },
-      ...publish.map((skill) => ({ type: 'generic', path: `skills/${skill}/SKILL.md` })),
-      ...publish.map((skill) => ({ type: 'generic', path: `plugins/make-skills-claude/skills/${skill}/SKILL.md` })),
+      ...['skills', 'plugins/make-skills-codex/skills', 'plugins/make-skills-claude/skills', 'plugins/make-skills-cursor/skills'].flatMap((dir) =>
+        publish.map((skill) => ({ type: 'generic', path: `${dir}/${skill}/SKILL.md` })),
+      ),
     ],
   },
 };

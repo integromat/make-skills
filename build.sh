@@ -28,7 +28,7 @@ command -v jq >/dev/null 2>&1 || {
     exit 1
 }
 
-node "$REPO_ROOT/scripts/sync-claude-plugin.mjs"
+node "$REPO_ROOT/scripts/sync-plugins.mjs"
 
 DIST_DIR="$REPO_ROOT/dist"
 VERSION=$(jq -r '.version' "$REPO_ROOT/plugins/make-skills-claude/.claude-plugin/plugin.json")

@@ -22,4 +22,4 @@ jobs:
         with:
           node-version: 24
       - run: node scripts/check-skill-manifests.mjs
-      - run: node scripts/sync-claude-plugin.mjs --check
+      - run: node scripts/sync-plugins.mjs --check
