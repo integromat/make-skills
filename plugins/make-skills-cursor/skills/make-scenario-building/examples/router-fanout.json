@@ -1,0 +1,69 @@
+{
+  "teamId": 1101,
+  "name": "Order intake → notify sales and log everything",
+  "scheduling": { "type": "immediately" },
+  "modules": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "root": "main",
+      "config": {}
+    },
+    {
+      "id": 2,
+      "module": "builtin:BasicRouter",
+      "version": 1,
+      "follows": 1,
+      "config": {}
+    },
+    {
+      "id": 3,
+      "module": "slack:CreateMessage",
+      "version": 4,
+      "parent": { "moduleId": 2, "kind": "route", "index": 0 },
+      "filter": {
+        "name": "High-value orders",
+        "conditions": [[ { "a": "{{1.amount}}", "o": "number:greater", "b": "1000" } ]]
+      },
+      "config": {
+        "parameters": { "__IMTCONN__": 30512 },
+        "mapper": { "channel": "C0SALESXXXX", "text": "Large order from {{1.customer}}: {{1.amount}} {{1.currency}}" },
+        "restore": { "mapper": { "channel": { "label": "#sales" } } }
+      }
+    },
+    {
+      "id": 4,
+      "module": "google-sheets:addRow",
+      "version": 2,
+      "parent": { "moduleId": 2, "kind": "route", "index": 1 },
+      "config": {
+        "parameters": { "__IMTCONN__": 18243 },
+        "mapper": {
+          "from": "drive",
+          "mode": "select",
+          "spreadsheetId": "1qruXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "sheetId": "Orders",
+          "includesHeaders": true,
+          "insertDataOption": "INSERT_ROWS",
+          "valueInputOption": "USER_ENTERED",
+          "values": { "0": "{{now}}", "1": "{{1.customer}}", "2": "{{1.amount}}" }
+        }
+      }
+    },
+    {
+      "id": 5,
+      "module": "google-drive:uploadAFile",
+      "version": 4,
+      "follows": 4,
+      "filter": {
+        "name": "Has an invoice",
+        "conditions": [[ { "a": "{{1.invoiceUrl}}", "o": "exist" } ]]
+      },
+      "config": {
+        "parameters": { "__IMTCONN__": 18243 },
+        "mapper": { "select": "value", "filename": "invoice-{{1.orderId}}.pdf", "data": "{{1.invoicePdf}}" }
+      }
+    }
+  ]
+}

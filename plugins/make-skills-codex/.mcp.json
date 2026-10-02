@@ -1,1 +1,8 @@
-../../.mcp.json
+{
+	"mcpServers": {
+		"make": {
+			"type": "http",
+			"url": "https://mcp.make.com/openai"
+		}
+	}
+}

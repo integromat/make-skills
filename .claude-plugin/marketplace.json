@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "make-marketplace",
   "description": "Design, build, and deploy Make.com automation scenarios using expert skills — directly from Claude Code",
   "owner": {
@@ -8,14 +9,11 @@
   },
   "plugins": [
     {
-      "name": "make-skills",
-      "description": "Expert skills for exploring, building, running and debugging Make scenarios, plus reusable API-call shells",
+      "name": "make",
+      "displayName": "Make",
+      "description": "Turn recurring work you spot in Claude into Make automations and AI Agents that keep running in the cloud. Build, run, and manage them from Claude Chat, Cowork, or Claude Code, connected to the apps and data they need. Everything stays visible in Make's visual landscape, so you can inspect and change it anytime.",
       "version": "0.1.7",
-      "source": {
-        "source": "github",
-        "repo": "integromat/make-skills",
-        "ref": "latest"
-      },
+      "source": "./plugins/make-skills-claude",
       "author": {
         "name": "Make",
         "url": "https://www.make.com"
@@ -33,7 +31,8 @@
       ],
       "homepage": "https://www.make.com",
       "repository": "https://github.com/integromat/make-skills",
-      "license": "MIT"
+      "license": "MIT",
+      "strict": true
     }
   ]
 }

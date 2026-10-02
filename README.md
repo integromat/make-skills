@@ -10,7 +10,6 @@ Give your AI coding agent deep Make expertise — for building, explaining, runn
 | **make-scenario-explore**    | Orienting in an account — organizations, teams, listing scenarios, explaining what one does, connection health, account-wide checks                                                                                   |
 | **make-scenario-building**   | Creating and editing scenarios — app and module discovery, connections, resolving account-dependent values, flow control, error handling, subscenarios, AI agents; with references and complete examples              |
 | **make-scenario-operations** | Running, activating and deactivating, reviewing and debugging executions, investigating a webhook                                                                                                                     |
-| **make-api-shell**           | A reusable API-call or HTTP shell scenario used as a retrieval transport into a SaaS account (email, CRM, tickets)                                                                                                    |
 
 ## Prerequisites
 
@@ -18,20 +17,43 @@ Give your AI coding agent deep Make expertise — for building, explaining, runn
 
 ## Installation
 
-There are two pieces, and both are needed: the **skills** (the expertise) and the **MCP server** (the tools the skills drive).
+Two pieces, both needed: the **skills** (the expertise) and the **MCP server** (the tools the skills drive).
 
-### 1. Install the skills
+### Option A: Plugin (recommended)
 
-Download the skills, then either upload them to your agent (Claude Cowork, Claude Chat, and similar) or unzip them into its skills directory:
+**Claude Code**
+
+```bash
+/plugin marketplace add integromat/make-skills
+/plugin install make@make-marketplace
+```
+
+**Cursor** — Team Marketplace: import `integromat/make-skills` and install `make`. The plugin registers the MCP server (`/cursor`).
+
+**Codex**
+
+```bash
+codex plugin marketplace add integromat/make-skills
+```
+
+Then open the plugin directory, select the **Make** marketplace, and install `make`. If the MCP server is not registered automatically, add it manually:
+
+```bash
+codex mcp add make --url https://mcp.make.com/openai
+codex mcp login make
+```
+
+### Option B: Download the skills
+
+Upload the zips to your agent (Claude Cowork, Claude Chat, and similar) or unzip them into its skills directory:
 
 | Skill                    | Download                                                                                                  |
 | ------------------------ | --------------------------------------------------------------------------------------------------------- |
-| Bundle of all the skills | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-skills.zip)              |
-| Scenario Reference       | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-reference.zip)  |
-| Scenario Explore         | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-explore.zip)    |
-| Scenario Building        | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-building.zip)   |
-| Scenario Operations      | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-scenario-operations.zip) |
-| API Shell                | [Download](https://raw.githubusercontent.com/integromat/make-skills/v2/dist/make-api-shell.zip)           |
+| Bundle of all the skills | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-skills.zip)              |
+| Scenario Reference       | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-reference.zip)  |
+| Scenario Explore         | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-explore.zip)    |
+| Scenario Building        | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-building.zip)   |
+| Scenario Operations      | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-operations.zip) |
 
 Skills directories, for agents that read skills from disk:
 
@@ -44,39 +66,24 @@ Skills directories, for agents that read skills from disk:
 | Cline           | `.cline/skills/`    |
 | Generic         | `.agents/skills/`   |
 
-### 2. Add the MCP server
+### Add the MCP server manually
 
-The skills target Make's scenario-management MCP server at `https://mcp.make.com/v2`, over HTTP.
+Skip this if a plugin registered it. Each platform has its own endpoint, over HTTP:
 
-**Codex**
-
-```bash
-codex mcp add make --url https://mcp.make.com/v2
-codex mcp login make
-```
-
-**Claude Code**
+| Platform     | MCP URL                       |
+| ------------ | ----------------------------- |
+| Claude Code  | `https://mcp.make.com/claude` |
+| Cursor       | `https://mcp.make.com/cursor` |
+| OpenAI Codex | `https://mcp.make.com/openai` |
 
 ```bash
-claude mcp add --transport http make https://mcp.make.com/v2
+claude mcp add --transport http make https://mcp.make.com/claude
+claude mcp list
 ```
 
-**Any agent with a JSON MCP config**
+For any other agent, add the matching URL to its JSON MCP config.
 
-Add the server to the agent's MCP configuration file:
-
-```json
-{
-  "mcpServers": {
-    "make": {
-      "type": "http",
-      "url": "https://mcp.make.com/v2"
-    }
-  }
-}
-```
-
-On first use, you'll authenticate through Make's OAuth consent screen. The server asks for one bundle of permissions and works only when every one of them is granted — if a tool answers with a permission error, reconnect and grant everything it asks for.
+On first use, authenticate through Make's OAuth consent screen. The server asks for one bundle of permissions and works only when every one of them is granted — if a tool answers with a permission error, reconnect and grant everything it asks for.
 
 ## Troubleshooting
 
@@ -88,7 +95,7 @@ On first use, you'll authenticate through Make's OAuth consent screen. The serve
 
 ## Contributing
 
-Open pull requests against **`main`** — that's the trunk. Use squash merges and Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …), since release-please relies on them. A separate `latest` branch is fast-forwarded to each released tag, so `main` can carry reviewed-but-unreleased commits.
+Open pull requests against **`main`** — that's the trunk. Use squash merges and Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …), since release-please relies on them. A separate `latest` branch is fast-forwarded to each released tag. The Claude Code marketplace entry uses a local `./plugins/make-skills-claude` source, so installs track the branch the marketplace is added from. Codex and `npx skills add` still resolve `main` HEAD directly. For Cursor Team Marketplace, import this repo and track branch **`main`** (branch is not set in `.cursor-plugin/marketplace.json`).
 
 ## License
 

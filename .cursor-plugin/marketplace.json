@@ -1,0 +1,17 @@
+{
+  "name": "make-marketplace",
+  "owner": {
+    "name": "Make",
+    "email": "support@make.com"
+  },
+  "metadata": {
+    "description": "Design, build, and deploy Make.com automation scenarios using expert skills in Cursor"
+  },
+  "plugins": [
+    {
+      "name": "make",
+      "source": "plugins/make-skills-cursor",
+      "description": "Turn recurring work you spot in Cursor into Make automations and AI Agents that keep running in the cloud. Build, run, and manage them from Cursor, connected to the apps and data they need. Everything stays visible in Make's visual landscape, so you can inspect and change it anytime."
+    }
+  ]
+}
