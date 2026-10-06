@@ -2,7 +2,7 @@
 name: make-scenario-operations
 description: Use when running a scenario, switching it on or off, reviewing or debugging executions, or investigating a webhook that receives nothing. Not for creating, editing or explaining a scenario.
 metadata:
-  version: "0.1.7" # x-release-please-version
+  version: "0.2.0" # x-release-please-version
 ---
 
 # Make scenarios — running and debugging

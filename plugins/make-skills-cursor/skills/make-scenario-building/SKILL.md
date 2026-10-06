@@ -2,7 +2,7 @@
 name: make-scenario-building
 description: Use when creating a new Make scenario or editing an existing one — finding modules, connections and account-dependent values, wiring the flow, saving through scenario_create or scenario_patch. Not for explaining, running or debugging a scenario, or for API-call shells.
 metadata:
-  version: "0.1.7" # x-release-please-version
+  version: "0.2.0" # x-release-please-version
 ---
 
 # Make scenarios — creating and editing
