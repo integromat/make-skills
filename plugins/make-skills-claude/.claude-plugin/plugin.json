@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "make",
   "displayName": "Make",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "Turn recurring work you spot in Claude into Make automations and AI Agents that keep running in the cloud. Build, run, and manage them from Claude Chat, Cowork, or Claude Code, connected to the apps and data they need. Everything stays visible in Make's visual landscape, so you can inspect and change it anytime.",
   "author": {
     "name": "Make",

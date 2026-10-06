@@ -2,7 +2,7 @@
 name: make-scenario-explore
 description: Use when orienting in a Make account — listing organizations, teams and scenarios, explaining what an existing scenario does, checking connection health, auditing several scenarios. Not for creating, editing, running or debugging.
 metadata:
-  version: "0.1.7" # x-release-please-version
+  version: "0.2.0" # x-release-please-version
 ---
 
 # Make scenarios — orienting and explaining
