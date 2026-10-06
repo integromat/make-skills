@@ -34,5 +34,8 @@
       "license": "MIT",
       "strict": true
     }
-  ]
+  ],
+  "renames": {
+    "make-skills": "make"
+  }
 }

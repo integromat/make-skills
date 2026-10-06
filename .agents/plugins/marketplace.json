@@ -5,9 +5,9 @@
   },
   "plugins": [
     {
-      "name": "make",
+      "name": "make-skills",
       "interface": {
-        "displayName": "Make Skills"
+        "displayName": "Make"
       },
       "source": {
         "source": "local",
