@@ -66,7 +66,7 @@ Four auto-activated skills, split by use case:
 
 ### Modifying MCP configuration
 
-Edit each plugin's MCP config under `plugins/` — Claude: `make-skills-claude/.mcp.json` (`https://mcp.make.com/claude`), Cursor: `make-skills-cursor/mcp.json` (`/cursor`), Codex: `make-skills-codex/.mcp.json` (`/openai`), Devin: `make-skills-devin/.devin-plugin/plugin.json` (`/v2`), Copilot: `make-skills-copilot/.mcp.json` (`/v2`).
+Edit each plugin's MCP config under `plugins/` — Claude: `make-skills-claude/.mcp.json` (`https://mcp.make.com/claude`), Cursor: `make-skills-cursor/mcp.json` (`/cursor`), Codex: `make-skills-codex/.mcp.json` (`/openai`), Devin: `make-skills-devin/.devin-plugin/plugin.json` (`/v2`), Copilot: `make-skills-copilot/.mcp.json` (`/copilot`).
 
 ### Branching & releasing (trunk-based)
 
