@@ -1,0 +1,28 @@
+{
+  "name": "make",
+  "description": "Build, run, and debug Make automation scenarios: browse apps and modules, create and edit scenarios, run them, and inspect executions via the official Make MCP server.",
+  "version": "0.2.0",
+  "author": {
+    "name": "Make",
+    "email": "support@make.com",
+    "url": "https://www.make.com"
+  },
+  "homepage": "https://www.make.com",
+  "repository": "https://github.com/integromat/make-skills",
+  "license": "MIT",
+  "keywords": [
+    "make",
+    "mcp",
+    "automation",
+    "scenarios",
+    "integration",
+    "workflow",
+    "blueprint",
+    "no-code",
+    "copilot-cli"
+  ],
+  "skills": [
+    "skills/"
+  ],
+  "mcpServers": ".mcp.json"
+}
