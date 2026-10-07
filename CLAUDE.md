@@ -22,6 +22,7 @@ plugins/
     skills/ assets/        # edit skills HERE only
   make-skills-claude/      # Claude Code plugin (.claude-plugin/, .mcp.json) — generated skills/ assets/
   make-skills-cursor/      # Cursor plugin (.cursor-plugin/, mcp.json) — generated skills/ assets/
+  make-skills-openclaw/    # OpenClaw native plugin (openclaw.plugin.json, package.json) — generated skills/ assets/
   make-skills-devin/       # Devin plugin (.devin-plugin/, inline mcpServers) — generated skills/ assets/
   make-skills-copilot/     # GitHub Copilot CLI plugin (plugin.json, .mcp.json) — generated skills/ assets/
 skills/ assets/            # generated copy of the above (npx skills add, build.sh, zips)
@@ -66,7 +67,7 @@ Four auto-activated skills, split by use case:
 
 ### Modifying MCP configuration
 
-Edit each plugin's MCP config under `plugins/` — Claude: `make-skills-claude/.mcp.json` (`https://mcp.make.com/claude`), Cursor: `make-skills-cursor/mcp.json` (`/cursor`), Codex: `make-skills-codex/.mcp.json` (`/openai`), Devin: `make-skills-devin/.devin-plugin/plugin.json` (`/v2`), Copilot: `make-skills-copilot/.mcp.json` (`/copilot`).
+Edit each plugin's MCP config under `plugins/` — Claude: `make-skills-claude/.mcp.json` (`https://mcp.make.com/claude`), Cursor: `make-skills-cursor/mcp.json` (`/cursor`), Codex: `make-skills-codex/.mcp.json` (`/openai`), Devin: `make-skills-devin/.devin-plugin/plugin.json` (`/v2`), Copilot: `make-skills-copilot/.mcp.json` (`/copilot`), OpenClaw: `make-skills-openclaw/openclaw.plugin.json` (`/v2`).
 
 ### Branching & releasing (trunk-based)
 

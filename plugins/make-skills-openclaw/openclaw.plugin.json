@@ -1,0 +1,18 @@
+{
+  "id": "make",
+  "name": "Make",
+  "description": "Build, run, and debug Make automation scenarios via the official Make MCP server and skills.",
+  "categories": ["integrations"],
+  "skills": ["skills"],
+  "mcpServers": {
+    "make": {
+      "url": "https://mcp.make.com/v2",
+      "transport": "streamable-http"
+    }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}
