@@ -1,7 +1,7 @@
 // Source of truth: plugins/make-skills-codex/{skills,assets}. Copies them as real files
 // (directory submissions skip symlinks) into every other consumer:
 //   skills/ + assets/ (repo root: npx skills add, build.sh, check-skill-manifests),
-//   plugins/make-skills-claude/, plugins/make-skills-cursor/.
+//   plugins/make-skills-claude/, plugins/make-skills-cursor/, plugins/make-skills-devin/.
 // Run: node scripts/sync-plugins.mjs
 // `--check` exits 1 if any copy is stale instead of writing.
 import { cpSync, rmSync, readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
@@ -13,6 +13,7 @@ const targets = [
   ['', root],
   ['plugins/make-skills-claude/', join(root, 'plugins/make-skills-claude')],
   ['plugins/make-skills-cursor/', join(root, 'plugins/make-skills-cursor')],
+  ['plugins/make-skills-devin/', join(root, 'plugins/make-skills-devin')],
 ];
 const check = process.argv.includes('--check');
 
@@ -38,4 +39,4 @@ for (const d of ['skills', 'assets']) {
   }
 }
 if (check) process.exit(stale ? 1 : 0);
-console.log('✓ Synced plugins/make-skills-codex/{skills,assets} to root, Claude and Cursor');
+console.log('✓ Synced plugins/make-skills-codex/{skills,assets} to root, Claude, Cursor and Devin');

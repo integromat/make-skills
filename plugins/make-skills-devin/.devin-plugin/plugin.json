@@ -1,0 +1,17 @@
+{
+  "name": "make",
+  "displayName": "Make",
+  "description": "Build, run, and debug Make automation scenarios: browse apps and modules, create and edit scenarios, run them, and inspect executions via the official Make MCP server.",
+  "homepage": "https://www.make.com",
+  "repository": "https://github.com/integromat/make-skills",
+  "logo": "logo.png",
+  "keywords": [
+    "Essentials",
+    "Productivity"
+  ],
+  "mcpServers": {
+    "make": {
+      "url": "https://mcp.make.com/v2"
+    }
+  }
+}
