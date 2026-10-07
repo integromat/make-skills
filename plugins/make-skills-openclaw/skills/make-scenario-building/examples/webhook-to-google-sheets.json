@@ -1,0 +1,44 @@
+{
+  "teamId": 1101,
+  "name": "Webhook → Google Sheets row",
+  "scheduling": { "type": "immediately" },
+  "modules": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "root": "main",
+      "config": {}
+    },
+    {
+      "id": 2,
+      "module": "google-sheets:addRow",
+      "version": 2,
+      "follows": 1,
+      "label": "Log lead",
+      "config": {
+        "parameters": { "__IMTCONN__": 18243 },
+        "mapper": {
+          "from": "drive",
+          "mode": "select",
+          "spreadsheetId": "1qruXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "sheetId": "Leads",
+          "includesHeaders": true,
+          "insertDataOption": "INSERT_ROWS",
+          "valueInputOption": "USER_ENTERED",
+          "values": {
+            "0": "{{now}}",
+            "1": "{{1.name}}",
+            "2": "{{1.email}}"
+          }
+        },
+        "restore": {
+          "mapper": {
+            "spreadsheetId": { "label": "Inbound leads" },
+            "sheetId": { "label": "Leads" }
+          }
+        }
+      }
+    }
+  ]
+}

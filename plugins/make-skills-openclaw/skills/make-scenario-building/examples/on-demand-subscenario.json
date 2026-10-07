@@ -1,0 +1,52 @@
+{
+  "teamId": 1101,
+  "name": "Summarize text (on demand)",
+  "scheduling": { "type": "on-demand" },
+  "interface": {
+    "input": [
+      { "name": "text", "type": "text", "label": "Text to summarize", "required": true, "multiline": true },
+      { "name": "sentences", "type": "integer", "label": "Max sentences", "default": 3 }
+    ],
+    "output": [
+      { "name": "summary", "type": "text", "label": "Summary" }
+    ]
+  },
+  "modules": [
+    {
+      "id": 1,
+      "module": "scenario-service:StartSubscenario",
+      "version": 2,
+      "root": "main",
+      "config": {}
+    },
+    {
+      "id": 2,
+      "module": "openai-gpt-3:CreateCompletion",
+      "version": 1,
+      "follows": 1,
+      "config": {
+        "parameters": { "__IMTCONN__": 20117 },
+        "mapper": {
+          "select": "chat",
+          "model": "gpt-4o-mini",
+          "messages": [
+            { "role": "user", "content": "Summarize the following in at most {{1.sentences}} sentences:\n\n{{1.text}}" }
+          ],
+          "max_tokens": "400",
+          "temperature": "0.3",
+          "n_completions": "1",
+          "response_format": "text"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "scenario-service:ReturnData",
+      "version": 2,
+      "follows": 2,
+      "config": {
+        "mapper": { "summary": "{{2.result}}" }
+      }
+    }
+  ]
+}

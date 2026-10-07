@@ -1,0 +1,33 @@
+{
+  "name": "@integromat/openclaw-make",
+  "version": "0.2.0",
+  "description": "Make plugin for OpenClaw: skills and the official Make MCP server for building, running and debugging automation scenarios.",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://www.make.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/integromat/make-skills.git",
+    "directory": "plugins/make-skills-openclaw"
+  },
+  "files": [
+    "index.js",
+    "openclaw.plugin.json",
+    "skills",
+    "assets"
+  ],
+  "peerDependencies": {
+    "openclaw": ">=2026.3.24-beta.2"
+  },
+  "openclaw": {
+    "extensions": ["./index.js"],
+    "compat": {
+      "pluginApi": ">=2026.3.24-beta.2",
+      "minGatewayVersion": "2026.3.24-beta.2"
+    },
+    "build": {
+      "openclawVersion": "2026.3.24-beta.2",
+      "pluginSdkVersion": "2026.3.24-beta.2"
+    }
+  }
+}

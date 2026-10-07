@@ -1,7 +1,8 @@
 // Source of truth: plugins/make-skills-codex/{skills,assets}. Copies them as real files
 // (directory submissions skip symlinks) into every other consumer:
 //   skills/ + assets/ (repo root: npx skills add, build.sh, check-skill-manifests),
-//   plugins/make-skills-claude/, plugins/make-skills-cursor/, plugins/make-skills-devin/, plugins/make-skills-copilot/, plugins/make-skills-grok/.
+//   plugins/make-skills-claude/, plugins/make-skills-cursor/, plugins/make-skills-devin/, plugins/make-skills-copilot/, plugins/make-skills-grok/,
+//   plugins/make-skills-openclaw/.
 // Run: node scripts/sync-plugins.mjs
 // `--check` exits 1 if any copy is stale instead of writing.
 import { cpSync, rmSync, readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
@@ -13,6 +14,7 @@ const targets = [
   ['', root],
   ['plugins/make-skills-claude/', join(root, 'plugins/make-skills-claude')],
   ['plugins/make-skills-cursor/', join(root, 'plugins/make-skills-cursor')],
+  ['plugins/make-skills-openclaw/', join(root, 'plugins/make-skills-openclaw')],
   ['plugins/make-skills-devin/', join(root, 'plugins/make-skills-devin')],
   ['plugins/make-skills-copilot/', join(root, 'plugins/make-skills-copilot')],
   ['plugins/make-skills-grok/', join(root, 'plugins/make-skills-grok')],
@@ -41,4 +43,4 @@ for (const d of ['skills', 'assets']) {
   }
 }
 if (check) process.exit(stale ? 1 : 0);
-console.log('✓ Synced plugins/make-skills-codex/{skills,assets} to root, Claude, Cursor, Devin, Copilot and Grok');
+console.log('✓ Synced plugins/make-skills-codex/{skills,assets} to root, Claude, Cursor, Devin, Copilot, Grok and OpenClaw');
