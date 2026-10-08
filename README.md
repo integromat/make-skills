@@ -25,7 +25,7 @@ Two pieces, both needed: the **skills** (the expertise) and the **MCP server** (
 
 ```bash
 /plugin marketplace add integromat/make-skills
-/plugin install make@make-marketplace
+/plugin install make-skills@make-marketplace
 ```
 
 **Cursor** — Team Marketplace: import `integromat/make-skills` and install `make`. The plugin registers the MCP server (`/cursor`).

@@ -7,6 +7,6 @@
   },
   "enabledPlugins": {
     "plugin-dev@claude-plugins-official": true,
-    "make@make-marketplace": true
+    "make-skills@make-marketplace": true
   }
 }
