@@ -1,0 +1,75 @@
+{
+  "teamId": 1101,
+  "name": "New sheet rows → OpenAI → write answer back",
+  "scheduling": { "type": "indefinitely", "interval": 900 },
+  "modules": [
+    {
+      "id": 1,
+      "module": "google-sheets:watchRows",
+      "version": 2,
+      "root": "main",
+      "config": {
+        "parameters": {
+          "__IMTCONN__": 18243,
+          "from": "drive",
+          "mode": "select",
+          "spreadsheetId": "1qruXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "sheetId": "Sheet1",
+          "includesHeaders": true,
+          "tableFirstRow": "A1:Z1",
+          "limit": 10
+        },
+        "data": { "epochType": "now", "epochId": null, "lastDate": "2026-09-10T08:00:00.000Z", "lastId": null },
+        "restore": {
+          "parameters": {
+            "spreadsheetId": { "label": "Content ideas" },
+            "sheetId": { "label": "Sheet1" }
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "openai-gpt-3:CreateCompletion",
+      "version": 1,
+      "follows": 1,
+      "label": "Suggest keywords",
+      "config": {
+        "parameters": { "__IMTCONN__": 20117 },
+        "mapper": {
+          "select": "chat",
+          "model": "gpt-4o-mini",
+          "messages": [
+            {
+              "role": "user",
+              "content": "You are an SEO expert. Give 5 effective keywords for an article about: {{1.`0`}}"
+            }
+          ],
+          "max_tokens": "500",
+          "temperature": "1",
+          "n_completions": "1",
+          "response_format": "text"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "google-sheets:updateRow",
+      "version": 2,
+      "follows": 2,
+      "label": "Write keywords to column B",
+      "config": {
+        "parameters": { "__IMTCONN__": 18243 },
+        "mapper": {
+          "mode": "map",
+          "spreadsheetId": "{{1.`__SPREADSHEET_ID__`}}",
+          "sheetId": "{{1.`__SHEET__`}}",
+          "rowNumber": "{{1.`__ROW_NUMBER__`}}",
+          "tableFirstRow": "A1:Z1",
+          "valueInputOption": "USER_ENTERED",
+          "values": { "1": "{{2.result}}" }
+        }
+      }
+    }
+  ]
+}

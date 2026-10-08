@@ -1,0 +1,67 @@
+{
+  "teamId": 1101,
+  "name": "Save email attachments to Drive, one summary per email",
+  "scheduling": { "type": "indefinitely", "interval": 900 },
+  "modules": [
+    {
+      "id": 1,
+      "module": "google-email:TriggerNewEmail",
+      "version": 2,
+      "root": "main",
+      "config": {
+        "parameters": {
+          "account": 27760,
+          "folder": "INBOX",
+          "criteria": "UNSEEN",
+          "searchType": "simple",
+          "markSeen": true,
+          "maxResults": 5
+        },
+        "data": { "epochType": "now", "epochId": null, "lastDate": "2026-09-10T08:00:00.000Z", "lastId": null }
+      }
+    },
+    {
+      "id": 2,
+      "module": "builtin:BasicFeeder",
+      "version": 1,
+      "follows": 1,
+      "label": "Each attachment",
+      "config": { "mapper": { "array": "{{1.attachments}}" } }
+    },
+    {
+      "id": 3,
+      "module": "google-drive:uploadAFile",
+      "version": 4,
+      "follows": 2,
+      "config": {
+        "parameters": { "__IMTCONN__": 18243 },
+        "mapper": { "select": "value", "filename": "{{2.fileName}}", "data": "{{2.data}}" }
+      }
+    },
+    {
+      "id": 4,
+      "module": "builtin:BasicAggregator",
+      "version": 1,
+      "follows": 3,
+      "label": "Collect uploaded files",
+      "config": {
+        "parameters": { "feeder": 2 },
+        "mapper": { "name": "{{2.fileName}}", "fileId": "{{3.id}}" },
+        "flags": { "stopIfEmpty": true }
+      }
+    },
+    {
+      "id": 5,
+      "module": "slack:CreateMessage",
+      "version": 4,
+      "follows": 4,
+      "config": {
+        "parameters": { "__IMTCONN__": 30512 },
+        "mapper": {
+          "channel": "C0FILESXXXX",
+          "text": "Saved {{length(4.array)}} attachment(s) from \"{{1.subject}}\": {{join(map(4.array; \"name\"); \", \")}}"
+        }
+      }
+    }
+  ]
+}
