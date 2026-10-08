@@ -1,6 +1,6 @@
 # Make plugin for Grok Build
 
-Build, explain, run and debug [Make](https://www.make.com) automation scenarios from Grok Build.
+Build Make automations and AI Agents from Grok. Turn recurring work you spot in Grok into Make automations and AI Agents that keep running in the cloud. Build, run, and manage them from Grok Build, connected to the apps and data they need, without switching tools. Everything stays visible in Make's visual landscape, so you can inspect and change it anytime.
 
 ## What it ships
 
