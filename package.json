@@ -1,7 +1,7 @@
 {
   "name": "make-skills",
   "version": "0.2.0",
-  "description": "Expert skills for designing, building, and deploying Make automation scenarios — for Claude Code, Cursor, GitHub Copilot, and other AI agents",
+  "description": "Expert skills for Make automation scenarios and direct app Endpoint workflows — for Claude Code, Cursor, GitHub Copilot, and other AI agents",
   "license": "MIT",
   "author": {
     "name": "Make",
@@ -20,6 +20,7 @@
     "mcp",
     "automation",
     "scenarios",
+    "endpoints",
     "integration",
     "workflow",
     "blueprint",
@@ -50,6 +51,10 @@
       {
         "name": "make-scenario-reference",
         "path": "./skills/make-scenario-reference"
+      },
+      {
+        "name": "make-endpoints",
+        "path": "./skills/make-endpoints"
       }
     ]
   }

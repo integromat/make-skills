@@ -4,11 +4,13 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-**make-skills** provides expert skills for building, explaining, running and debugging Make automation scenarios. Installed by copying the skill folders into an agent's skills directory or by uploading the per-skill zips, and paired with the Make MCP server. Published by Make under MIT license.
+**make-skills** provides expert skills for building, explaining, running and debugging Make automation scenarios, plus direct app Endpoint workflows. Installed by copying the skill folders into an agent's skills directory or by uploading the per-skill zips. Scenario skills use the Make MCP server; the standalone Endpoints skill uses the Endpoints SDK/CLI. Published by Make under MIT license.
 
-The skills connect to the remote Make MCP server:
+The scenario skills connect to the remote Make MCP server:
 
 - **`make`** — Make's scenario-management MCP server (platform endpoints: `https://mcp.make.com/claude`, `/cursor`, `/openai`). Tools are named `{subject}_{action}` (`environment_get`, `scenario_get`, `module_spec`, …) and the surface is gated by one all-or-nothing scope bundle. Authenticated via OAuth.
+
+**`make-endpoints`** is a separate interface: `@makehq/endpoints-sdk` contains its SDK, `make-endpoints-cli`, and `EndpointTools`. It uses Make API credentials, explicit team/connection scope, and requires Endpoints beta access. Do not apply the scenario MCP server's OAuth-bundle or capped-list rules to SDK/CLI calls. Skills/plugins do not install the package or enable the beta.
 
 ## Repository Structure
 
@@ -37,23 +39,27 @@ skills/ assets/            # generated copy of the above (npx skills add, build.
     examples/                # complete scenario_create calls per pattern
   make-scenario-operations/  # Running, activating, debugging runs and webhooks
     SKILL.md
+  make-endpoints/            # Direct app actions through the standalone SDK/CLI
+    SKILL.md
+    references/ examples/   # Setup, discovery, reliable reads/writes, complete starters
 ```
 
 ## Skills
 
-Four auto-activated skills, split by use case:
+Four scenario skills and one standalone Endpoints skill, split by use case:
 
 - **make-scenario-reference** — what every tool assumes: scopes, `content` remarks are instructions, the structure-vs-configuration split, one call = one save, the refusal contract, "state a guess before acting on it". Loaded on a 403, an unexplained refusal, or a request no tool covers; the three or four rules a routine task needs are inlined as a "Ground rules" block in each task skill instead.
 - **make-scenario-explore** — `environment_get` → `scenario_list` → `scenario_get` → `scenario_module_get`, and how to read the structural fields for a non-technical user.
 - **make-scenario-building** — the build and edit workflows (`app_find` → `module_spec` → connections → `module_field_resolve` → `scenario_create` / `scenario_patch`), the decisions the tools leave to the model, and on-demand references for everything past a straight line.
 - **make-scenario-operations** — `scenario_run` by trigger kind, activation, the execution list → get → inspect → module-get chain, webhook learning and inspection.
+- **make-endpoints** — app-action discovery, compatible managed connections, SDK/CLI execution, complete pagination, approval-bound writes and readback. Not scenario building or custom-app Endpoint authoring.
 
 ## Writing skills for this surface
 
 - **Less is more.** The MCP server performs well with no skill loaded; a skill nudges and sequences. Tool-specific facts (what a field means, which values it takes) belong in the tool's own description or schema in the server repo, not here — a skill should not repeat what `tools/list` already says.
 - **SKILL.md is workflows.** Numbered steps and the decisions the tools cannot make. Concepts go in `references/`, complete calls in `examples/`.
 - **Say when to load a reference.** Each reference link states the trigger that makes it worth reading, so an agent does not load error-handling guidance for a notification scenario.
-- **Only what the surface can do.** Do not port guidance for capabilities the `/v2` server does not implement (data stores, custom IML functions, data structures, DLQ retry).
+- **Only what the selected surface can do.** Scenario guidance must match the current MCP tool contracts; unsupported custom IML functions or DLQ retry are not implied by related reads. Endpoints guidance must match the published SDK/CLI and distinguish bundled metadata from live team availability. Do not promise future interface centralisation or discovery features.
 - Skill descriptions use third person; the body avoids second person; target 500–5000 words per SKILL.md.
 
 ## Working with This Repository
@@ -87,4 +93,4 @@ Which skills ship is controlled by `skills.publish.json` (single source of truth
 
 - All file paths in scripts must use `${CLAUDE_PLUGIN_ROOT}` — never hardcode absolute paths.
 - No secrets (API keys, tokens) in committed files. Example JSON uses placeholder ids only.
-- OAuth is the only auth on the `/v2` server.
+- OAuth is the only auth on the scenario `/v2` server; the standalone Endpoints SDK/CLI uses its own documented credential flow.
