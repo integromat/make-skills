@@ -57,6 +57,11 @@ Inside the tool's flow, a field the agent should fill at run time maps to the **
 - `"type": "name"` is **fixed** — set by you. `"city": "{{2.city}}"` is **AI-decided** — the agent (id 2)
   supplies it. Give every AI-decided field an `aiHelp` (format hint) and, where the choice is not obvious, an
   `aiInstruction` under `config.restore.expect.<field>.extra`; without them the agent has no guidance.
+- A `filter`-type **field** of a tool module (a search module's `filter` in `config.mapper`, not the arm's own
+  route `filter`) is AI-decided per condition: the operand `b` of the n-th AI-decided condition is
+  `{{<agentId>.filter[n]}}` (n from 0, in filter order) and `config.restore.expect.filter.extra.aiInstruction`
+  is an array whose entry n is that condition's instruction. The engine reads only that node — an entry
+  keyed under a condition or operand (`filter[0][0].b`) never reaches the agent.
 - Tool modules that authenticate use their own connection parameter as usual.
 - One module per tool is the simple case. For multi-step tools, make the tool arm a
   `scenario-service:CallSubscenario` to an on-demand scenario with declared inputs and outputs (see
