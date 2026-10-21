@@ -1,5 +1,5 @@
 {
-  "name": "@integromat/openclaw-make",
+  "name": "@make/openclaw-make",
   "version": "0.2.0",
   "description": "Make plugin for OpenClaw: skills and the official Make MCP server for building, running and debugging automation scenarios.",
   "license": "MIT",
