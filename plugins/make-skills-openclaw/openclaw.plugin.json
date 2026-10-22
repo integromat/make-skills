@@ -7,7 +7,8 @@
   "mcpServers": {
     "make": {
       "url": "https://mcp.make.com/v2",
-      "transport": "streamable-http"
+      "transport": "streamable-http",
+      "auth": "oauth"
     }
   },
   "configSchema": {
