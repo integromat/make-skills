@@ -1,0 +1,18 @@
+{
+  "url": "https://api.example.com/v0/meta/bases",
+  "headers": {
+    "X-API-Client-Secret": "{{common.metadataClientSecret}}"
+  },
+  "response": {
+    "output": {
+      "label": "{{item.name}}",
+      "value": "{{item.id}}"
+    },
+    "iterate": "{{body.bases}}"
+  },
+  "log": {
+    "sanitize": [
+      "request.headers.x-api-client-secret"
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "document",
+  "type": "collection",
+  "label": "Document",
+  "spec": [
+    {
+      "name": "data",
+      "type": "buffer",
+      "label": "File Data",
+      "required": true
+    },
+    {
+      "name": "filename",
+      "type": "text",
+      "label": "File Name",
+      "required": true
+    },
+    {
+      "name": "contentType",
+      "type": "text",
+      "label": "Content Type",
+      "default": "application/octet-stream"
+    }
+  ]
+}

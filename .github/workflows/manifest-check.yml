@@ -23,3 +23,4 @@ jobs:
           node-version: 24
       - run: node scripts/check-skill-manifests.mjs
       - run: node scripts/sync-plugins.mjs --check
+      - run: npm run check:custom-apps

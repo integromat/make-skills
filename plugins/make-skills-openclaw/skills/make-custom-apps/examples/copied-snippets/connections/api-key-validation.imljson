@@ -1,0 +1,18 @@
+{
+  "url": "https://api.example.com/validate",
+  "headers": {
+    "Authorization": "Bearer {{parameters.apiKey}}"
+  },
+  "response": {
+    "metadata": {
+      "type": "text",
+      "value": "{{body.user.name}}"
+    }
+  },
+  "method": "GET",
+  "log": {
+    "sanitize": [
+      "request.headers.authorization"
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+[
+  {
+    "url": "https://api.example.com/v2/skills/{{parameters.skill}}/stages/{{parameters.stage}}/simulations/",
+    "method": "POST",
+    "body": {
+      "session": {
+        "mode": "{{parameters.sessionMode}}"
+      }
+    },
+    "response": {
+      "temp": {
+        "simulation": "{{body.id}}"
+      }
+    }
+  },
+  {
+    "url": "https://api.example.com/v2/skills/{{parameters.skill}}/stages/{{parameters.stage}}/simulations/{{temp.simulation}}",
+    "method": "GET",
+    "repeat": {
+      "condition": "{{temp.status === 'IN_PROGRESS'}}",
+      "delay": 2000,
+      "limit": 10
+    },
+    "response": {
+      "output": "{{body}}",
+      "temp": {
+        "status": "{{body.status}}"
+      }
+    }
+  }
+]

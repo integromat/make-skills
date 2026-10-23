@@ -1,0 +1,4 @@
+{
+  "url": "{{body.`@odata.nextLink`}}",
+  "condition": "{{body.`@odata.nextLink`}}"
+}

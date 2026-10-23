@@ -1,0 +1,17 @@
+{
+  "name": "dateRange",
+  "type": "collection",
+  "label": "Date Range",
+  "spec": [
+    {
+      "name": "from",
+      "type": "date",
+      "label": "From Date"
+    },
+    {
+      "name": "to",
+      "type": "date",
+      "label": "To Date"
+    }
+  ]
+}

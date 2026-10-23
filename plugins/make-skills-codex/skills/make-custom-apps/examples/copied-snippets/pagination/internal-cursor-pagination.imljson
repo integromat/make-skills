@@ -1,0 +1,8 @@
+{
+  "pagination": {
+    "body": {
+      "start": "{{body.`ia::meta`.next}}"
+    },
+    "condition": "{{body.`ia::meta`.next}}"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "condition": false,
+  "verification": {
+    "condition": false,
+    "respond": {
+      "status": 503,
+      "type": "text",
+      "body": "Teaching template disabled: signature verification is not implemented."
+    }
+  },
+  "respond": {
+    "status": 503,
+    "type": "text",
+    "body": "Teaching template disabled: signature verification is not implemented."
+  },
+  "output": {
+    "id": "{{body.issue.id}}",
+    "number": "{{body.issue.number}}",
+    "title": "{{body.issue.title}}",
+    "action": "{{body.action}}",
+    "locked": "{{body.issue.locked}}"
+  }
+}

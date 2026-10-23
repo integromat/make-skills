@@ -1,0 +1,7 @@
+{
+  "name": "description",
+  "type": "text",
+  "label": "Description",
+  "multiline": true,
+  "help": "Enter a detailed description"
+}

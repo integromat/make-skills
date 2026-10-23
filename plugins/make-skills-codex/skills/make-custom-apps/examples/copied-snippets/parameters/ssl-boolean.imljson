@@ -1,0 +1,7 @@
+{
+  "name": "useSSL",
+  "type": "boolean",
+  "label": "Use SSL",
+  "default": true,
+  "help": "Enable SSL encryption"
+}

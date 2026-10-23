@@ -1,0 +1,5 @@
+{
+  "qs": {
+    "offset": "{{(pagination.page - 1) * 100}}"
+  }
+}

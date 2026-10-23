@@ -1,0 +1,10 @@
+{
+  "response": {
+    "output": {
+      "id": "{{body.id}}",
+      "name": "{{body.name}}",
+      "status": "{{body.status}}",
+      "createdAt": "{{body.created_at}}"
+    }
+  }
+}

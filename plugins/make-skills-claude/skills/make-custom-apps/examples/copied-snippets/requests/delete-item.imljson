@@ -1,0 +1,11 @@
+{
+  "url": "/items/{{parameters.itemId}}",
+  "method": "DELETE",
+  "response": {
+    "output": {
+      "id": "{{parameters.itemId}}",
+      "deleted": true,
+      "deletedAt": "{{now}}"
+    }
+  }
+}

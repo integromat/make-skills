@@ -1,0 +1,7 @@
+{
+  "name": "dueDate",
+  "type": "date",
+  "label": "Due Date",
+  "required": false,
+  "help": "Select the due date"
+}

@@ -1,0 +1,14 @@
+{
+  "baseUrl": "https://api.example.com/v1",
+  "headers": {
+    "X-API-Key": "{{connection.apiKey}}",
+    "X-Client-ID": "{{connection.clientId}}",
+    "Accept": "application/json"
+  },
+  "log": {
+    "sanitize": [
+      "request.headers.x-api-key",
+      "request.headers.x-client-id"
+    ]
+  }
+}

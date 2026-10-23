@@ -1,0 +1,16 @@
+{
+  "name": "sortOrder",
+  "type": "select",
+  "label": "Sort Order",
+  "options": [
+    {
+      "label": "Ascending",
+      "value": "asc"
+    },
+    {
+      "label": "Descending",
+      "value": "desc"
+    }
+  ],
+  "default": "desc"
+}

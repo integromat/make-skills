@@ -1,0 +1,12 @@
+{
+  "id": "RPC-01",
+  "rpc": "<rpcName>",
+  "rpcType": "dynamic_options | sample | epoch | dynamic_interface",
+  "invokedVia": "<consuming module name>",
+  "inputs": {},
+  "expectedShape": {
+    "element": "<e.g. {label, value} for dynamic_options>",
+    "minLength": 0,
+    "typeConstraints": "<e.g. value must be string>"
+  }
+}

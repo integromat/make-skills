@@ -1,0 +1,41 @@
+{
+  "condition": false,
+  "url": "https://api.github.com/repos/{{encodeURL(parameters.owner)}}/{{encodeURL(parameters.repo)}}/hooks",
+  "method": "POST",
+  "type": "json",
+  "headers": {
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2026-03-10",
+    "User-Agent": "make-custom-apps-teaching",
+    "Authorization": "Bearer {{connection.token}}"
+  },
+  "body": {
+    "name": "web",
+    "active": false,
+    "events": [
+      "issues"
+    ],
+    "config": {
+      "url": "{{webhook.url}}",
+      "content_type": "json",
+      "insecure_ssl": "0",
+      "secret": "{{parameters.secret}}"
+    }
+  },
+  "response": {
+    "data": {
+      "externalHookId": "{{body.id}}",
+      "owner": "{{parameters.owner}}",
+      "repo": "{{parameters.repo}}"
+    }
+  },
+  "log": {
+    "sanitize": [
+      "request.headers.authorization",
+      "request.body.config.secret",
+      "request.body.config.url",
+      "response.body.config.secret",
+      "response.body.config.url"
+    ]
+  }
+}

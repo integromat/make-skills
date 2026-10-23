@@ -1,0 +1,7 @@
+{
+  "baseUrl": "https://api.example.com/v1",
+  "qs": {
+    "api_version": "2023-10-01",
+    "format": "json"
+  }
+}

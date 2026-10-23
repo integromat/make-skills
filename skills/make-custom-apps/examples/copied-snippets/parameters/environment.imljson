@@ -1,0 +1,17 @@
+{
+  "name": "environment",
+  "type": "select",
+  "label": "Environment",
+  "required": true,
+  "default": "production",
+  "options": [
+    {
+      "label": "Production",
+      "value": "production"
+    },
+    {
+      "label": "Sandbox",
+      "value": "sandbox"
+    }
+  ]
+}

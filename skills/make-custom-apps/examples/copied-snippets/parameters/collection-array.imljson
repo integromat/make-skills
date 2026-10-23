@@ -1,0 +1,27 @@
+{
+  "name": "contacts",
+  "type": "array",
+  "label": "Contacts",
+  "spec": {
+    "type": "collection",
+    "spec": [
+      {
+        "name": "name",
+        "type": "text",
+        "label": "Name",
+        "required": true
+      },
+      {
+        "name": "email",
+        "type": "email",
+        "label": "Email",
+        "required": true
+      },
+      {
+        "name": "phone",
+        "type": "text",
+        "label": "Phone"
+      }
+    ]
+  }
+}

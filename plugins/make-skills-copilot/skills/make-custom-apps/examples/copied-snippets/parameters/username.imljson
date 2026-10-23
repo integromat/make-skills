@@ -1,0 +1,7 @@
+{
+  "name": "username",
+  "type": "text",
+  "label": "Username",
+  "required": true,
+  "help": "Enter your username"
+}

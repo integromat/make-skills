@@ -1,0 +1,9 @@
+{
+  "response": {
+    "limit": 300,
+    "output": {
+      "label": "#{{item.number}} {{item.title}}",
+      "date": "{{parseDate(item.created_at)}}"
+    }
+  }
+}

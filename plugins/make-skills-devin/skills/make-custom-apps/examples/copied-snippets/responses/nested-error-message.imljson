@@ -1,0 +1,7 @@
+{
+  "response": {
+    "error": {
+      "message": "[{{statusCode}}] {{body.error.message || body.message || 'Unknown error'}}"
+    }
+  }
+}

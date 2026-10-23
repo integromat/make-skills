@@ -1,0 +1,12 @@
+{
+  "url": "/endpoint/{{parameters.key}}",
+  "method": "POST",
+  "body": {
+    "field": "{{parameters.value}}"
+  },
+  "response": {
+    "output": {
+      "id": "{{body.id}}"
+    }
+  }
+}

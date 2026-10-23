@@ -1,0 +1,12 @@
+[
+  {
+    "name": "messageId",
+    "type": "text",
+    "label": "Message ID"
+  },
+  {
+    "name": "remainingBalance",
+    "type": "number",
+    "label": "Remaining Balance"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "name": "owner",
+    "type": "text",
+    "label": "Repository owner",
+    "required": true,
+    "validate": {
+      "pattern": "^[A-Za-z0-9-]+$",
+      "min": 1
+    }
+  },
+  {
+    "name": "repo",
+    "type": "text",
+    "label": "Repository name",
+    "required": true,
+    "validate": {
+      "pattern": "^[A-Za-z0-9_.-]+$",
+      "min": 1
+    },
+    "help": "Repository name without the .git suffix; no URL or slash."
+  },
+  {
+    "name": "secret",
+    "type": "password",
+    "label": "Webhook signing secret",
+    "required": true,
+    "help": "A unique high-entropy secret stored securely. This template cannot yet verify signatures; do not deploy."
+  }
+]

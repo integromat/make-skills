@@ -1,0 +1,15 @@
+{
+  "url": "/users",
+  "method": "GET",
+  "headers": {
+    "ConsistencyLevel": "eventual"
+  },
+  "response": {
+    "limit": 100,
+    "output": {
+      "label": "{{item.displayName}}",
+      "value": "{{item.id}}"
+    },
+    "iterate": "{{body.value}}"
+  }
+}

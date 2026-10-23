@@ -1,0 +1,9 @@
+{
+  "name": "quantity",
+  "type": "number",
+  "label": "Quantity",
+  "default": 0,
+  "validate": {
+    "min": 0
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "address",
+  "type": "collection",
+  "label": "Address",
+  "spec": [
+    {
+      "name": "street",
+      "type": "text",
+      "label": "Street Address",
+      "required": true
+    },
+    {
+      "name": "city",
+      "type": "text",
+      "label": "City",
+      "required": true
+    },
+    {
+      "name": "zipCode",
+      "type": "text",
+      "label": "ZIP Code"
+    }
+  ]
+}

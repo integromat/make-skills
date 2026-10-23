@@ -1,0 +1,14 @@
+{
+  "url": "/messages/send/",
+  "method": "POST",
+  "body": {
+    "to": "{{parameters.recipient}}",
+    "text": "{{parameters.messageText}}"
+  },
+  "response": {
+    "output": {
+      "messageId": "{{body.smsId}}",
+      "remainingBalance": "{{body.balance}}"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "status",
+  "type": "select",
+  "label": "Status",
+  "multiple": true,
+  "options": [
+    {
+      "label": "Active",
+      "value": "active"
+    },
+    {
+      "label": "Inactive",
+      "value": "inactive"
+    },
+    {
+      "label": "Pending",
+      "value": "pending"
+    },
+    {
+      "label": "Archived",
+      "value": "archived"
+    }
+  ]
+}

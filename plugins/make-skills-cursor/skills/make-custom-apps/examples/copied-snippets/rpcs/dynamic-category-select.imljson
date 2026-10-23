@@ -1,0 +1,8 @@
+{
+  "name": "category",
+  "type": "select",
+  "label": "Category",
+  "required": true,
+  "options": "rpc://getCategoriesByType",
+  "help": "Select a category from your account"
+}

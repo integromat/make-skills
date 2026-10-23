@@ -1,0 +1,14 @@
+[
+  {
+    "name": "recipient",
+    "type": "text",
+    "label": "Recipient",
+    "required": true
+  },
+  {
+    "name": "messageText",
+    "type": "text",
+    "label": "Message Text",
+    "required": true
+  }
+]

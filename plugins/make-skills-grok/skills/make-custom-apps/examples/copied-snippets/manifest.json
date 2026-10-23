@@ -1,0 +1,1691 @@
+{
+  "format": "make-custom-apps-copied-snippets-v1",
+  "scope": "Local teaching-library index, not a Make SDK manifest or deployable app. All snippets require the documented surrounding context and authorized runtime tests.",
+  "entries": [
+    {
+      "id": "base-bearer",
+      "file": "base/base-bearer.imljson",
+      "topic": "base",
+      "role": "App Base",
+      "copyStatus": "copied",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "04-BASE-CONFIG.md",
+        "section": "Basic Structure"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/app-components/base.md",
+        "https://developers.make.com/custom-apps-documentation/app-components/base/sanitization.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Teaching template only: example.com is not a provider API. Replace its host/path only from provider documentation.",
+        "Supply the referenced connection fields, validate credentials separately, and verify exact log sanitization with authorized Make tests."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "base-basic",
+      "file": "base/base-basic.imljson",
+      "topic": "base",
+      "role": "App Base",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "04-BASE-CONFIG.md",
+        "section": "Basic Authentication"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/app-components/base.md",
+        "https://developers.make.com/custom-apps-documentation/app-components/base/sanitization.md"
+      ],
+      "adaptations": [
+        "Added log.sanitize for the Authorization header; the source omitted it."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Teaching template only: example.com is not a provider API. Replace its host/path only from provider documentation.",
+        "Supply the referenced connection fields, validate credentials separately, and verify exact log sanitization with authorized Make tests."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "base-custom-auth",
+      "file": "base/base-custom-auth.imljson",
+      "topic": "base",
+      "role": "App Base",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "04-BASE-CONFIG.md",
+        "section": "Custom Authentication Header"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/app-components/base.md",
+        "https://developers.make.com/custom-apps-documentation/app-components/base/sanitization.md"
+      ],
+      "adaptations": [
+        "Added log.sanitize for both credential-bearing custom headers."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Teaching template only: example.com is not a provider API. Replace its host/path only from provider documentation.",
+        "Supply the referenced connection fields, validate credentials separately, and verify exact log sanitization with authorized Make tests."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "base-global-query",
+      "file": "base/base-global-query.imljson",
+      "topic": "base",
+      "role": "App Base",
+      "copyStatus": "copied",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "04-BASE-CONFIG.md",
+        "section": "Global Query Parameters"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/app-components/base.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Template URL, api_version and format values must be replaced using a real provider contract; not an authentication example."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "base-two-environments",
+      "file": "base/base-two-environments.imljson",
+      "topic": "base",
+      "role": "App Base",
+      "copyStatus": "copied",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "04-BASE-CONFIG.md",
+        "section": "4. Support Multiple Environments"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/app-components/base.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/iml.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Teaching template with two fixed example.com hosts. Supply a validated connection.environment select; never interpolate an arbitrary credential destination."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "json-headers",
+      "file": "base/json-headers.imljson",
+      "topic": "base",
+      "role": "Base or Communication headers fragment",
+      "copyStatus": "copied",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "04-BASE-CONFIG.md",
+        "section": "5. Include Proper Content Types"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/making-requests.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "For JSON requests only. Do not reuse this Content-Type on multipart uploads; Make sets request Content-Type from type."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "sanitize-secrets",
+      "file": "base/sanitize-secrets.imljson",
+      "topic": "base",
+      "role": "Base or Communication log fragment",
+      "copyStatus": "copied",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "04-BASE-CONFIG.md",
+        "section": "Comprehensive Sanitization"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/app-components/base/sanitization.md",
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/making-requests.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Mask paths illustrate possible locations, not a comprehensive secret detector. Match the actual request/response paths and inspect authorized test logs."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "nested-error-message",
+      "file": "responses/nested-error-message.imljson",
+      "topic": "responses",
+      "role": "Communication response fragment",
+      "copyStatus": "copied",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "04-BASE-CONFIG.md",
+        "section": "Basic Error Handling"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/handling-responses/error.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Assumes error.message or message contains a safe user-facing string. Do not echo credentials or full response bodies into error text."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "status-specific-errors",
+      "file": "responses/status-specific-errors.imljson",
+      "topic": "responses",
+      "role": "Communication response fragment",
+      "copyStatus": "copied",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "04-BASE-CONFIG.md",
+        "section": "Status Code Specific Errors"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/handling-responses/error.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Assumes the illustrated provider error fields. Static 401/403/404 messages are examples, not a requirement. The 429 text alone is not a retry policy."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "wrapped-output",
+      "file": "responses/wrapped-output.imljson",
+      "topic": "responses",
+      "role": "Communication response fragment",
+      "copyStatus": "copied",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "00-LLM-DEVELOPMENT-RULES.md",
+        "section": "2. Direct Module Output (CRITICAL)"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/handling-responses/output.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Optional named wrapper around body; declare the same response collection in Interface. Do not use if a direct provider projection is intended."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "direct-output",
+      "file": "responses/direct-output.imljson",
+      "topic": "responses",
+      "role": "Communication response fragment",
+      "copyStatus": "copied",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "00-LLM-DEVELOPMENT-RULES.md",
+        "section": "2. Direct Module Output (CRITICAL)"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/handling-responses/output.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Declare an Interface and Samples for the actual body shape; no endpoint or credential contract is supplied."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "username",
+      "file": "parameters/username.imljson",
+      "topic": "parameters",
+      "role": "One Connection parameter entry",
+      "copyStatus": "copied",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "06-CONNECTION-TYPES.md",
+        "section": "Text Input"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Insert this single object into a Parameters array. Field labels/defaults do not implement authentication or TLS policy."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "password",
+      "file": "parameters/password.imljson",
+      "topic": "parameters",
+      "role": "One Connection parameter entry",
+      "copyStatus": "copied",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "06-CONNECTION-TYPES.md",
+        "section": "Password Input"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/password.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Insert this single object into a Parameters array. Field labels/defaults do not implement authentication or TLS policy."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "environment",
+      "file": "parameters/environment.imljson",
+      "topic": "parameters",
+      "role": "One Connection parameter entry",
+      "copyStatus": "copied",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "06-CONNECTION-TYPES.md",
+        "section": "Select Dropdown"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Insert this single object into a Parameters array. Field labels/defaults do not implement authentication or TLS policy."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "ssl-boolean",
+      "file": "parameters/ssl-boolean.imljson",
+      "topic": "parameters",
+      "role": "One Connection parameter entry",
+      "copyStatus": "copied",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "06-CONNECTION-TYPES.md",
+        "section": "Boolean Checkbox"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Insert this single object into a Parameters array. Field labels/defaults do not implement authentication or TLS policy."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "timeout-number",
+      "file": "parameters/timeout-number.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "06-CONNECTION-TYPES.md",
+        "section": "Number Input"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/number.md"
+      ],
+      "adaptations": [
+        "Moved minimum: 1 and maximum: 300 to validate.min and validate.max; the former top-level keys are not the documented SDK fields."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Insert into a Parameters/expect array. This input does not itself configure the HTTP timeout; the source describes seconds."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "http-input-fields",
+      "file": "parameters/http-input-fields.imljson",
+      "topic": "parameters",
+      "role": "Mappable parameters array",
+      "copyStatus": "copied",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "parameters and user inputs.md",
+        "section": "Parameters and User Inputs-01"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/array.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Input fields only: URL, method, headers. This is not the full input set for the universal-call fragment, which additionally requires qs/body. Validate a relative path and protect authentication headers."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "action-post",
+      "file": "requests/action-post.imljson",
+      "topic": "requests",
+      "role": "Module Communication",
+      "copyStatus": "copied",
+      "source": {
+        "category": "internal-sdk-skill",
+        "title": "sdk-conventions.md",
+        "section": "API Section"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/making-requests.md",
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/handling-responses/output.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Internal SDK teaching template: /endpoint is deliberately not a provider contract. Supply a documented Base, connection, key/value inputs, Interface and Samples before use."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "offset-pagination",
+      "file": "pagination/offset-pagination.imljson",
+      "topic": "pagination",
+      "role": "Value of Communication pagination",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "modules actions triggers searches.md",
+        "section": "Modules (Actions, Triggers, Searches)-01"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/pagination.md"
+      ],
+      "adaptations": [
+        "Extracted the section at watchRecords.api.pagination; omitted the outer example/export wrapper."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Use with a zero-based offset API, initial offset 0, page size 100, a response iterator and a user bundle limit. Make supplies page 2 for request 2."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "cursor-pagination",
+      "file": "pagination/cursor-pagination.imljson",
+      "topic": "pagination",
+      "role": "Value of Communication pagination",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "modules actions triggers searches.md",
+        "section": "Modules (Actions, Triggers, Searches)-03"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/pagination.md"
+      ],
+      "adaptations": [
+        "Extracted the section at api.pagination; omitted the outer example/export wrapper."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Assumes a nonempty body.offset string is the next-page cursor. Supply request, iterator and limit. This is not a claim about a current Airtable API."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "next-link-pagination",
+      "file": "pagination/next-link-pagination.imljson",
+      "topic": "pagination",
+      "role": "Value of Communication pagination",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "api communication.md",
+        "section": "API Communication-11"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/pagination.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/iml.md"
+      ],
+      "adaptations": [
+        "Extracted the section at listUsers.api.pagination; omitted the outer example/export wrapper."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Assumes the provider returns a trusted same-provider @odata.nextLink URL. Review host validation/credential forwarding and stop on missing next link."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "required-text",
+      "file": "parameters/required-text.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Text Input"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/text.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "email",
+      "file": "parameters/email.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Email Input"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/email.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "url",
+      "file": "parameters/url.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "URL Input"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/url.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "date",
+      "file": "parameters/date.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Date Input"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/date.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "active-boolean",
+      "file": "parameters/active-boolean.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Boolean (Checkbox)"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/boolean.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "priority-select",
+      "file": "parameters/priority-select.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Static Select Options"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/select.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "text-array",
+      "file": "parameters/text-array.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Array Input"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/array.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "file-buffer",
+      "file": "parameters/file-buffer.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "File Buffer"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/buffer.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "file-metadata",
+      "file": "parameters/file-metadata.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "File with Metadata"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/collection.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "bounded-number",
+      "file": "parameters/bounded-number.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Number Input"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/number.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments.",
+        "Moved minimum: 1 / maximum: 1000 into validate.min / validate.max."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "multiline-text",
+      "file": "parameters/multiline-text.imljson",
+      "topic": "parameters",
+      "role": "One Static/Connection parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Textarea"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/text.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments.",
+        "Removed undocumented rows: 4; retained documented multiline: true."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "multiline affects static/connection text; mappable text is already multiline. Insert this object into an array."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "collection-array",
+      "file": "parameters/collection-array.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Array of Objects"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/array.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/collection.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "nested-notification-select",
+      "file": "parameters/nested-notification-select.imljson",
+      "topic": "parameters",
+      "role": "One Static parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Nested Conditional Fields"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/select.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/text.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Use in a static configuration section; nested email/SMS fields are UI examples only, not notification senders. Test both branches and mapping modes."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "validated-inputs",
+      "file": "parameters/validated-inputs.imljson",
+      "topic": "parameters",
+      "role": "Parameters/expect array",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Parameter Validation"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/text.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/number.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments.",
+        "Wrapped comma-separated parameter objects in a JSON array.",
+        "Moved username.pattern into username.validate.pattern and age.minimum/maximum into age.validate.min/max."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "The nested pattern validates username text, and nested min/max validates numeric age. These are SDK fields, not JSON Schema."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "currency-select",
+      "file": "parameters/currency-select.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "E-commerce Product Parameters"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/select.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments.",
+        "Extracted existing sub-section 1.spec.1 without carrying the outer example container."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "zero-quantity",
+      "file": "parameters/zero-quantity.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "E-commerce Product Parameters"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/number.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments.",
+        "Extracted existing sub-section 2.spec.1 without carrying the outer example container.",
+        "Moved minimum: 0 to validate.min: 0; retained default: 0 exactly."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Default 0 is intentional and must survive downstream mappings. Insert into a parameter array."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "date-range",
+      "file": "parameters/date-range.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Search/Filter Parameters"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/collection.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments.",
+        "Extracted existing sub-section 1.spec.0 without carrying the outer example container."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "multi-status-select",
+      "file": "parameters/multi-status-select.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Search/Filter Parameters"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/select.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments.",
+        "Extracted existing sub-section 1.spec.1 without carrying the outer example container."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "sort-field",
+      "file": "parameters/sort-field.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Search/Filter Parameters"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/select.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments.",
+        "Extracted existing sub-section 2.spec.0 without carrying the outer example container."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "sort-direction",
+      "file": "parameters/sort-direction.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Search/Filter Parameters"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/select.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments.",
+        "Extracted existing sub-section 2.spec.1 without carrying the outer example container."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "optional-text-default",
+      "file": "parameters/optional-text-default.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "20-COMMON-PATTERNS.md",
+        "section": "Optional Text with Default"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/text.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "address-collection",
+      "file": "parameters/address-collection.imljson",
+      "topic": "parameters",
+      "role": "One parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "20-COMMON-PATTERNS.md",
+        "section": "Collection (Object) Input"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/collection.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Single parameter entry, not a complete expect/Parameters array; insert it into the appropriate section and test the UI in Make. No provider request is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "projected-output",
+      "file": "responses/projected-output.imljson",
+      "topic": "responses",
+      "role": "Communication response fragment",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "20-COMMON-PATTERNS.md",
+        "section": "Simple Output Mapping (When transformation is needed)"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/handling-responses/output.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Assumes the illustrated body fields. Interface and Samples must match the projection; this is not a complete module."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "nested-output",
+      "file": "responses/nested-output.imljson",
+      "topic": "responses",
+      "role": "Communication response fragment",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "20-COMMON-PATTERNS.md",
+        "section": "Nested Data Extraction"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/handling-responses/output.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Assumes data.user and data.attributes exist. Declare matching nested output schema and test absent/null values with the actual provider."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "iterated-tag-output",
+      "file": "responses/iterated-tag-output.imljson",
+      "topic": "responses",
+      "role": "Communication response fragment",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "20-COMMON-PATTERNS.md",
+        "section": "Array Processing"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/handling-responses/iterate.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/iml.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Assumes body.items and an item.tags array of objects with name. No API request or output interface is included."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "flat-interface",
+      "file": "responses/flat-interface.imljson",
+      "topic": "responses",
+      "role": "Module Interface array",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "20-COMMON-PATTERNS.md",
+        "section": "Basic Output Interface"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/interface.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Standalone schema only: does not imply that any API returns these fields. Pair with a matching output projection and typed Samples."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "nested-interface",
+      "file": "responses/nested-interface.imljson",
+      "topic": "responses",
+      "role": "Module Interface array",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "20-COMMON-PATTERNS.md",
+        "section": "Rich Output Interface"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/interface.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/array.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/collection.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments.",
+        "Added spec: [] to the otherwise unspecified metadata collection, as required by the public Interface example for unknown collections."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Standalone schema only; metadata is an unspecified collection. Define provider-specific nested fields before claiming complete output coverage."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "message-inputs",
+      "file": "requests/message-inputs.imljson",
+      "topic": "requests",
+      "role": "Module Mappable parameters",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "modules actions triggers searches.md",
+        "section": "Modules (Actions, Triggers, Searches)-05"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md",
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api.md"
+      ],
+      "adaptations": [
+        "Extracted the section at _modules.sendMessage.expect; omitted the outer example/export wrapper."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Teaching template only: /messages/send/ and the smsId/balance shape are illustrative, not a newly verified provider contract. Bind these three sections together; supply Base/connection and credential/live tests before any send."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "message-request",
+      "file": "requests/message-request.imljson",
+      "topic": "requests",
+      "role": "Module Communication",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "modules actions triggers searches.md",
+        "section": "Modules (Actions, Triggers, Searches)-05"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md",
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api.md"
+      ],
+      "adaptations": [
+        "Extracted the section at _modules.sendMessage.api; omitted the outer example/export wrapper."
+      ],
+      "dependencies": [
+        "message-inputs",
+        "message-interface"
+      ],
+      "limitations": [
+        "Teaching template only: /messages/send/ and the smsId/balance shape are illustrative, not a newly verified provider contract. Bind these three sections together; supply Base/connection and credential/live tests before any send."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "message-interface",
+      "file": "requests/message-interface.imljson",
+      "topic": "requests",
+      "role": "Module Interface",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "modules actions triggers searches.md",
+        "section": "Modules (Actions, Triggers, Searches)-05"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md",
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api.md"
+      ],
+      "adaptations": [
+        "Extracted the section at _modules.sendMessage.interface; omitted the outer example/export wrapper.",
+        "Changed unsupported interface type float to documented number."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Teaching template only: /messages/send/ and the smsId/balance shape are illustrative, not a newly verified provider contract. Bind these three sections together; supply Base/connection and credential/live tests before any send."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "api-key-parameters",
+      "file": "connections/api-key-parameters.imljson",
+      "topic": "connections",
+      "role": "Connection Parameters",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "22-CONNECTION-UPLOAD-LEARNINGS.md",
+        "section": "API Key Connection Template"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/app-components/connections/basic-connection.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/password.md"
+      ],
+      "adaptations": [
+        "Extracted parameters; omitted outer connection label/type example."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Password input only; pair with a documented read-only credential validation endpoint, not an event/send endpoint."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "api-key-validation",
+      "file": "connections/api-key-validation.imljson",
+      "topic": "connections",
+      "role": "Basic connection Communication",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "22-CONNECTION-UPLOAD-LEARNINGS.md",
+        "section": "API Key Connection Template"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/app-components/connections/basic-connection.md",
+        "https://developers.make.com/custom-apps-documentation/app-components/base/sanitization.md"
+      ],
+      "adaptations": [
+        "Extracted the section at api; omitted the outer example/export wrapper.",
+        "Replaced unbound common.baseUrl with reserved https://api.example.com; kept the source /validate teaching path.",
+        "Made GET explicit and added authorization-header log sanitization."
+      ],
+      "dependencies": [
+        "api-key-parameters"
+      ],
+      "limitations": [
+        "Teaching template: /validate and body.user.name are placeholders, not a provider API. Replace with a real read-only endpoint and expected response before use. Does not inherit app Base."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "rotating-refresh",
+      "file": "connections/rotating-refresh.imljson",
+      "topic": "connections",
+      "role": "OAuth2 Communication refresh fragment",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "06-CONNECTION-TYPES.md",
+        "section": "OAuth with Refresh Token Rotation"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/app-components/connections/oauth2.md",
+        "https://developers.make.com/custom-apps-documentation/app-components/base/sanitization.md"
+      ],
+      "adaptations": [
+        "Replaced accounts.service.com with reserved accounts.example.com.",
+        "Added documented form encoding and sensitive request/response log masks; retained token-rotation mapping."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Teaching template only; use only when the provider documents refresh-token rotation, URL/form authentication, and expires_in.",
+        "Requires existing data.refreshToken/data.expires and confidential client parameters; not a full connection. The old refresh-token fallback handles a missing replacement string; it is not a numeric/boolean defaulting pattern."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "bounded-async-poll",
+      "file": "requests/bounded-async-poll.imljson",
+      "topic": "requests",
+      "role": "Multiple-request Communication array",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "api communication.md",
+        "section": "API Communication-09"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/multiple-requests.md",
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/making-requests.md"
+      ],
+      "adaptations": [
+        "Stored body.status in response.temp.status; repeat.condition now uses temp because repeat has no body context.",
+        "Changed repeat.delay from string \"2000\" to number 2000 and repeat.limit from 30 to 10 to bound this teaching poll; no dynamic delay/limit expressions."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "SDK teaching template with reserved example.com URLs. Supply the referenced inputs, Base/auth/logging, output schema, and provider-specific terminal statuses.",
+        "Returns the final observed body, not a guarantee of successful completion. If the repeat limit is exhausted, status may remain IN_PROGRESS; the caller must handle that result and the overall timeout. No task was started."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "get-item",
+      "file": "requests/get-item.imljson",
+      "topic": "requests",
+      "role": "Module Communication",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "20-COMMON-PATTERNS.md",
+        "section": "Basic GET Request"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/making-requests.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Teaching template /items/{itemId}; supply a documented Base/auth, validated/encoded itemId, matching Interface and Samples."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "post-preserving-false",
+      "file": "requests/post-preserving-false.imljson",
+      "topic": "requests",
+      "role": "Module Communication",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "20-COMMON-PATTERNS.md",
+        "section": "POST with JSON Body"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/making-requests.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/iml.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments.",
+        "Replaced parameters.active || true with an explicit null check so active: false is preserved.",
+        "Extended the explicit null test to exclude undefined as well; Make IML equality is strict, so an absent boolean still receives the intended true default."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Teaching template /items; supply name/description/active inputs and provider-specific Base/auth/schema. No POST was executed."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "delete-item",
+      "file": "requests/delete-item.imljson",
+      "topic": "requests",
+      "role": "Module Communication",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "20-COMMON-PATTERNS.md",
+        "section": "DELETE Request"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/making-requests.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Teaching template /items/{itemId}; deleted:true assumes the chosen provider treats a successful HTTP response as completion. Confirm target/readback and async-delete semantics before claiming deletion. No DELETE was executed."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "response-page-pagination",
+      "file": "pagination/response-page-pagination.imljson",
+      "topic": "pagination",
+      "role": "Communication qs/pagination fragment",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "20-COMMON-PATTERNS.md",
+        "section": "Page-Based Pagination"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/pagination.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Assumes a one-based provider current_page/total_pages response. The +1 is deliberately on body.pagination.current_page, NOT on Make pagination.page. Supply an iterator and bundle limit."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "statuses-rpc",
+      "file": "rpcs/statuses-rpc.imljson",
+      "topic": "rpcs",
+      "role": "RPC Communication",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "20-COMMON-PATTERNS.md",
+        "section": "Simple Options List"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/app-components/rpcs.md",
+        "https://developers.make.com/custom-apps-documentation/app-components/rpcs/dynamic-options-rpc.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Teaching template /statuses with body.data[{id,name}]. Create getStatuses, bind it to the same connection as its caller, and add a result limit if the provider can return large option lists."
+      ],
+      "validation": "static only; Make/provider runtime untested",
+      "provides": {
+        "rpc": "getStatuses"
+      }
+    },
+    {
+      "id": "categories-rpc",
+      "file": "rpcs/categories-rpc.imljson",
+      "topic": "rpcs",
+      "role": "RPC Communication",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "20-COMMON-PATTERNS.md",
+        "section": "Dependent Dropdown"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/app-components/rpcs.md",
+        "https://developers.make.com/custom-apps-documentation/app-components/rpcs/dynamic-options-rpc.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Teaching template /categories; the caller must supply parameters.type and share the RPC connection. Description is supplementary UI metadata; label/value are the option pair."
+      ],
+      "validation": "static only; Make/provider runtime untested",
+      "provides": {
+        "rpc": "getCategoriesByType"
+      }
+    },
+    {
+      "id": "dynamic-category-select",
+      "file": "rpcs/dynamic-category-select.imljson",
+      "topic": "rpcs",
+      "role": "One Mappable parameter entry",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "08-PARAMETER-TYPES.md",
+        "section": "Dynamic Select with RPC"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/select.md",
+        "https://developers.make.com/custom-apps-documentation/app-components/rpcs.md"
+      ],
+      "adaptations": [
+        "Normalized Markdown-fence quote escaping/indentation and removed only whole-line section comments.",
+        "Changed the unprovided getCategories RPC reference to the included getCategoriesByType dependency."
+      ],
+      "dependencies": [
+        "categories-rpc"
+      ],
+      "limitations": [
+        "Insert into an expect array with a type input needed by the linked RPC. Bind that RPC and the consuming module to the same connection."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "users-rpc",
+      "file": "rpcs/users-rpc.imljson",
+      "topic": "rpcs",
+      "role": "RPC Communication",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "remote procedure calls rpcs.md",
+        "section": "Remote Procedure Calls (RPCs)-01"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/app-components/rpcs.md",
+        "https://developers.make.com/custom-apps-documentation/app-components/rpcs/dynamic-options-rpc.md"
+      ],
+      "adaptations": [
+        "Extracted the section at _rpcs.users.api; omitted the outer example/export wrapper."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Generic Graph-shaped teaching template; /users, ConsistencyLevel and body.value/displayName/id are assumed, not provider-runtime verified. Supply Base/auth and bind caller and users RPC to the same connection."
+      ],
+      "validation": "static only; Make/provider runtime untested",
+      "provides": {
+        "rpc": "users"
+      }
+    },
+    {
+      "id": "bases-rpc",
+      "file": "rpcs/bases-rpc.imljson",
+      "topic": "rpcs",
+      "role": "RPC Communication",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "remote procedure calls rpcs1.md",
+        "section": "Remote Procedure Calls (RPCs)-11"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/app-components/rpcs.md",
+        "https://developers.make.com/custom-apps-documentation/app-components/rpcs/dynamic-options-rpc.md",
+        "https://developers.make.com/custom-apps-documentation/app-components/base/sanitization.md"
+      ],
+      "adaptations": [
+        "Extracted the section at _rpcs.RpcGetBases.api; omitted the outer example/export wrapper.",
+        "Added sanitization for the illustrated client-secret header."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "Reserved example.com endpoint and X-API-Client-Secret are teaching placeholders. Securely configure common.metadataClientSecret only after confirming a real provider contract; share the caller connection."
+      ],
+      "validation": "static only; Make/provider runtime untested",
+      "provides": {
+        "rpc": "RpcGetBases"
+      }
+    },
+    {
+      "id": "base-select",
+      "file": "rpcs/base-select.imljson",
+      "topic": "rpcs",
+      "role": "Module Mappable parameters",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "local-knowledgebase",
+        "title": "remote procedure calls rpcs1.md",
+        "section": "Remote Procedure Calls (RPCs)-11"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters/select.md",
+        "https://developers.make.com/custom-apps-documentation/app-components/rpcs.md"
+      ],
+      "adaptations": [
+        "Extracted the section at _modules.ActionGetRecord.expect; omitted the outer example/export wrapper.",
+        "Replaced exported app-qualified RPC reference with the local rpc://RpcGetBases name; no private app identity is required."
+      ],
+      "dependencies": [
+        "bases-rpc"
+      ],
+      "limitations": [
+        "Bind to the included RpcGetBases definition using the same connection. The generic example endpoint must be replaced before use."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "internal-search-response",
+      "file": "responses/internal-search-response.imljson",
+      "topic": "responses",
+      "role": "Communication fragment",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "internal-sdk-skill",
+        "title": "SDK App Conventions and Review Standards",
+        "section": "Search response"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/handling-responses/iterate.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/iml.md"
+      ],
+      "adaptations": [
+        "Added outer JSON braces around the original named-property fragment; expressions and field names unchanged."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "SDK teaching template. Backticks address the literal colon-containing response keys; the selected provider must actually return that shape. Supply request, inputs, Base/auth and appropriate limits."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "internal-cursor-pagination",
+      "file": "pagination/internal-cursor-pagination.imljson",
+      "topic": "pagination",
+      "role": "Communication fragment",
+      "copyStatus": "adapted",
+      "source": {
+        "category": "internal-sdk-skill",
+        "title": "SDK App Conventions and Review Standards",
+        "section": "Cursor-Based Pagination"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/pagination.md",
+        "https://developers.make.com/custom-apps-documentation/block-elements/iml.md"
+      ],
+      "adaptations": [
+        "Added outer JSON braces around the original named-property fragment; expressions and field names unchanged."
+      ],
+      "dependencies": [],
+      "limitations": [
+        "SDK teaching template. Backticks address the literal colon-containing response keys; the selected provider must actually return that shape. Supply request, inputs, Base/auth and appropriate limits."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "function-test-plan",
+      "file": "qa/function-test-plan.json",
+      "topic": "qa",
+      "role": "Local QA planning record (NOT an SDK section)",
+      "copyStatus": "copied",
+      "source": {
+        "category": "internal-sdk-skill",
+        "title": "templates.md",
+        "section": "IML Function Test Entry"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/debug-your-app/debugging-of-custom-iml-functions.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Planning template only. Replace angle-bracket/choice placeholders with documented cases and record real results separately; this is not executed evidence, a provider fixture, or Make import schema."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "rpc-test-plan",
+      "file": "qa/rpc-test-plan.json",
+      "topic": "qa",
+      "role": "Local QA planning record (NOT an SDK section)",
+      "copyStatus": "copied",
+      "source": {
+        "category": "internal-sdk-skill",
+        "title": "templates.md",
+        "section": "RPC Test Entry"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/app-components/rpcs.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Planning template only. Replace angle-bracket/choice placeholders with documented cases and record real results separately; this is not executed evidence, a provider fixture, or Make import schema."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "pagination-test-plan",
+      "file": "qa/pagination-test-plan.json",
+      "topic": "qa",
+      "role": "Local QA planning record (NOT an SDK section)",
+      "copyStatus": "copied",
+      "source": {
+        "category": "internal-sdk-skill",
+        "title": "templates.md",
+        "section": "Pagination Test Entry"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/component-blocks/api/pagination.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Planning template only. Replace angle-bracket/choice placeholders with documented cases and record real results separately; this is not executed evidence, a provider fixture, or Make import schema."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    },
+    {
+      "id": "parameter-change-plan",
+      "file": "qa/parameter-change-plan.json",
+      "topic": "qa",
+      "role": "Local QA planning record (NOT an SDK section)",
+      "copyStatus": "copied",
+      "source": {
+        "category": "internal-sdk-skill",
+        "title": "templates.md",
+        "section": "Changed Parameters Entry"
+      },
+      "publicDocs": [
+        "https://developers.make.com/custom-apps-documentation/block-elements/parameters.md"
+      ],
+      "adaptations": [],
+      "dependencies": [],
+      "limitations": [
+        "Planning template only. Replace angle-bracket/choice placeholders with documented cases and record real results separately; this is not executed evidence, a provider fixture, or Make import schema."
+      ],
+      "validation": "static only; Make/provider runtime untested"
+    }
+  ]
+}

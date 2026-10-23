@@ -1,0 +1,17 @@
+{
+  "id": "PAG-01",
+  "module": "<moduleName>",
+  "variant": "multi_page | exact_boundary | early_termination | empty_result",
+  "pageSize": 0,
+  "maxResults": 0,
+  "expected": {
+    "minOperations": 0,
+    "maxOperations": 0,
+    "noDuplicates": true,
+    "allRecordsReturned": true
+  },
+  "dataPrecondition": "<what must exist in the connected account>",
+  "minRecordCount": 0,
+  "preconditionMet": "yes | no | unknown",
+  "statusIfPreconditionUnmet": "INCONCLUSIVE"
+}

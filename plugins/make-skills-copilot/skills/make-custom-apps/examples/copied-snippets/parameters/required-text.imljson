@@ -1,0 +1,7 @@
+{
+  "name": "title",
+  "type": "text",
+  "label": "Title",
+  "required": true,
+  "help": "Enter a descriptive title"
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "count",
+    "type": "number",
+    "label": "Count",
+    "required": false
+  },
+  {
+    "name": "active",
+    "type": "boolean",
+    "label": "Active",
+    "required": false
+  }
+]

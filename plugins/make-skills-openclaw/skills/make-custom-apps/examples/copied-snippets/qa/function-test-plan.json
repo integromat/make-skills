@@ -1,0 +1,7 @@
+{
+  "id": "IML-01",
+  "function": "<functionName>",
+  "input": "<arg or arg list>",
+  "expectedOutput": "<deterministic expected return value>",
+  "notes": "null | empty array | unicode | type coercion | boundary | nested | large"
+}

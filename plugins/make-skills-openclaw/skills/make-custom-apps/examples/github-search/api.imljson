@@ -1,0 +1,36 @@
+{
+  "url": "https://api.github.com/search/repositories",
+  "method": "GET",
+  "headers": {
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2026-03-10",
+    "User-Agent": "make-custom-apps-teaching"
+  },
+  "qs": {
+    "q": "{{parameters.q}}",
+    "sort": "stars",
+    "order": "desc",
+    "per_page": 100,
+    "page": 1
+  },
+  "response": {
+    "valid": {
+      "condition": "{{statusCode === 200 && body.incomplete_results === false}}",
+      "message": "GitHub search did not return a complete successful page; narrow the query and check rate limits."
+    },
+    "iterate": "{{body.items}}",
+    "limit": "{{parameters.limit}}",
+    "output": {
+      "id": "{{item.id}}",
+      "name": "{{item.name}}",
+      "full_name": "{{item.full_name}}",
+      "stargazers_count": "{{item.stargazers_count}}",
+      "archived": "{{item.archived}}"
+    }
+  },
+  "pagination": {
+    "qs": {
+      "page": "{{pagination.page}}"
+    }
+  }
+}

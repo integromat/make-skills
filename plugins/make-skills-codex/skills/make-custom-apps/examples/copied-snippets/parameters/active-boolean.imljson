@@ -1,0 +1,7 @@
+{
+  "name": "isActive",
+  "type": "boolean",
+  "label": "Active",
+  "default": true,
+  "help": "Check to mark as active"
+}

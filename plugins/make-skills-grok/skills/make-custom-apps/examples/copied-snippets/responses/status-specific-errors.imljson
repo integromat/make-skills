@@ -1,0 +1,26 @@
+{
+  "response": {
+    "error": {
+      "400": {
+        "message": "[400] Bad Request: {{body.error.message}}"
+      },
+      "401": {
+        "message": "[401] Authentication failed. Please check your credentials."
+      },
+      "403": {
+        "message": "[403] Access forbidden. Check your permissions."
+      },
+      "404": {
+        "message": "[404] Resource not found."
+      },
+      "429": {
+        "type": "RateLimitError",
+        "message": "[429] Rate limit exceeded. Please try again in {{body.retry_after}} seconds."
+      },
+      "500": {
+        "message": "[500] Internal server error. Please try again later."
+      },
+      "message": "[{{statusCode}}] {{body.error.message || body.message || 'Unknown error'}}"
+    }
+  }
+}

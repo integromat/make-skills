@@ -1,0 +1,91 @@
+{
+  "authorize": {
+    "url": "https://www.dropbox.com/oauth2/authorize",
+    "qs": {
+      "client_id": "{{common.clientId}}",
+      "redirect_uri": "{{oauth.makeRedirectUri}}",
+      "response_type": "code",
+      "token_access_type": "offline",
+      "scope": "{{join(oauth.scope, ' ')}}"
+    },
+    "response": {
+      "temp": {
+        "code": "{{query.code}}"
+      }
+    }
+  },
+  "token": {
+    "url": "https://api.dropboxapi.com/oauth2/token",
+    "method": "POST",
+    "type": "urlencoded",
+    "body": {
+      "grant_type": "authorization_code",
+      "code": "{{temp.code}}",
+      "client_id": "{{common.clientId}}",
+      "client_secret": "{{common.clientSecret}}",
+      "redirect_uri": "{{oauth.makeRedirectUri}}"
+    },
+    "response": {
+      "data": {
+        "accessToken": "{{body.access_token}}",
+        "refreshToken": "{{body.refresh_token}}",
+        "expires": "{{addSeconds(now, body.expires_in)}}"
+      }
+    },
+    "log": {
+      "sanitize": [
+        "request.body.code",
+        "request.body.client_secret",
+        "response.body.access_token",
+        "response.body.refresh_token"
+      ]
+    }
+  },
+  "refresh": {
+    "condition": "{{data.expires < addMinutes(now, 15)}}",
+    "url": "https://api.dropboxapi.com/oauth2/token",
+    "method": "POST",
+    "type": "urlencoded",
+    "body": {
+      "grant_type": "refresh_token",
+      "refresh_token": "{{data.refreshToken}}",
+      "client_id": "{{common.clientId}}",
+      "client_secret": "{{common.clientSecret}}"
+    },
+    "response": {
+      "data": {
+        "accessToken": "{{body.access_token}}",
+        "refreshToken": "{{data.refreshToken}}",
+        "expires": "{{addSeconds(now, body.expires_in)}}"
+      }
+    },
+    "log": {
+      "sanitize": [
+        "request.body.client_secret",
+        "request.body.refresh_token",
+        "response.body.access_token"
+      ]
+    }
+  },
+  "info": {
+    "url": "https://api.dropboxapi.com/2/users/get_current_account",
+    "method": "POST",
+    "type": "json",
+    "body": null,
+    "headers": {
+      "Authorization": "Bearer {{data.accessToken}}"
+    },
+    "response": {
+      "uid": "{{body.account_id}}",
+      "metadata": {
+        "type": "text",
+        "value": "{{body.account_id}}"
+      }
+    },
+    "log": {
+      "sanitize": [
+        "request.headers.authorization"
+      ]
+    }
+  }
+}

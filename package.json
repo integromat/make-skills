@@ -1,7 +1,7 @@
 {
   "name": "make-skills",
   "version": "0.2.0",
-  "description": "Expert skills for Make automation scenarios and direct app Endpoint workflows — for Claude Code, Cursor, GitHub Copilot, and other AI agents",
+  "description": "Expert skills for Make scenarios, direct app Endpoints, and custom app development — for Claude Code, Cursor, GitHub Copilot, and other AI agents",
   "license": "MIT",
   "author": {
     "name": "Make",
@@ -21,6 +21,7 @@
     "automation",
     "scenarios",
     "endpoints",
+    "custom-apps",
     "integration",
     "workflow",
     "blueprint",
@@ -32,7 +33,8 @@
   ],
   "scripts": {
     "build": "bash build.sh",
-    "check:skills": "node scripts/check-skill-manifests.mjs"
+    "check:skills": "node scripts/check-skill-manifests.mjs",
+    "check:custom-apps": "node --test scripts/check-custom-app-examples.test.mjs && node scripts/check-custom-app-examples.mjs"
   },
   "agents": {
     "skills": [
@@ -55,6 +57,10 @@
       {
         "name": "make-endpoints",
         "path": "./skills/make-endpoints"
+      },
+      {
+        "name": "make-custom-apps",
+        "path": "./skills/make-custom-apps"
       }
     ]
   }

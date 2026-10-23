@@ -1,0 +1,11 @@
+{
+  "name": "quantity",
+  "type": "number",
+  "label": "Quantity",
+  "required": true,
+  "default": 1,
+  "validate": {
+    "min": 1,
+    "max": 1000
+  }
+}

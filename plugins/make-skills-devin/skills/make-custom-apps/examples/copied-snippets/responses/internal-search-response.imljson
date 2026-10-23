@@ -1,0 +1,9 @@
+{
+  "response": {
+    "limit": "{{parameters.limit}}",
+    "iterate": "{{body.`ia::result`}}",
+    "output": {
+      "key": "{{item.key}}"
+    }
+  }
+}

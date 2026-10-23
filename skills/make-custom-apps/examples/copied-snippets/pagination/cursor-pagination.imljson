@@ -1,0 +1,6 @@
+{
+  "qs": {
+    "offset": "{{body.offset}}"
+  },
+  "condition": "{{body.offset}}"
+}

@@ -3,5 +3,6 @@
   "make-scenario-explore",
   "make-scenario-building",
   "make-scenario-operations",
-  "make-endpoints"
+  "make-endpoints",
+  "make-custom-apps"
 ]

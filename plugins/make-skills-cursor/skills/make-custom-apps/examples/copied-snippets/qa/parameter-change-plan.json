@@ -1,0 +1,11 @@
+{
+  "module": "<moduleName>",
+  "name": "<paramName>",
+  "change": "added | renamed | retyped | default_changed | removed",
+  "apiField": "<third-party API field name>",
+  "apiBehavior": "<documented behavior: required, allowed values, effect on response>",
+  "coveredBy": [
+    "TC-01",
+    "TC-02"
+  ]
+}

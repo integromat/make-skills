@@ -1,0 +1,12 @@
+[
+  {
+    "name": "count",
+    "type": "number",
+    "label": "Count"
+  },
+  {
+    "name": "active",
+    "type": "boolean",
+    "label": "Active"
+  }
+]

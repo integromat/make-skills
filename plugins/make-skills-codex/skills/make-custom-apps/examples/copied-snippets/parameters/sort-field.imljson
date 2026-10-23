@@ -1,0 +1,24 @@
+{
+  "name": "sortBy",
+  "type": "select",
+  "label": "Sort By",
+  "options": [
+    {
+      "label": "Created Date",
+      "value": "created_at"
+    },
+    {
+      "label": "Updated Date",
+      "value": "updated_at"
+    },
+    {
+      "label": "Name",
+      "value": "name"
+    },
+    {
+      "label": "Priority",
+      "value": "priority"
+    }
+  ],
+  "default": "created_at"
+}

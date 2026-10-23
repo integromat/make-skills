@@ -1,0 +1,27 @@
+[
+  {
+    "name": "id",
+    "type": "uinteger",
+    "label": "Repository ID"
+  },
+  {
+    "name": "name",
+    "type": "text",
+    "label": "Name"
+  },
+  {
+    "name": "full_name",
+    "type": "text",
+    "label": "Full name"
+  },
+  {
+    "name": "stargazers_count",
+    "type": "uinteger",
+    "label": "Stars"
+  },
+  {
+    "name": "archived",
+    "type": "boolean",
+    "label": "Archived"
+  }
+]

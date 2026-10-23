@@ -1,0 +1,15 @@
+{
+  "url": "/items",
+  "method": "POST",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": {
+    "name": "{{parameters.name}}",
+    "description": "{{parameters.description}}",
+    "active": "{{if(parameters.active != null && parameters.active != undefined, parameters.active, true)}}"
+  },
+  "response": {
+    "output": "{{body.data}}"
+  }
+}

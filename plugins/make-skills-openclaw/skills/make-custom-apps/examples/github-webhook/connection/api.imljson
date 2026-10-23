@@ -1,0 +1,25 @@
+{
+  "url": "https://api.github.com/user",
+  "method": "GET",
+  "headers": {
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2026-03-10",
+    "User-Agent": "make-custom-apps-teaching",
+    "Authorization": "Bearer {{parameters.token}}"
+  },
+  "response": {
+    "valid": "{{statusCode === 200}}",
+    "data": {
+      "token": "{{parameters.token}}"
+    },
+    "metadata": {
+      "type": "text",
+      "value": "{{body.login}}"
+    }
+  },
+  "log": {
+    "sanitize": [
+      "request.headers.authorization"
+    ]
+  }
+}

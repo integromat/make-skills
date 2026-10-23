@@ -1,0 +1,15 @@
+{
+  "url": "/categories",
+  "method": "GET",
+  "qs": {
+    "type": "{{parameters.type}}"
+  },
+  "response": {
+    "iterate": "{{body.data}}",
+    "output": {
+      "label": "{{item.name}}",
+      "value": "{{item.id}}",
+      "description": "{{item.description}}"
+    }
+  }
+}

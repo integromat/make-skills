@@ -1,0 +1,24 @@
+[
+  {
+    "name": "q",
+    "type": "text",
+    "label": "Query",
+    "required": true,
+    "validate": {
+      "min": 1
+    },
+    "help": "GitHub repository search query, for example tetris language:assembly."
+  },
+  {
+    "name": "limit",
+    "type": "uinteger",
+    "label": "Limit",
+    "required": true,
+    "default": 100,
+    "validate": {
+      "min": 1,
+      "max": 1000
+    },
+    "help": "Maximum bundles returned per execution; not the API page size."
+  }
+]

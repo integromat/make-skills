@@ -1,0 +1,7 @@
+{
+  "response": {
+    "output": {
+      "response": "{{body}}"
+    }
+  }
+}

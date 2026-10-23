@@ -1,6 +1,6 @@
 # Make Skills for AI Coding Agents
 
-Give your AI coding agent deep Make expertise — for building, explaining, running and debugging Make scenarios through Make's scenario-management MCP server, and for calling app Endpoints through the standalone Endpoints SDK or CLI. Works with agents that read skill folders and can use the relevant interface — Claude Code, Codex, Cursor, GitHub Copilot, Windsurf, Cline, and others.
+Give your AI coding agent deep Make expertise — for building, explaining, running and debugging Make scenarios through Make's scenario-management MCP server, calling app Endpoints through the standalone Endpoints SDK or CLI, and developing custom (SDK) apps through an authorized app-authoring interface. Works with agents that read skill folders and can use the relevant interface — Claude Code, Codex, Cursor, GitHub Copilot, Windsurf, Cline, and others.
 
 ## Skills
 
@@ -11,16 +11,18 @@ Give your AI coding agent deep Make expertise — for building, explaining, runn
 | **make-scenario-building**   | Creating and editing scenarios — app and module discovery, connections, resolving account-dependent values, flow control, error handling, subscenarios, AI agents; with references and complete examples              |
 | **make-scenario-operations** | Running, activating and deactivating, reviewing and debugging executions, investigating a webhook                                                                                                                     |
 | **make-endpoints**           | Direct app actions through `@makehq/endpoints-sdk` or its CLI — discovery, managed connections, typed calls, complete retrieval, and approval-bound writes with readback. Endpoints are in closed beta.                 |
+| **make-custom-apps**         | Developing and maintaining custom (SDK) apps — API research, connections, modules, RPCs, webhooks, app IML functions, review and QA; with source-grounded references and offline-tested component examples.             |
 
 ## Prerequisites
 
 - A [Make](https://www.make.com) account
 - For scenario skills: access to the Make scenario-management MCP server.
 - For `make-endpoints`: an approved Node.js/terminal environment, the Endpoints package, and organization access to the Endpoints beta. See [setup and interfaces](skills/make-endpoints/references/setup-and-interfaces.md). Installing this skill does not install the SDK or enable the beta.
+- For `make-custom-apps`: access to the relevant provider API documentation and an authorized Make Apps Editor, VS Code extension, or verified app-authoring CLI/API. See [tooling and release](skills/make-custom-apps/references/tooling-and-release.md). The skill does not install tools, grant authoring access, or assume the scenario MCP exposes custom-app administration. Local work can proceed without provider credentials; live tests cannot.
 
 ## Installation
 
-Install the **skills** and configure the interface they use. Scenario skills use the **MCP server**; `make-endpoints` uses `@makehq/endpoints-sdk`, which includes both the SDK and `make-endpoints-cli`. Endpoints-only use does not require the scenario MCP server. The plugins below register that server for the scenario skills; the standalone skill download can be used independently.
+Install the **skills** and configure the interface they use. Scenario skills use the **MCP server**; `make-endpoints` uses `@makehq/endpoints-sdk`, which includes both the SDK and `make-endpoints-cli`. `make-custom-apps` uses the selected app-authoring interface, not the scenario MCP by assumption. Endpoints-only or custom-app-only use does not require the scenario MCP server. The plugins below register that server for the scenario skills; standalone skill downloads can be used independently.
 
 ### Option A: Plugin (recommended)
 
@@ -52,12 +54,15 @@ Upload the zips to your agent (Claude Cowork, Claude Chat, and similar) or unzip
 
 | Skill                    | Download                                                                                                  |
 | ------------------------ | --------------------------------------------------------------------------------------------------------- |
-| Bundle of all the skills | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-skills.zip)              |
-| Scenario Reference       | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-reference.zip)  |
-| Scenario Explore         | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-explore.zip)    |
-| Scenario Building        | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-building.zip)   |
-| Scenario Operations      | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-operations.zip) |
-| Make Endpoints           | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-endpoints.zip)           |
+| Bundle of all the skills | [Download](dist/make-skills.zip?raw=true)                                                                   |
+| Scenario Reference       | [Download](dist/make-scenario-reference.zip?raw=true)                                                       |
+| Scenario Explore         | [Download](dist/make-scenario-explore.zip?raw=true)                                                         |
+| Scenario Building        | [Download](dist/make-scenario-building.zip?raw=true)                                                        |
+| Scenario Operations      | [Download](dist/make-scenario-operations.zip?raw=true)                                                      |
+| Make Endpoints           | [Download](dist/make-endpoints.zip?raw=true)                                                                |
+| Make Custom Apps         | [Download](dist/make-custom-apps.zip?raw=true)                                                              |
+
+On GitHub, these download links follow the branch being viewed, including a pull-request branch; they do not depend on an unmerged file already existing on `main`.
 
 Skills directories, for agents that read skills from disk:
 
@@ -98,8 +103,11 @@ On first use, authenticate through Make's OAuth consent screen. The server asks 
 | An MCP tool refuses a write        | Read the refusal and the current tool contract; use the Make editor for capabilities the tool explicitly does not support                    |
 | Endpoints SDK/CLI access failure    | Check the selected key/zone, Make scopes, team access and provider connection separately; the MCP full-scope-bundle rule does not apply       |
 | Endpoints execution unavailable     | Confirm organization beta/runtime access; local catalog discovery and package installation do not enable execution                           |
+| Custom-app authoring unavailable    | Check the selected app, version, origin, permissions and authoring interface; scenario MCP or Endpoint execution access is not authoring access |
 
 ## Contributing
+
+For custom-app examples, run `npm run check:custom-apps`. This validates the indexed copied/adapted snippets and focused component examples, exercises checker regressions, and runs the actual JavaScript helper tests. These are offline static/unit checks, not Make or provider execution. Add source attribution, section mapping, adaptations and limitations when reusing an example. Edit canonical skills in `plugins/make-skills-codex/skills/`, then run `node scripts/sync-plugins.mjs` and `npm run check:skills`.
 
 Open pull requests against **`main`** — that's the trunk. Use squash merges and Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …), since release-please relies on them. A separate `latest` branch is fast-forwarded to each released tag. The Claude Code marketplace entry uses a local `./plugins/make-skills-claude` source, so installs track the branch the marketplace is added from. Codex and `npx skills add` still resolve `main` HEAD directly. For Cursor Team Marketplace, import this repo and track branch **`main`** (branch is not set in `.cursor-plugin/marketplace.json`).
 

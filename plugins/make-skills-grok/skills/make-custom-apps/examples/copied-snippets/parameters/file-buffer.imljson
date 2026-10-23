@@ -1,0 +1,7 @@
+{
+  "name": "file",
+  "type": "buffer",
+  "label": "File",
+  "required": true,
+  "help": "Select a file to upload"
+}

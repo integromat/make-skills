@@ -1,0 +1,44 @@
+{
+  "name": "notificationType",
+  "type": "select",
+  "label": "Notification Type",
+  "options": [
+    {
+      "label": "Email",
+      "value": "email",
+      "nested": [
+        {
+          "name": "emailAddress",
+          "type": "email",
+          "label": "Email Address",
+          "required": true
+        },
+        {
+          "name": "emailSubject",
+          "type": "text",
+          "label": "Subject",
+          "required": true
+        }
+      ]
+    },
+    {
+      "label": "SMS",
+      "value": "sms",
+      "nested": [
+        {
+          "name": "phoneNumber",
+          "type": "text",
+          "label": "Phone Number",
+          "required": true
+        },
+        {
+          "name": "smsMessage",
+          "type": "text",
+          "label": "Message",
+          "required": true,
+          "multiline": true
+        }
+      ]
+    }
+  ]
+}

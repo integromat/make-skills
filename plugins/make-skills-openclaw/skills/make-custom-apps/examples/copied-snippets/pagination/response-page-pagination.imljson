@@ -1,0 +1,12 @@
+{
+  "qs": {
+    "page": "{{parameters.page || 1}}",
+    "per_page": "100"
+  },
+  "pagination": {
+    "qs": {
+      "page": "{{body.pagination.current_page + 1}}"
+    },
+    "condition": "{{body.pagination.current_page < body.pagination.total_pages}}"
+  }
+}

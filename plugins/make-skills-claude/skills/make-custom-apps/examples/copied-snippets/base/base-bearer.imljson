@@ -1,0 +1,18 @@
+{
+  "baseUrl": "https://api.example.com/v1",
+  "headers": {
+    "Authorization": "Bearer {{connection.accessToken}}",
+    "Accept": "application/json",
+    "Content-Type": "application/json"
+  },
+  "response": {
+    "error": {
+      "message": "[{{statusCode}}] {{body.error.message}}"
+    }
+  },
+  "log": {
+    "sanitize": [
+      "request.headers.authorization"
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "url": "https://api.github.com/repos/{{encodeURL(parameters.owner)}}/{{encodeURL(parameters.repo)}}/issues",
+  "method": "GET",
+  "headers": {
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2026-03-10",
+    "User-Agent": "make-custom-apps-teaching"
+  },
+  "qs": {
+    "state": "all",
+    "sort": "created",
+    "direction": "desc",
+    "per_page": 100,
+    "page": 1
+  },
+  "response": {
+    "iterate": "{{body}}",
+    "limit": "{{parameters.limit}}",
+    "trigger": {
+      "type": "date",
+      "order": "desc",
+      "id": "{{item.id}}",
+      "date": "{{parseDate(item.created_at)}}"
+    },
+    "output": {
+      "id": "{{item.id}}",
+      "number": "{{item.number}}",
+      "title": "{{item.title}}",
+      "created_at": "{{parseDate(item.created_at)}}",
+      "locked": "{{item.locked}}"
+    }
+  },
+  "pagination": {
+    "qs": {
+      "page": "{{pagination.page}}"
+    }
+  }
+}

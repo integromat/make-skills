@@ -1,0 +1,4 @@
+{
+  "count": "{{defaultIfNull(parameters.count, 10)}}",
+  "active": "{{defaultIfNull(parameters.active, true)}}"
+}

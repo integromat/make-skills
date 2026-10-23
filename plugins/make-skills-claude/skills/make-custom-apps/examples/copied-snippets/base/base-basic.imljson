@@ -1,0 +1,12 @@
+{
+  "baseUrl": "https://api.example.com/v1",
+  "headers": {
+    "Authorization": "Basic {{base64(connection.username + ':' + connection.password)}}",
+    "Accept": "application/json"
+  },
+  "log": {
+    "sanitize": [
+      "request.headers.authorization"
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+[
+  {
+    "name": "token",
+    "type": "password",
+    "label": "GitHub personal access token",
+    "required": true
+  }
+]

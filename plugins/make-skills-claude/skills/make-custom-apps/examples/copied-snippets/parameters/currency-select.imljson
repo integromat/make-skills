@@ -1,0 +1,20 @@
+{
+  "name": "currency",
+  "type": "select",
+  "label": "Currency",
+  "options": [
+    {
+      "label": "USD",
+      "value": "USD"
+    },
+    {
+      "label": "EUR",
+      "value": "EUR"
+    },
+    {
+      "label": "GBP",
+      "value": "GBP"
+    }
+  ],
+  "default": "USD"
+}

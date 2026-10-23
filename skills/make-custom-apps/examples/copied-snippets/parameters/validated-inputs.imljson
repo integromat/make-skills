@@ -1,0 +1,22 @@
+[
+  {
+    "name": "username",
+    "type": "text",
+    "label": "Username",
+    "required": true,
+    "help": "3-20 characters, letters, numbers, and underscores only",
+    "validate": {
+      "pattern": "^[a-zA-Z0-9_]{3,20}$"
+    }
+  },
+  {
+    "name": "age",
+    "type": "number",
+    "label": "Age",
+    "help": "Must be between 18 and 120",
+    "validate": {
+      "min": 18,
+      "max": 120
+    }
+  }
+]

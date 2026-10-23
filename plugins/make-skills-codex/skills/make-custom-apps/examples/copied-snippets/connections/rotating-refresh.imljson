@@ -1,0 +1,29 @@
+{
+  "refresh": {
+    "condition": "{{data.expires < addMinutes(now, 5)}}",
+    "url": "https://accounts.example.com/oauth/token",
+    "method": "POST",
+    "body": {
+      "grant_type": "refresh_token",
+      "refresh_token": "{{data.refreshToken}}",
+      "client_id": "{{parameters.clientId}}",
+      "client_secret": "{{parameters.clientSecret}}"
+    },
+    "response": {
+      "data": {
+        "accessToken": "{{body.access_token}}",
+        "refreshToken": "{{body.refresh_token || data.refreshToken}}",
+        "expires": "{{addSeconds(now, body.expires_in)}}"
+      }
+    },
+    "type": "urlencoded",
+    "log": {
+      "sanitize": [
+        "request.body.refresh_token",
+        "request.body.client_secret",
+        "response.body.access_token",
+        "response.body.refresh_token"
+      ]
+    }
+  }
+}

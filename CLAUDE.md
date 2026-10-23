@@ -4,13 +4,15 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-**make-skills** provides expert skills for building, explaining, running and debugging Make automation scenarios, plus direct app Endpoint workflows. Installed by copying the skill folders into an agent's skills directory or by uploading the per-skill zips. Scenario skills use the Make MCP server; the standalone Endpoints skill uses the Endpoints SDK/CLI. Published by Make under MIT license.
+**make-skills** provides expert skills for building, explaining, running and debugging Make automation scenarios, direct app Endpoint workflows, and custom (SDK) app development. Installed by copying the skill folders into an agent's skills directory or by uploading the per-skill zips. Scenario skills use the Make MCP server; the standalone Endpoints skill uses the Endpoints SDK/CLI; custom-app development uses an authorized app-authoring interface. Published by Make under MIT license.
 
 The scenario skills connect to the remote Make MCP server:
 
 - **`make`** — Make's scenario-management MCP server (platform endpoints: `https://mcp.make.com/claude`, `/cursor`, `/openai`). Tools are named `{subject}_{action}` (`environment_get`, `scenario_get`, `module_spec`, …) and the surface is gated by one all-or-nothing scope bundle. Authenticated via OAuth.
 
 **`make-endpoints`** is a separate interface: `@makehq/endpoints-sdk` contains its SDK, `make-endpoints-cli`, and `EndpointTools`. It uses Make API credentials, explicit team/connection scope, and requires Endpoints beta access. Do not apply the scenario MCP server's OAuth-bundle or capped-list rules to SDK/CLI calls. Skills/plugins do not install the package or enable the beta.
+
+**`make-custom-apps`** covers authoring and maintaining SDK apps through the Apps Editor, VS Code extension, or a verified CLI/API. It does not assume the scenario MCP can administer custom apps. SDK Endpoint authoring is capability-gated and separate from consuming existing Endpoints. Private company accounts, ticket systems and knowledge-base repositories are not prerequisites.
 
 ## Repository Structure
 
@@ -43,17 +45,21 @@ skills/ assets/            # generated copy of the above (npx skills add, build.
   make-endpoints/            # Direct app actions through the standalone SDK/CLI
     SKILL.md
     references/ examples/   # Setup, discovery, reliable reads/writes, complete starters
+  make-custom-apps/          # SDK app authoring, review, QA and maintenance
+    SKILL.md
+    references/ examples/   # Progressive SDK guidance and offline-tested component examples
 ```
 
 ## Skills
 
-Four scenario skills and one standalone Endpoints skill, split by use case:
+Four scenario skills, one standalone Endpoints skill, and one custom-app development skill, split by use case:
 
 - **make-scenario-reference** — what every tool assumes: scopes, `content` remarks are instructions, the structure-vs-configuration split, one call = one save, the refusal contract, "state a guess before acting on it". Loaded on a 403, an unexplained refusal, or a request no tool covers; the three or four rules a routine task needs are inlined as a "Ground rules" block in each task skill instead.
 - **make-scenario-explore** — `environment_get` → `scenario_list` → `scenario_get` → `scenario_module_get`, and how to read the structural fields for a non-technical user.
 - **make-scenario-building** — the build and edit workflows (`app_find` → `module_spec` → connections → `module_field_resolve` → `scenario_create` / `scenario_patch`), the decisions the tools leave to the model, and on-demand references for everything past a straight line.
 - **make-scenario-operations** — `scenario_run` by trigger kind, activation, the execution list → get → inspect → module-get chain, webhook learning and inspection.
 - **make-endpoints** — app-action discovery, compatible managed connections, SDK/CLI execution, complete pagination, approval-bound writes and readback. Not scenario building or custom-app Endpoint authoring.
+- **make-custom-apps** — provider/API research, exact app/version inventory, implementation of connections/modules/RPCs/webhooks/app IML functions, review, QA and API-change maintenance. Keep current public SDK semantics separate from local conventions and distinguish static validation, upload/readback, live execution and publication.
 
 ## Writing skills for this surface
 
@@ -71,6 +77,8 @@ Four scenario skills and one standalone Endpoints skill, split by use case:
 2. Add reference files under `references/` and examples under `examples/`.
 3. Run `node scripts/sync-plugins.mjs`.
 4. Add the skill to `skills.publish.json` and to `package.json` `agents.skills[]` (`npm run check:skills` fails otherwise).
+
+For changes to `make-custom-apps`, also run `npm run check:custom-apps`. It checks the indexed reusable examples and focused component sections and executes the helper tests; it does not validate Make runtime or provider credentials. Keep source attribution and adaptations accurate, and never publish private source paths or credential-bearing exports. CI runs both the example checker regressions and the example/helper check through this command.
 
 ### Modifying MCP configuration
 

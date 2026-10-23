@@ -1,0 +1,12 @@
+{
+  "response": {
+    "output": {
+      "id": "{{body.data.id}}",
+      "user": {
+        "name": "{{body.data.user.name}}",
+        "email": "{{body.data.user.email}}"
+      },
+      "metadata": "{{body.data.attributes}}"
+    }
+  }
+}

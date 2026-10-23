@@ -1,0 +1,10 @@
+{
+  "response": {
+    "iterate": "{{body.items}}",
+    "output": {
+      "id": "{{item.id}}",
+      "title": "{{item.title}}",
+      "tags": "{{map(item.tags, 'name')}}"
+    }
+  }
+}

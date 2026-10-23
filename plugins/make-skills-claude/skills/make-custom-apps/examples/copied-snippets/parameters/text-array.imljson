@@ -1,0 +1,10 @@
+{
+  "name": "tags",
+  "type": "array",
+  "label": "Tags",
+  "spec": {
+    "type": "text",
+    "label": "Tag"
+  },
+  "help": "Add multiple tags"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "website",
+  "type": "url",
+  "label": "Website URL",
+  "required": false,
+  "help": "Enter a complete URL including http:// or https://"
+}

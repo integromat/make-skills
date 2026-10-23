@@ -1,0 +1,8 @@
+[
+  {
+    "name": "base",
+    "type": "select",
+    "label": "Base",
+    "options": "rpc://RpcGetBases"
+  }
+]

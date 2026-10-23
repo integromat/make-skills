@@ -1,0 +1,7 @@
+{
+  "name": "email",
+  "type": "email",
+  "label": "Email Address",
+  "required": true,
+  "help": "Enter a valid email address"
+}
