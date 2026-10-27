@@ -59,6 +59,10 @@
       {
         "name": "make-functions-v2",
         "path": "./skills/make-functions-v2"
+      },
+      {
+        "name": "make-credential-requests",
+        "path": "./skills/make-credential-requests"
       }
     ]
   }

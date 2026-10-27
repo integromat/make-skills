@@ -4,5 +4,6 @@
   "make-scenario-building",
   "make-scenario-operations",
   "make-endpoints",
-  "make-functions-v2"
+  "make-functions-v2",
+  "make-credential-requests"
 ]

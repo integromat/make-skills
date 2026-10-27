@@ -1,6 +1,6 @@
 # Make Skills for AI Coding Agents
 
-Give your AI coding agent deep Make expertise — for building, explaining, running and debugging Make scenarios and authoring and operating Functions v2 through Make's MCP server, and for calling app Endpoints through the standalone Endpoints SDK or CLI. Works with agents that read skill folders and can use the relevant interface — Claude Code, Codex, Cursor, GitHub Copilot, Windsurf, Cline, and others.
+Give your AI coding agent deep Make expertise — for building, explaining, running and debugging Make scenarios and authoring and operating Functions v2 through Make's MCP server, calling app Endpoints through the standalone Endpoints SDK or CLI, and securely requesting credentials for Endpoints and custom-app testing. Works with agents that read skill folders and can use the relevant interface — Claude Code, Codex, Cursor, GitHub Copilot, Windsurf, Cline, and others.
 
 ## Skills
 
@@ -12,16 +12,20 @@ Give your AI coding agent deep Make expertise — for building, explaining, runn
 | **make-scenario-operations** | Running, activating and deactivating, reviewing and debugging executions, investigating a webhook                                                                                                                     |
 | **make-endpoints**           | Direct app actions through `@makehq/endpoints-sdk` or its CLI — discovery, managed connections, typed calls, complete retrieval, and approval-bound writes with readback. Endpoints are in closed beta.                 |
 | **make-functions-v2**        | Authoring, testing, publishing and operating TypeScript Functions through the existing Make MCP connection, including Endpoint discovery and execution recovery. Requires Functions v2 rollout access. |
+| **make-credential-requests** | Credential provisioning for agents using Endpoints or testing custom apps — the owner receives an authorization link and supplies secrets in Make; the agent resumes with managed connection/key IDs, not raw credentials. No scenario required. |
+
+Creating a connection in the scenario editor remains the standard manual path. Credential Requests are the recommended secure handoff for agents; they complement that editor workflow rather than replace it.
 
 ## Prerequisites
 
 - A [Make](https://www.make.com) account
 - For scenario skills and `make-functions-v2`: access to the Make MCP server. Functions v2 also requires the curated Functions tools and team rollout access; installing the skill does not enable either.
 - For `make-endpoints`: an approved Node.js/terminal environment, the Endpoints package, and organization access to the Endpoints beta. See [setup and interfaces](skills/make-endpoints/references/setup-and-interfaces.md). Installing this skill does not install the SDK or enable the beta.
+- For `make-credential-requests`: access to a chosen, authorized credential-request interface, with the required Make permissions and organization/team access. Verify that interface's current contract before making a request; installing a skill or plugin does not grant access. SDK/REST requests follow their own permission contracts, not the scenario MCP server's all-or-nothing OAuth bundle.
 
 ## Installation
 
-Install the **skills** and configure the interface they use. Scenario skills and `make-functions-v2` use the same **MCP server**; `make-endpoints` uses `@makehq/endpoints-sdk`, which includes both the SDK and `make-endpoints-cli`. Endpoints-only use does not require the scenario MCP server. The plugins below register that server for both scenario and Functions v2 skills; the standalone skill download can be used independently.
+Install the **skills** and configure the interface they use. Scenario skills and `make-functions-v2` use the same **MCP server**; `make-endpoints` uses `@makehq/endpoints-sdk`, which includes both the SDK and `make-endpoints-cli`. `make-credential-requests` uses the chosen authorized request interface to provision credentials, not execute app actions. Neither Endpoints execution nor credential provisioning requires building a scenario. Endpoints-only use does not require the scenario MCP server. The plugins below register that server for both scenario and Functions v2 skills; the standalone skill download can be used independently.
 
 ### Option A: Plugin (recommended)
 
@@ -60,6 +64,7 @@ Upload the zips to your agent (Claude Cowork, Claude Chat, and similar) or unzip
 | Scenario Operations      | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-operations.zip) |
 | Make Endpoints           | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-endpoints.zip)           |
 | Functions v2             | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-functions-v2.zip)         |
+| Make Credential Requests | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-credential-requests.zip) |
 
 Skills directories, for agents that read skills from disk:
 

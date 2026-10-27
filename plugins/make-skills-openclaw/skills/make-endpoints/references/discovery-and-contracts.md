@@ -58,6 +58,23 @@ permission checks. When live usable discovery is unavailable, bundled definition
 connection listing remain useful, but report compatibility/enablement as unverified until a permitted read
 succeeds.
 
+## Missing credentials or approved authentication repair
+
+The scenario editor remains the standard manual connection-setup path. For agents, prefer Credential
+Requests as the secure authorization handoff; a new scenario is not required solely for provisioning.
+
+Load **`make-credential-requests`** when authorized discovery confirms a required compatible connection is
+missing, or authentication repair is needed and approved. A denied catalog, missing action, or empty list
+alone does not establish that a new request is needed. Verify availability and credential requirements
+first; no-auth actions need no credential request.
+
+Credential provisioning and Endpoint execution are separate. Use the companion skill's chosen authorized
+request interface: the credential owner receives an authorization link and supplies secrets in Make, not to
+the agent. Verify the resulting managed connection ID against the intended team, account type, provider scopes,
+and account before resuming the original Endpoints SDK/CLI workflow under its own execution approval.
+A completed request does not prove beta/runtime access or authorize an app action. Do not build a scenario
+or substitute scenario/MCP execution for the requested Endpoint call.
+
 ## Use the exact input contract
 
 Treat the generated definition, current app-version schema, or authoritative custom-app definition as the
