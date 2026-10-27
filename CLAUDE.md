@@ -61,7 +61,7 @@ Four scenario skills and one standalone Endpoints skill, split by use case:
 - **SKILL.md is workflows.** Numbered steps and the decisions the tools cannot make. Concepts go in `references/`, complete calls in `examples/`.
 - **Say when to load a reference.** Each reference link states the trigger that makes it worth reading, so an agent does not load error-handling guidance for a notification scenario.
 - **Only what the selected surface can do.** Scenario guidance must match the current MCP tool contracts; unsupported custom IML functions or DLQ retry are not implied by related reads. Endpoints guidance must match the published SDK/CLI and distinguish bundled metadata from live team availability. Do not promise future interface centralisation or discovery features.
-- Skill descriptions use third person; the body avoids second person; target 500–5000 words per SKILL.md.
+- Skill descriptions use third person; the body avoids second person. Size budget, enforced in CI by `scripts/check-skill-content.mjs` (`npm run check:content`): SKILL.md ≤ 10,000 chars and ≤ 1,200 words, each other `.md` ≤ 2,000 words, a whole skill ≤ 10,000 words and ≤ 40 files. The same check fails on broken relative links, references SKILL.md never links, frontmatter `name` ≠ folder, and credentials or internal Make hosts; it warns on pinned package versions.
 
 ## Working with This Repository
 
