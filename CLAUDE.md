@@ -4,11 +4,11 @@ This file provides guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
-**make-skills** provides expert skills for building, explaining, running and debugging Make automation scenarios, plus direct app Endpoint workflows. Installed by copying the skill folders into an agent's skills directory or by uploading the per-skill zips. Scenario skills use the Make MCP server; the standalone Endpoints skill uses the Endpoints SDK/CLI. Published by Make under MIT license.
+**make-skills** provides expert skills for building, explaining, running and debugging Make automation scenarios, Functions v2 authoring and execution, plus direct app Endpoint workflows. Installed by copying the skill folders into an agent's skills directory or by uploading the per-skill zips. Scenario and Functions v2 skills use the Make MCP server; the standalone Endpoints skill uses the Endpoints SDK/CLI. Published by Make under MIT license.
 
-The scenario skills connect to the remote Make MCP server:
+The scenario and Functions v2 skills connect to the remote Make MCP server:
 
-- **`make`** — Make's scenario-management MCP server (platform endpoints: `https://mcp.make.com/claude`, `/cursor`, `/openai`). Tools are named `{subject}_{action}` (`environment_get`, `scenario_get`, `module_spec`, …) and the surface is gated by one all-or-nothing scope bundle. Authenticated via OAuth.
+- **`make`** — Make's curated MCP server (platform endpoints: `https://mcp.make.com/claude`, `/cursor`, `/openai`). Tools are named `{subject}_{action}` (`environment_get`, `scenario_get`, `module_spec`, …) with category-based authorization; Functions v2 uses the Build & Run area and an optional module rollout. Authenticated via OAuth.
 
 **`make-endpoints`** is a separate interface: `@makehq/endpoints-sdk` contains its SDK, `make-endpoints-cli`, and `EndpointTools`. It uses Make API credentials, explicit team/connection scope, and requires Endpoints beta access. Do not apply the scenario MCP server's OAuth-bundle or capped-list rules to SDK/CLI calls. Skills/plugins do not install the package or enable the beta.
 
@@ -40,6 +40,9 @@ skills/ assets/            # generated copy of the above (npx skills add, build.
     examples/                # complete scenario_create calls per pattern
   make-scenario-operations/  # Running, activating, debugging runs and webhooks
     SKILL.md
+  make-functions-v2/         # Curated MCP authoring, execution and recovery
+    SKILL.md
+    references/ examples/
   make-endpoints/            # Direct app actions through the standalone SDK/CLI
     SKILL.md
     references/ examples/   # Setup, discovery, reliable reads/writes, complete starters
@@ -47,13 +50,15 @@ skills/ assets/            # generated copy of the above (npx skills add, build.
 
 ## Skills
 
-Four scenario skills and one standalone Endpoints skill, split by use case:
+Four scenario skills, one Functions v2 skill and one standalone Endpoints skill, split by use case:
 
 - **make-scenario-reference** — what every tool assumes: scopes, `content` remarks are instructions, the structure-vs-configuration split, one call = one save, the refusal contract, "state a guess before acting on it". Loaded on a 403, an unexplained refusal, or a request no tool covers; the three or four rules a routine task needs are inlined as a "Ground rules" block in each task skill instead.
 - **make-scenario-explore** — `environment_get` → `scenario_list` → `scenario_get` → `scenario_module_get`, and how to read the structural fields for a non-technical user.
 - **make-scenario-building** — the build and edit workflows (`app_find` → `module_spec` → connections → `module_field_resolve` → `scenario_create` / `scenario_patch`), the decisions the tools leave to the model, and on-demand references for everything past a straight line.
 - **make-scenario-operations** — `scenario_run` by trigger kind, activation, the execution list → get → inspect → module-get chain, webhook learning and inspection.
 - **make-endpoints** — app-action discovery, compatible managed connections, SDK/CLI execution, complete pagination, approval-bound writes and readback. Not scenario building or custom-app Endpoint authoring.
+
+- **make-functions-v2** — Functions v2 authoring, Endpoint discovery, inline testing, publication, execution and recovery through curated `function_*` tools on the same connection. Separate from legacy IML custom functions; no scenario-reference dependency.
 
 ## Writing skills for this surface
 

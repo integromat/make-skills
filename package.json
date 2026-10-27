@@ -1,7 +1,7 @@
 {
   "name": "make-skills",
   "version": "0.2.0",
-  "description": "Expert skills for Make automation scenarios and direct app Endpoint workflows — for Claude Code, Cursor, GitHub Copilot, and other AI agents",
+  "description": "Expert skills for Make automation scenarios, Functions v2 and direct app Endpoint workflows \u2014 for Claude Code, Cursor, GitHub Copilot, and other AI agents",
   "license": "MIT",
   "author": {
     "name": "Make",
@@ -55,6 +55,10 @@
       {
         "name": "make-endpoints",
         "path": "./skills/make-endpoints"
+      },
+      {
+        "name": "make-functions-v2",
+        "path": "./skills/make-functions-v2"
       }
     ]
   }

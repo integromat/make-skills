@@ -1,6 +1,6 @@
 # Make Skills for AI Coding Agents
 
-Give your AI coding agent deep Make expertise — for building, explaining, running and debugging Make scenarios through Make's scenario-management MCP server, and for calling app Endpoints through the standalone Endpoints SDK or CLI. Works with agents that read skill folders and can use the relevant interface — Claude Code, Codex, Cursor, GitHub Copilot, Windsurf, Cline, and others.
+Give your AI coding agent deep Make expertise — for building, explaining, running and debugging Make scenarios and authoring and operating Functions v2 through Make's MCP server, and for calling app Endpoints through the standalone Endpoints SDK or CLI. Works with agents that read skill folders and can use the relevant interface — Claude Code, Codex, Cursor, GitHub Copilot, Windsurf, Cline, and others.
 
 ## Skills
 
@@ -11,16 +11,17 @@ Give your AI coding agent deep Make expertise — for building, explaining, runn
 | **make-scenario-building**   | Creating and editing scenarios — app and module discovery, connections, resolving account-dependent values, flow control, error handling, subscenarios, AI agents; with references and complete examples              |
 | **make-scenario-operations** | Running, activating and deactivating, reviewing and debugging executions, investigating a webhook                                                                                                                     |
 | **make-endpoints**           | Direct app actions through `@makehq/endpoints-sdk` or its CLI — discovery, managed connections, typed calls, complete retrieval, and approval-bound writes with readback. Endpoints are in closed beta.                 |
+| **make-functions-v2**        | Authoring, testing, publishing and operating TypeScript Functions through the existing Make MCP connection, including Endpoint discovery and execution recovery. Requires Functions v2 rollout access. |
 
 ## Prerequisites
 
 - A [Make](https://www.make.com) account
-- For scenario skills: access to the Make scenario-management MCP server.
+- For scenario skills and `make-functions-v2`: access to the Make MCP server. Functions v2 also requires the curated Functions tools and team rollout access; installing the skill does not enable either.
 - For `make-endpoints`: an approved Node.js/terminal environment, the Endpoints package, and organization access to the Endpoints beta. See [setup and interfaces](skills/make-endpoints/references/setup-and-interfaces.md). Installing this skill does not install the SDK or enable the beta.
 
 ## Installation
 
-Install the **skills** and configure the interface they use. Scenario skills use the **MCP server**; `make-endpoints` uses `@makehq/endpoints-sdk`, which includes both the SDK and `make-endpoints-cli`. Endpoints-only use does not require the scenario MCP server. The plugins below register that server for the scenario skills; the standalone skill download can be used independently.
+Install the **skills** and configure the interface they use. Scenario skills and `make-functions-v2` use the same **MCP server**; `make-endpoints` uses `@makehq/endpoints-sdk`, which includes both the SDK and `make-endpoints-cli`. Endpoints-only use does not require the scenario MCP server. The plugins below register that server for both scenario and Functions v2 skills; the standalone skill download can be used independently.
 
 ### Option A: Plugin (recommended)
 
@@ -58,6 +59,7 @@ Upload the zips to your agent (Claude Cowork, Claude Chat, and similar) or unzip
 | Scenario Building        | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-building.zip)   |
 | Scenario Operations      | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-scenario-operations.zip) |
 | Make Endpoints           | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-endpoints.zip)           |
+| Functions v2             | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-functions-v2.zip)         |
 
 Skills directories, for agents that read skills from disk:
 
@@ -70,7 +72,7 @@ Skills directories, for agents that read skills from disk:
 | Cline           | `.cline/skills/`    |
 | Generic         | `.agents/skills/`   |
 
-### Add the MCP server manually for scenario skills
+### Add the MCP server manually for scenario and Functions v2 skills
 
 Skip this if a plugin registered it. Each platform has its own endpoint, over HTTP:
 
@@ -87,14 +89,14 @@ claude mcp list
 
 For any other agent, add the matching URL to its JSON MCP config.
 
-On first use, authenticate through Make's OAuth consent screen. The server asks for one bundle of permissions and works only when every one of them is granted — if a tool answers with a permission error, reconnect and grant everything it asks for.
+On first use, authenticate through Make's OAuth consent screen. Follow the tool's authorization challenge to grant its required access area. Functions v2 uses Build & Run; tool availability and team rollout access are separate from OAuth consent.
 
 ## Troubleshooting
 
 | Issue                              | Solution                                                                                                                                    |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | MCP server not connecting          | Check network connectivity to Make servers                                                                                                  |
-| MCP permission denied / 403        | Reconnect the Make MCP server and grant every requested permission                                                                          |
+| MCP permission denied / 403        | Follow the challenge for the required access area and confirm access to the target team/resource                                                                          |
 | An MCP tool refuses a write        | Read the refusal and the current tool contract; use the Make editor for capabilities the tool explicitly does not support                    |
 | Endpoints SDK/CLI access failure    | Check the selected key/zone, Make scopes, team access and provider connection separately; the MCP full-scope-bundle rule does not apply       |
 | Endpoints execution unavailable     | Confirm organization beta/runtime access; local catalog discovery and package installation do not enable execution                           |
@@ -106,3 +108,5 @@ Open pull requests against **`main`** — that's the trunk. Use squash merges an
 ## License
 
 MIT
+
+Functions v2 tools missing from an otherwise working connection can indicate rollout restrictions or an older client catalog. See [access and discovery](skills/make-functions-v2/references/access-and-discovery.md); do not add a second connection to bypass availability.

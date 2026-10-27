@@ -5,4 +5,4 @@ node_modules/
 # Stable-alias zips are committed so raw.githubusercontent download links work
 # until the first GitHub Release exists; versioned zips are built ad-hoc in CI
 # and attached to the Release only.
-dist/*-v*.zip
+dist/*-v[0-9]*.[0-9]*.[0-9]*.zip
