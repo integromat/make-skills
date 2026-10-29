@@ -1,6 +1,7 @@
 # Make Skills for AI Coding Agents
 
 Give your AI coding agent deep Make expertise — for building, explaining, running and debugging Make scenarios and authoring and operating Functions v2 through Make's MCP server, calling app Endpoints through the standalone Endpoints SDK or CLI, and securely requesting credentials for Endpoints and custom-app testing. Works with agents that read skill folders and can use the relevant interface — Claude Code, Codex, Cursor, GitHub Copilot, Windsurf, Cline, and others.
+For Make app development, use [Make Apps Skill](https://github.com/integromat/make-apps-skill).
 
 ## Skills
 
