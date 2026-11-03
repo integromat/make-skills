@@ -21,7 +21,8 @@ change external systems. Never automatically resubmit an uncertain Run.
 1. Inspect the tools available on the existing `make` connection, then use `environment_get` to select the
    intended zone and team. Use the curated `function_*` tools; no extra connection or local SDK installation
    is needed.
-2. If the Functions tools are missing, report that Functions v2 is unavailable on this connection. Installing
+2. If no Make connection exists, follow [connection setup](references/access-and-discovery.md) first.
+   If the Functions tools are missing, report that Functions v2 is unavailable on this connection. Installing
    the skill does not enable the server rollout or team access. Do not switch credentials, invent tool names,
    or use another interface to bypass the restriction.
 3. For an existing Function, narrow `function_list` with its supported filters and read the selected Function
@@ -35,20 +36,25 @@ or a capped list needs narrowing. The skill does not require loading scenario-re
 
 1. For code that calls apps, use `function_endpoint_list` to discover the team's Endpoints and compatible
    Connection references. Narrow by app or search when `hasMore` is true. Match the intended account before
-   selecting a Connection; a label alone does not prove its identity.
+   selecting a Connection; a label alone does not prove its identity. If none is suitable, follow
+   [missing Connection guidance](references/access-and-discovery.md).
 2. Retrieve the selected declarations with `function_endpoint_types`, using the catalog identifier when
    available. Check each availability status. An unavailable declaration is not permission to guess a call
    signature or silently substitute another app action.
 3. Prepare complete TypeScript source and input/output contracts. Declare only the Endpoints and Connections
    that code needs. Derive calls from the returned declarations and tool schemas; do not repeat the full
    catalog in the Function or embed credentials in source.
-4. Create the Function with `function_create` when creation is within the requested scope. Creation already
+4. Check source against [STS authoring](references/sts-authoring.md) and contracts against the
+   [supported schema subset](references/schema-contracts.md) before submission. Use a suitable local
+   validator when available, then check Functions host restrictions separately.
+5. Create the Function with `function_create` when creation is within the requested scope. Creation already
    publishes version 1 and leaves it inactive. For existing Functions, metadata edits use `function_update`;
    code or contract edits require a new version.
 
 Load [source and Endpoint contracts](references/source-and-endpoints.md) for app calls, connection labels,
 or edits to an existing version. For a complete starting workflow, use the
-[authoring example](examples/authoring.md).
+[authoring example](examples/authoring.md). For a complete app call with connection binding and response
+checks, use the [HTTP Endpoint example](examples/http-endpoint.md).
 
 ## 3. Test the intended content
 
@@ -60,7 +66,10 @@ or edits to an existing version. For a complete starting workflow, use the
 3. Keep the returned Run ID and retrieve `function_run_get` until it reaches a terminal status. Admission is
    not completion. Check the actual output and error, including `sideEffectPossible`; `false`, `0` and `null`
    are valid outputs rather than evidence of failure.
-4. Report what was tested and what remains unverified. A successful inline test does not publish the tested
+4. On a confirmed pre-execution validation rejection, inspect diagnostics, repair the candidate and test
+   again. A generic error does not identify the faulty line; report missing diagnostics. Keep this separate
+   from uncertain admission and terminal execution failure; see [recovery](references/execution-and-recovery.md).
+5. Report what was tested and what remains unverified. A successful inline test does not publish the tested
    content or activate the Function. Resolve failures before promoting the candidate.
 
 ## 4. Publish and run the selected version

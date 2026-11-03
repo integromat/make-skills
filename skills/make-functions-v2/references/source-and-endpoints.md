@@ -20,8 +20,9 @@ a Run-submission request safe.
 For app calls, discover the exact app name, version and Endpoint name. Use the declaration returned by
 `function_endpoint_types` to construct the input and interpret the output. Source calls use the runtime's
 `make.endpoints.<app>.v<version>.<Endpoint>({ input, connection })` shape, with the declared connection label
-when required. Endpoint names and app identifiers must come from discovery; bracket access can represent
-identifiers that are not JavaScript property names.
+when required. Use the generated property identifiers from discovery. The Functions host requires direct property access;
+bracket access, aliases and passing Endpoint functions around are unsupported. If the generated declaration
+cannot be expressed in this form, report the limitation instead of inventing a call.
 
 The content's `connections` maps labels to discovered Connection IDs. Its Endpoint declarations identify
 the permitted app/version/Endpoint and, when needed, its `connectionKey`. The declaration's `alias` is a

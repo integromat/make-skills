@@ -20,3 +20,34 @@ The Endpoint catalog is team-specific. Filter `function_endpoint_list` by exact 
 An empty available catalog means no matching entries; `catalogStatus: unavailable` means discovery could
 not complete. Preserve `catalogId` for the subsequent type lookup. A missing/unavailable declaration does
 not establish that execution is safe or supported. Do not substitute the standalone Endpoints SDK/CLI.
+
+## Connect before discovery
+
+A downloaded skill supplies instructions, not an authenticated MCP connection. If `make` is absent, follow
+[Make Skills setup](https://github.com/integromat/make-skills#readme) for the user's client. For Codex CLI:
+
+```bash
+codex mcp add make --url https://mcp.make.com/openai
+codex mcp login make
+```
+
+Reuse an existing configured connection rather than overwriting it. Let the user complete sign-in in the
+browser; never request raw tokens. Refresh the client's tools after authentication, then call
+`environment_get`. If a connection exists but Functions tools are absent, report that separately from a
+missing connection. Reinstalling the skill cannot enable server features or grant permissions.
+
+## Endpoint access and missing Connections
+
+Functions rollout, organization Endpoint execution access and generated type availability are separate
+prerequisites. A Function without Endpoints may work while Endpoint discovery is unavailable. An
+“Endpoint availability is unavailable” error is not an empty catalog: ask the administrator to check
+organization Endpoint execution access and upstream health. Do not diagnose a disabled flag from that
+message alone or attempt to enable it. Discovery can also succeed with missing/unavailable type definitions;
+report the returned status and stop authoring the affected dependency.
+
+If `credentialsRequired` is true but no compatible Connection is available, have the owner create or repair
+one in Make. An available, authorized Credential Requests workflow is another option; load
+`make-credential-requests` if installed and inspect the actual tools before using it. Do not assume that a
+particular provisioning tool exists. The owner authorizes in Make; the agent receives a managed Connection
+ID, never raw credentials. Repeat `function_endpoint_list` afterward to verify compatibility and intended
+account. Do not choose an unrelated existing Connection just to make a test pass.

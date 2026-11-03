@@ -24,3 +24,18 @@ was rolled back.
 `function_run_cancel` requests cancellation. Follow with reads until terminal or report that cancellation
 is still pending. Already completed Runs can reject cancellation. Deactivation prevents new published Runs;
 it neither cancels existing Runs nor reverses their effects.
+
+## Repair a rejected candidate
+
+There is no validation-only Functions MCP tool. When an appropriate local STS validator is available, use
+it before submission; passing it does not establish host compatibility or schema validity. Check imports,
+direct Endpoint calls, literal connection labels and declared dependencies separately.
+
+For a confirmed pre-execution source/schema rejection, read the reported rule, location and message; fix
+the exact candidate and validate again before resubmission. Preserve requested validation in source when
+the schema subset cannot express it. Do not drop checks just to obtain acceptance. If only a generic message
+is returned, inspect the candidate against the authoring/schema references and state that detailed diagnostics
+are unavailable. Do not infer that every HTTP failure is a validation rejection.
+
+For an admitted Run, retrieve its state instead. A terminal failure can occur after external effects; use
+its diagnostics and side-effect information before deciding whether another execution is authorized and safe.

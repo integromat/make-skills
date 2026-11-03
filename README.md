@@ -71,12 +71,17 @@ Skills directories, for agents that read skills from disk:
 
 | Agent           | Skills directory    |
 | --------------- | ------------------- |
-| ChatGPT / Codex | `.codex/skills`     |
+| Codex (project) | `.agents/skills/`   |
+| Codex (global)  | `~/.agents/skills/` |
 | Claude Code     | `.claude/skills/`   |
 | Cursor          | `.cursor/skills/`   |
 | Windsurf        | `.windsurf/skills/` |
 | Cline           | `.cline/skills/`    |
 | Generic         | `.agents/skills/`   |
+
+ChatGPT does not use a local skills directory. Install the Make plugin or use the skill-upload flow supported
+by the selected ChatGPT experience; configure and authenticate its Make connection separately.
+Unzip each downloaded skill so its folder directly contains `SKILL.md`, `references/` and `examples/`.
 
 ### Add the MCP server manually for scenario and Functions v2 skills
 
@@ -97,14 +102,37 @@ For any other agent, add the matching URL to its JSON MCP config.
 
 On first use, authenticate through Make's OAuth consent screen. Follow the tool's authorization challenge to grant its required access area. Functions v2 uses Build & Run; tool availability and team rollout access are separate from OAuth consent.
 
+### Verify the skill and connection
+
+After installation and sign-in, refresh the client's available skills and tools (restart the client if needed).
+Use this read-only check before creating anything:
+
+> Use the make-functions-v2 skill. Check the Make connection, call environment_get, and show the available
+> organizations and teams so I can select the target. Confirm that function_list, function_endpoint_list and
+> function_endpoint_types are available. Do not create or run a Function yet.
+
+The skill being discoverable, MCP being authenticated, the required tools being present, and access to the
+selected team are separate checks. For scenario work, use `make-scenario-explore` and check `scenario_list`
+instead. Reuse the configured Make connection; adding a duplicate does not grant missing access.
+
+Functions that call Endpoints also need organization access to Endpoint execution and available generated
+Endpoint types. Discover the selected team's Endpoints, then retrieve their types before authoring calls.
+If no compatible Connection exists, create one in Make or use an available, authorized Credential Requests
+workflow. Complete authorization in Make, then repeat Endpoint discovery; never paste provider secrets into
+an agent conversation. See [Functions access and discovery](skills/make-functions-v2/references/access-and-discovery.md).
+
 ## Troubleshooting
 
 | Issue                              | Solution                                                                                                                                    |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| MCP server not connecting          | Check network connectivity to Make servers                                                                                                  |
+| MCP server not connecting          | Confirm the server is configured, complete OAuth sign-in, then refresh tools; check network connectivity if connection still fails                                                                                                  |
 | MCP permission denied / 403        | Follow the challenge for the required access area and confirm access to the target team/resource                                                                          |
 | An MCP tool refuses a write        | Read the refusal and the current tool contract; use the Make editor for capabilities the tool explicitly does not support                    |
 | Endpoints SDK/CLI access failure    | Check the selected key/zone, Make scopes, team access and provider connection separately; the MCP full-scope-bundle rule does not apply       |
+| Functions tools missing | Confirm the client has refreshed its catalog and the account/team has Functions rollout access. Installing the skill does not enable tools. |
+| Functions Endpoint availability unavailable | Ask the administrator to check organization Endpoint execution access and upstream availability. This is separate from Functions rollout and OAuth consent; do not assume the catalog is empty. |
+| Endpoint types unavailable | Discovery may succeed while generated types are unavailable. Report the returned status and stop authoring the affected dependency. |
+| Skill not found | Check the installation scope and folder layout, then refresh/restart the client. Updating the repository does not update a previously copied skill. |
 | Endpoints execution unavailable     | Confirm organization beta/runtime access; local catalog discovery and package installation do not enable execution                           |
 
 ## Contributing
@@ -114,5 +142,3 @@ Open pull requests against **`main`** — that's the trunk. Use squash merges an
 ## License
 
 MIT
-
-Functions v2 tools missing from an otherwise working connection can indicate rollout restrictions or an older client catalog. See [access and discovery](skills/make-functions-v2/references/access-and-discovery.md); do not add a second connection to bypass availability.
