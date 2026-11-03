@@ -38,12 +38,13 @@ missing connection. Reinstalling the skill cannot enable server features or gran
 
 ## Endpoint access and missing Connections
 
-Functions rollout, organization Endpoint execution access and generated type availability are separate
-prerequisites. A Function without Endpoints may work while Endpoint discovery is unavailable. An
-“Endpoint availability is unavailable” error is not an empty catalog: ask the administrator to check
-organization Endpoint execution access and upstream health. Do not diagnose a disabled flag from that
-message alone or attempt to enable it. Discovery can also succeed with missing/unavailable type definitions;
-report the returned status and stop authoring the affected dependency.
+A Function without Endpoints can work even when Endpoint discovery is unavailable. An
+“Endpoint availability is unavailable” error means discovery could not complete; it does not mean the
+team has no Endpoints. Report the error and ask the user to contact their Make administrator or support
+if it persists. Do not infer the cause or change the connection to work around it.
+
+Discovery can also succeed while type definitions for a selected Endpoint are unavailable. Report the
+returned status and pause authoring code that depends on that Endpoint until its definition is available.
 
 If `credentialsRequired` is true but no compatible Connection is available, have the owner create or repair
 one in Make. An available, authorized Credential Requests workflow is another option; load
