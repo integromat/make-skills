@@ -32,7 +32,8 @@
   ],
   "scripts": {
     "build": "bash build.sh",
-    "check:skills": "node scripts/check-skill-manifests.mjs"
+    "check:skills": "node scripts/check-skill-manifests.mjs",
+    "check:content": "node scripts/check-skill-content.mjs"
   },
   "agents": {
     "skills": [
