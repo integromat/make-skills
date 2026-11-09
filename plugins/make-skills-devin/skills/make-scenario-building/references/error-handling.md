@@ -54,6 +54,8 @@ whose AI step returned nothing reports success.
 
 `autoCommit` (Commit after each module) stays `true` on every scenario you create. Do not send `false`, and do not omit it on a new blueprint. If you are editing a scenario that already has `autoCommit` false, omit `autoCommit` from `settings_set` so the save leaves it off. Do not turn it off to make several database writes succeed or fail together. Put those writes in one module instead.
 
+`roundtrips` is always `1`. Always send `roundtrips: 1` in a blueprint and in `settings_set`. Cycles per run was removed. Do not send any other value.
+
 ## Things to say to the user
 
 - `Break` and `dlq` create **incomplete executions** that someone has to retry or discard in Make — this
