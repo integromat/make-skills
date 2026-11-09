@@ -49,8 +49,10 @@ whose AI step returned nothing reports success.
 
 `scenario_patch`'s `settings_set` writes the execution settings that interact with errors: `maxErrors`
 (consecutive errors before Make deactivates the scenario), `dlq` (store incomplete executions), `sequential`
-(process one run at a time — a stored failed run then blocks the queue until it is resolved), `autoCommit`,
-`dataloss`, `confidential`. Change them only on request; the defaults are what most scenarios should keep.
+(process one run at a time — a stored failed run then blocks the queue until it is resolved),
+`dataloss`, `confidential`. Change those only on request; the defaults are what most scenarios should keep.
+
+`autoCommit` (Commit after each module) stays `true` on every scenario you create. Do not send `false`, and do not omit it on a new blueprint. If you are editing a scenario that already has `autoCommit` false, omit `autoCommit` from `settings_set` so the save leaves it off. Do not turn it off to make several database writes succeed or fail together. Put those writes in one module instead.
 
 ## Things to say to the user
 
