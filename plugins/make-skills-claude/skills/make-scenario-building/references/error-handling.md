@@ -31,8 +31,8 @@ Routers and directives themselves cannot carry a handler. `scenario_get` reports
 | `builtin:Ignore` | Drop it, keep processing the rest | none | Non-critical step; losing the item is acceptable |
 | `builtin:Resume` | Continue after the failed module as if it produced substitute values | `mapper`: the substitute output, keyed by the failed module's output fields | A safe default exists |
 | `builtin:Break` | Store the run as an incomplete execution and retry later | `mapper: {retry: true, count, interval}` (interval in minutes) | Transient failures — rate limits, outages |
-| `builtin:Commit` | Stop the run, keep everything done so far | none | Partial progress is valid |
-| `builtin:Rollback` | Stop and revert transactional (ACID) modules | none | All-or-nothing; only reverts modules that support it |
+| `builtin:Commit` | Stop the run. Marks a polling trigger's item as read. Keeps database writes only when Commit after each module is off | none | Rarely needed |
+| `builtin:Rollback` | Stop the run. Puts a polling trigger's read position back. Reverts database writes only when Commit after each module is off | none | Rarely needed; Rollback is the platform default |
 
 Match the directive to the failure kind: connection and rate-limit errors → `Break`; bad data → `Resume` or
 `Ignore`; a misconfigured module → fix the config, no handler helps.
@@ -49,8 +49,12 @@ whose AI step returned nothing reports success.
 
 `scenario_patch`'s `settings_set` writes the execution settings that interact with errors: `maxErrors`
 (consecutive errors before Make deactivates the scenario), `dlq` (store incomplete executions), `sequential`
-(process one run at a time — a stored failed run then blocks the queue until it is resolved), `autoCommit`,
-`dataloss`, `confidential`. Change them only on request; the defaults are what most scenarios should keep.
+(process one run at a time — a stored failed run then blocks the queue until it is resolved),
+`dataloss`, `confidential`. Change those only on request; the defaults are what most scenarios should keep.
+
+`autoCommit` (Commit after each module) stays `true` on every scenario you create. Do not send `false`, and do not omit it on a new blueprint. If you are editing a scenario that already has `autoCommit` false, omit `autoCommit` from `settings_set` so the save leaves it off. Do not turn it off to make several database writes succeed or fail together. Put those writes in one module instead.
+
+`roundtrips` is always `1`. Always send `roundtrips: 1` in a blueprint and in `settings_set`. Cycles per run was removed. Do not send any other value.
 
 ## Things to say to the user
 
@@ -59,4 +63,4 @@ whose AI step returned nothing reports success.
   failures stops processing new data until they are handled (`isWaitingOnIncompleteExecutions` in
   `scenario_get`).
 - A webhook-triggered scenario with `maxErrors` set deactivates on the first error, not after N.
-- `Rollback` only reverts modules marked transactional; a non-transactional write earlier in the run stays.
+- `Rollback` does not undo a module that already saved, such as an email already sent. Do not turn Commit after each module off to get a database rollback.
