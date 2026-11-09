@@ -31,8 +31,8 @@ Routers and directives themselves cannot carry a handler. `scenario_get` reports
 | `builtin:Ignore` | Drop it, keep processing the rest | none | Non-critical step; losing the item is acceptable |
 | `builtin:Resume` | Continue after the failed module as if it produced substitute values | `mapper`: the substitute output, keyed by the failed module's output fields | A safe default exists |
 | `builtin:Break` | Store the run as an incomplete execution and retry later | `mapper: {retry: true, count, interval}` (interval in minutes) | Transient failures — rate limits, outages |
-| `builtin:Commit` | Stop the run. When Commit after each module is off, keep database writes made so far. When it is on, only move a polling trigger's read position forward, and only when Commit trigger last is on | none | The item should be treated as already read, or the database writes should stay |
-| `builtin:Rollback` | Stop the run. When Commit after each module is off, also revert database writes in that transaction. When it is on, only put a polling trigger's read position back, and only when Commit trigger last is on | none | Does not undo an email already sent or any other module that already saved |
+| `builtin:Commit` | Stop the run. Marks a polling trigger's item as read. Keeps database writes only when Commit after each module is off | none | Rarely needed |
+| `builtin:Rollback` | Stop the run. Puts a polling trigger's read position back. Reverts database writes only when Commit after each module is off | none | Rarely needed; Rollback is the platform default |
 
 Match the directive to the failure kind: connection and rate-limit errors → `Break`; bad data → `Resume` or
 `Ignore`; a misconfigured module → fix the config, no handler helps.
@@ -63,4 +63,4 @@ whose AI step returned nothing reports success.
   failures stops processing new data until they are handled (`isWaitingOnIncompleteExecutions` in
   `scenario_get`).
 - A webhook-triggered scenario with `maxErrors` set deactivates on the first error, not after N.
-- `Rollback` does not undo a module that already saved, such as an email already sent. When Commit after each module is on, Rollback and Commit only move a polling trigger's read position, and only when Commit trigger last is on. Rollback leaves a Watch emails message to be read again. Commit treats it as already read. Do not turn Commit after each module off to get a database rollback.
+- `Rollback` does not undo a module that already saved, such as an email already sent. Do not turn Commit after each module off to get a database rollback.
