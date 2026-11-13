@@ -4,7 +4,7 @@
 //
 // This file only supplies the extra version-bump targets release-please can't infer
 // from the `node` release type (which already bumps package.json + package-lock.json).
-// The per-skill SKILL.md targets are DERIVED from skills.publish.json so there is no
+// The per-skill SKILL.md targets are DERIVED from the published skills in skills.json so there is no
 // second skill list to drift; adding/removing a published skill needs no edit here.
 //
 // SKILL.md files use release-please's `generic` updater — the version line carries a
@@ -12,9 +12,8 @@
 
 import { readFileSync } from 'node:fs';
 
-const publish = JSON.parse(
-  readFileSync(new URL('./skills.publish.json', import.meta.url), 'utf8'),
-);
+const { skills } = JSON.parse(readFileSync(new URL('./skills.json', import.meta.url), 'utf8'));
+const publish = Object.keys(skills).filter((name) => skills[name].publish);
 
 /** @type {import('@integromat/actions-toolkit').ConfigSchema} */
 const config = {
