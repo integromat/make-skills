@@ -1,0 +1,11 @@
+{
+  "skills": {
+    "make-scenario-reference": { "publish": true, "mcp": true },
+    "make-scenario-explore": { "publish": true, "mcp": true },
+    "make-scenario-building": { "publish": true, "mcp": true },
+    "make-scenario-operations": { "publish": true, "mcp": true },
+    "make-endpoints": { "publish": true, "mcp": false },
+    "make-functions-v2": { "publish": true, "mcp": true },
+    "make-credential-requests": { "publish": true, "mcp": true }
+  }
+}
