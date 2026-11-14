@@ -1,14 +1,9 @@
 #!/usr/bin/env node
-// Drift guard: fails if the skill lists that must stay in sync disagree.
-//
-// skills.publish.json is the single source of truth for which skills ship.
-// build.sh (zips + bundle) and actions-toolkit.config.mjs (release-please
-// SKILL.md bump targets) both derive from it, so those can't drift. This guard
-// covers the two lists that are still hand-maintained/independent:
-//   - package.json agents.skills[] (consumed by the Open Agent Skills tooling)
-//   - every skills/ folder must be consciously classified as published or
-//     internal, so a newly added skill fails CI loudly instead of being
-//     silently forgotten.
+// Drift guard for skills.json, the single source of truth for which skills exist and where they ship:
+//   - publish: shipped through the plugins, release zips and `npx skills add`
+//   - mcp: needs the Make MCP server, which also serves it over MCP
+// Every skills/ folder must be listed, so a new skill fails CI instead of being silently left out.
+// package.json agents.skills[] (read by the Open Agent Skills tooling) must match the published skills.
 
 import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -17,64 +12,59 @@ import { dirname, join, resolve } from 'node:path';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const readJson = (p) => JSON.parse(readFileSync(join(ROOT, p), 'utf8'));
 
-const publish = readJson('skills.publish.json');
-const internal = readJson('skills.internal.json');
+const manifest = readJson('skills.json');
 const pkg = readJson('package.json');
 
 const errors = [];
-const asSet = (arr) => new Set(arr);
 const sorted = (s) => [...s].sort();
 const diff = (a, b) => sorted(a).filter((x) => !b.has(x));
-const findDuplicates = (arr) => [...new Set(arr.filter((s, i) => arr.indexOf(s) !== i))];
 
-// 0. neither list may contain duplicate entries — a Set-based check further down would
-// silently absorb them, but build.sh iterates the raw array and would zip/bundle the
-// skill twice.
-for (const [name, arr] of [
-  ['skills.publish.json', publish],
-  ['skills.internal.json', internal],
-]) {
-  const duplicates = findDuplicates(arr);
-  if (duplicates.length) {
-    errors.push(`Duplicate entries in ${name}: ${duplicates.join(', ')}`);
+const FLAGS = ['publish', 'mcp'];
+const entries = Object.entries(manifest.skills ?? {});
+if (!entries.length) errors.push('skills.json has no "skills" entries.');
+
+// 1. every entry declares each flag as a boolean, and nothing else
+for (const [name, entry] of entries) {
+  const keys = Object.keys(entry ?? {});
+  const unknown = keys.filter((k) => !FLAGS.includes(k));
+  const invalid = FLAGS.filter((f) => typeof entry?.[f] !== 'boolean');
+  if (unknown.length) errors.push(`skills.json "${name}" has unknown field(s): ${unknown.join(', ')}`);
+  if (invalid.length) errors.push(`skills.json "${name}" must set ${invalid.join(', ')} to true or false`);
+  // The MCP server serves only what is also published, so the two channels never disagree on a skill's content
+  if (entry?.mcp === true && entry?.publish !== true) {
+    errors.push(`skills.json "${name}" sets mcp without publish`);
   }
 }
 
-const publishSet = asSet(publish);
-const internalSet = asSet(internal);
+const listed = new Set(entries.map(([name]) => name));
+const published = new Set(entries.filter(([, e]) => e?.publish === true).map(([name]) => name));
+const mcp = entries.filter(([, e]) => e?.mcp === true);
 
-// 1. publish and internal must not overlap
-const overlap = [...publishSet].filter((s) => internalSet.has(s));
-if (overlap.length) {
-  errors.push(`Skills listed in BOTH skills.publish.json and skills.internal.json: ${overlap.join(', ')}`);
-}
-
-// 2. every skills/ folder must be classified as published or internal
-const onDisk = asSet(
+// 2. every skills/ folder is listed, and every listed skill has a folder
+const onDisk = new Set(
   readdirSync(join(ROOT, 'skills'), { withFileTypes: true })
     .filter((d) => d.isDirectory())
     .map((d) => d.name),
 );
-const classified = new Set([...publishSet, ...internalSet]);
-const unclassified = diff(onDisk, classified);
-if (unclassified.length) {
+const unlisted = diff(onDisk, listed);
+if (unlisted.length) {
   errors.push(
-    `Skill folder(s) present in skills/ but not classified: ${unclassified.join(', ')}. ` +
-      `Add each to skills.publish.json (to ship it) or skills.internal.json (to hold it back).`,
+    `Skill folder(s) present in skills/ but not in skills.json: ${unlisted.join(', ')}. ` +
+      `Add each with "publish": true to ship it, or false to hold it back.`,
   );
 }
-const missingOnDisk = [...classified].filter((s) => !onDisk.has(s));
+const missingOnDisk = diff(listed, onDisk);
 if (missingOnDisk.length) {
-  errors.push(`Listed skill(s) with no folder in skills/: ${missingOnDisk.join(', ')}`);
+  errors.push(`skills.json lists skill(s) with no folder in skills/: ${missingOnDisk.join(', ')}`);
 }
 
-// 3. package.json agents.skills[] names must equal the publish list
-const pkgSkills = asSet((pkg.agents?.skills ?? []).map((s) => s.name));
-const pkgMissing = diff(publishSet, pkgSkills);
-const pkgExtra = diff(pkgSkills, publishSet);
+// 3. package.json agents.skills[] names must equal the published skills
+const pkgSkills = new Set((pkg.agents?.skills ?? []).map((s) => s.name));
+const pkgMissing = diff(published, pkgSkills);
+const pkgExtra = diff(pkgSkills, published);
 if (pkgMissing.length || pkgExtra.length) {
   errors.push(
-    `package.json agents.skills is out of sync with skills.publish.json` +
+    `package.json agents.skills is out of sync with the published skills in skills.json` +
       (pkgMissing.length ? ` — missing: ${pkgMissing.join(', ')}` : '') +
       (pkgExtra.length ? ` — unexpected: ${pkgExtra.join(', ')}` : ''),
   );
@@ -87,4 +77,6 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`✓ Skill manifests in sync (${publish.length} published, ${internal.length} internal).`);
+console.log(
+  `✓ Skill manifests in sync (${published.size} published, ${listed.size - published.size} held back, ${mcp.length} served over MCP).`,
+);

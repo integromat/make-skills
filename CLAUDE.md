@@ -76,7 +76,7 @@ Four scenario skills, one Functions v2 skill and one standalone Endpoints skill,
 1. Create `plugins/make-skills-codex/skills/<skill-name>/SKILL.md` with YAML frontmatter (`name`, `description`, `metadata.version` with the `# x-release-please-version` annotation).
 2. Add reference files under `references/` and examples under `examples/`.
 3. Run `node scripts/sync-plugins.mjs`.
-4. Add the skill to `skills.publish.json` and to `package.json` `agents.skills[]` (`npm run check:skills` fails otherwise).
+4. Add the skill to `skills.json` (`publish`, and `mcp` when it needs the Make MCP server) and, if published, to `package.json` `agents.skills[]` (`npm run check:skills` fails otherwise).
 
 ### Modifying MCP configuration
 
@@ -94,7 +94,7 @@ Each platform has its own plugin under `plugins/` (Claude, Cursor, Codex) and it
 
 The version-bump targets beyond `package.json` live in `actions-toolkit.config.mjs` (`releasePlease.extraFiles`). Stable-alias zips (`dist/<name>.zip`) are committed so raw download links work before the first release; versioned zips are built ad-hoc in CI and attached to the Release. Download links resolve via `https://github.com/integromat/make-skills/releases/latest/download/<name>.zip` (a GitHub Release API alias, unrelated to the `latest` git branch).
 
-Which skills ship is controlled by `skills.publish.json` (single source of truth) — both `build.sh` (zips + bundle) and `actions-toolkit.config.mjs` (SKILL.md bump targets) derive from it. `skills.internal.json` holds skills back. `scripts/check-skill-manifests.mjs` (run in CI via `manifest-check.yml`) fails if a skill folder is left unclassified or `package.json` `agents.skills[]` drifts from the publish list.
+Which skills ship, and where, is controlled by `skills.json` (single source of truth). Each skill sets two flags: `publish` (shipped through the plugins, release zips and `npx skills add`; `false` holds it back) and `mcp` (needs the Make MCP server, which also serves it to MCP clients; requires `publish`). `build.sh` (zips + bundle) and `actions-toolkit.config.mjs` (SKILL.md bump targets) take the published skills from it; the MCP Server Host build takes the `mcp` ones. `scripts/check-skill-manifests.mjs` (run in CI via `manifest-check.yml`) fails if a skill folder is not listed, a flag is missing, or `package.json` `agents.skills[]` drifts from the published skills.
 
 ## Key Conventions
 

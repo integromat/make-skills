@@ -12,15 +12,14 @@
 # Both are produced here and attached to the release by CI
 # (.github/workflows/build-release-assets.yml).
 #
-# The set of skills packaged into individual zips AND into the bundle is the
-# single source of truth in skills.publish.json. A skill folder present in
-# skills/ but absent from that list is NOT published (enforced by
-# scripts/check-skill-manifests.mjs).
+# The skills packaged into individual zips AND into the bundle are those with
+# "publish": true in skills.json, the single source of truth. Every skills/
+# folder must be listed there (enforced by scripts/check-skill-manifests.mjs).
 
 set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 
-# jq parses skills.publish.json below; fail early with a clear message rather
+# jq parses skills.json below; fail early with a clear message rather
 # than an opaque error at the process-substitution read (jq is not preinstalled
 # on fresh macOS).
 command -v jq >/dev/null 2>&1 || {
@@ -38,7 +37,7 @@ VERSION=$(jq -r '.version' "$REPO_ROOT/plugins/make-skills-claude/.claude-plugin
 SKILLS=()
 while IFS= read -r _skill; do
     [ -n "$_skill" ] && SKILLS+=("$_skill")
-done < <(jq -r '.[]' "$REPO_ROOT/skills.publish.json")
+done < <(jq -r '.skills | to_entries[] | select(.value.publish) | .key' "$REPO_ROOT/skills.json")
 
 # Cleanup temp dirs on exit/error/interrupt
 _CLEANUP_DIRS=()

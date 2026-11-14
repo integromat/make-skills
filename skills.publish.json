@@ -1,9 +1,0 @@
-[
-  "make-scenario-reference",
-  "make-scenario-explore",
-  "make-scenario-building",
-  "make-scenario-operations",
-  "make-endpoints",
-  "make-functions-v2",
-  "make-credential-requests"
-]
