@@ -1,8 +1,6 @@
 ---
 name: make-functions-v2
 description: Guides authoring, testing, publishing and operating Make Functions v2 through the Make MCP connection. Covers TypeScript Functions, Endpoint contracts, version conflicts and uncertain execution; not legacy IML custom functions or scenario building.
-metadata:
-  version: "0.2.0" # x-release-please-version
 ---
 
 # Make Functions v2

@@ -137,7 +137,7 @@ an agent conversation. See [Functions access and discovery](skills/make-function
 
 ## Contributing
 
-Open pull requests against **`main`** — that's the trunk. Use squash merges and Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …), since release-please relies on them. A separate `latest` branch is fast-forwarded to each released tag. The Claude Code marketplace entry uses a local `./plugins/make-skills-claude` source, so installs track the branch the marketplace is added from. Codex and `npx skills add` still resolve `main` HEAD directly. For Cursor Team Marketplace, import this repo and track branch **`main`** (branch is not set in `.cursor-plugin/marketplace.json`).
+Open pull requests against **`main`** and squash-merge with Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …). Edit skills only in the root `skills/` folder, then run `node scripts/sync-plugins.mjs` to refresh the copies under `plugins/`. One version covers every plugin, package and skill: bump it with `npm version <x.y.z>`. See [CLAUDE.md](CLAUDE.md) for the release steps and publishing channels.
 
 ## License
 

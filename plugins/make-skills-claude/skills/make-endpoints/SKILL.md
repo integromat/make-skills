@@ -1,8 +1,6 @@
 ---
 name: make-endpoints
 description: Use when calling Make Endpoints from code or CLI. Guides app-action discovery, managed connection selection, typed SDK calls, complete retrieval and verified writes with @makehq/endpoints-sdk; not scenario building or custom-app authoring.
-metadata:
-  version: "0.2.0" # x-release-please-version
 ---
 
 # Make Endpoints — direct app actions

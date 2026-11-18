@@ -9,7 +9,7 @@ For Make app development, use [Make Apps Skill](https://github.com/integromat/ma
 
 The scenario and Functions v2 skills connect to the remote Make MCP server:
 
-- **`make`** — Make's curated MCP server (platform endpoints: `https://mcp.make.com/claude`, `/cursor`, `/openai`). Tools are named `{subject}_{action}` (`environment_get`, `scenario_get`, `module_spec`, …) with category-based authorization; Functions v2 uses the Build & Run area and an optional module rollout. Authenticated via OAuth.
+- **`make`** — Make's curated MCP server (platform endpoints: `https://mcp.make.com/claude`, `/cursor`, `/openai`). Tools are named `{subject}_{action}` (`environment_get`, `scenario_get`, `module_spec`, …) with category-based authorization; the Functions v2 tools are enabled per team. Authenticated via OAuth.
 
 **`make-endpoints`** is a separate interface: `@makehq/endpoints-sdk` contains its SDK, `make-endpoints-cli`, and `EndpointTools`. It uses Make API credentials, explicit team/connection scope, and requires Endpoints beta access. Do not apply the scenario MCP server's OAuth-bundle or capped-list rules to SDK/CLI calls. Skills/plugins do not install the package or enable the beta.
 
@@ -20,16 +20,16 @@ The scenario and Functions v2 skills connect to the remote Make MCP server:
   marketplace.json         # Claude Code marketplace manifest (repo root)
 .cursor-plugin/
   marketplace.json         # Cursor Team Marketplace manifest (repo root)
-plugins/
-  make-skills-codex/       # OpenAI Codex plugin (.codex-plugin/, .mcp.json) — SOURCE OF TRUTH
-    skills/ assets/        # edit skills HERE only
-  make-skills-claude/      # Claude Code plugin (.claude-plugin/, .mcp.json) — generated skills/ assets/
-  make-skills-cursor/      # Cursor plugin (.cursor-plugin/, mcp.json) — generated skills/ assets/
-  make-skills-openclaw/    # OpenClaw native plugin (openclaw.plugin.json, package.json) — generated skills/ assets/
-  make-skills-devin/       # Devin plugin (.devin-plugin/, inline mcpServers) — generated skills/ assets/
-  make-skills-copilot/     # GitHub Copilot CLI plugin (plugin.json, .mcp.json) — generated skills/ assets/
-  make-skills-grok/        # Grok Build plugin (.grok-plugin/, .mcp.json) — generated skills/ assets/
-skills/ assets/            # generated copy of the above (npx skills add, build.sh, zips)
+plugins/                   # one folder per client; skills/ + assets/ in each are generated copies
+  make-skills-claude/      # Claude Code / Claude.ai plugin (.claude-plugin/, .mcp.json)
+  make-skills-codex/       # ChatGPT / Codex plugin (.codex-plugin/, .mcp.json)
+  make-skills-cursor/      # Cursor plugin (.cursor-plugin/, mcp.json)
+  make-skills-openclaw/    # OpenClaw native plugin (openclaw.plugin.json, package.json)
+  make-skills-devin/       # Devin plugin (.devin-plugin/, inline mcpServers)
+  make-skills-copilot/     # GitHub Copilot CLI plugin (plugin.json, .mcp.json)
+  make-skills-grok/        # Grok Build plugin (.grok-plugin/, .mcp.json)
+assets/                    # SOURCE OF TRUTH for plugin icons
+skills/                    # SOURCE OF TRUTH — edit skills here only (npx skills add, build.sh, zips)
   make-scenario-reference/   # Shared conventions — load first
     SKILL.md
   make-scenario-explore/     # Orienting, listing, explaining, health checks
@@ -73,7 +73,7 @@ Four scenario skills, one Functions v2 skill and one standalone Endpoints skill,
 
 ### Adding a new skill
 
-1. Create `plugins/make-skills-codex/skills/<skill-name>/SKILL.md` with YAML frontmatter (`name`, `description`, `metadata.version` with the `# x-release-please-version` annotation).
+1. Create `skills/<skill-name>/SKILL.md` with YAML frontmatter (`name`, `description`), per the [Agent Skills spec](https://agentskills.io/specification).
 2. Add reference files under `references/` and examples under `examples/`.
 3. Run `node scripts/sync-plugins.mjs`.
 4. Add the skill to `skills.json` (`publish`, and `mcp` when it needs the Make MCP server) and, if published, to `package.json` `agents.skills[]` (`npm run check:skills` fails otherwise).
@@ -82,19 +82,29 @@ Four scenario skills, one Functions v2 skill and one standalone Endpoints skill,
 
 Edit each plugin's MCP config under `plugins/` — Claude: `make-skills-claude/.mcp.json` (`https://mcp.make.com/claude`), Cursor: `make-skills-cursor/mcp.json` (`/cursor`), Codex: `make-skills-codex/.mcp.json` (`/openai`), Devin: `make-skills-devin/.devin-plugin/plugin.json` (`/v2`), Copilot: `make-skills-copilot/.mcp.json` (`/copilot`), Grok: `make-skills-grok/.mcp.json` (`/v2`), OpenClaw: `make-skills-openclaw/openclaw.plugin.json` (`/v2`).
 
-### Branching & releasing (trunk-based)
+### Branching, versioning & releasing
 
-`main` is the GitHub default branch, the trunk, and the working branch — all PRs land there directly. A separate **`latest`** branch is fast-forwarded to each released tag and stays reserved for that — don't push to it directly.
+Everything lives on `main` (the default branch): PRs squash-merge there and every client installs from it. There are no release branches.
 
-Each platform has its own plugin under `plugins/` (Claude, Cursor, Codex) and its own marketplace manifest at the repo root. **Edit skills only in `plugins/make-skills-codex/skills` (and `assets`)**, then run `node scripts/sync-plugins.mjs`: it writes real copies (directory submissions skip symlinks) to the root `skills/` + `assets/`, the Claude plugin and the Cursor plugin. CI runs it with `--check`. Marketplaces use local plugin sources, so installs track the branch the marketplace is added from. All channels, plus `npx skills add` and the raw `dist/` download links, resolve `main` HEAD, so they can pick up reviewed-but-unreleased commits between releases — an accepted gap.
+**Edit skills only in the root `skills/` (and `assets/`)**, then run `node scripts/sync-plugins.mjs`. It writes real copies into every `plugins/*/` folder, because Codex drops symlinks on install and every client rejects skill paths outside the plugin folder. CI runs it with `--check`; the copies are marked `linguist-generated` so PR diffs collapse them.
 
-- **Work:** open PRs against **`main`**, squash merge. PR titles are linted as Conventional Commits by the org `validate-pr.yml` (mono-generated), which release-please relies on.
-- **Release cut:** release-please runs on `main` (org-managed `.github/workflows/release-please.yml`, generated from mono `libs/github-resources/src/repositories/make-skills.ts` via stock `releasePleaseWorkflow: true`). It opens/updates a **Release PR** that bumps the version across `package.json`, `package-lock.json`, the Claude, Cursor, and Codex plugin manifests, `marketplace.json`, and each published `skills/*/SKILL.md` frontmatter (via the `# x-release-please-version` annotation), and regenerates `CHANGELOG.md`.
-- **Promote:** merge the Release PR. release-please (authenticating as a GitHub App) creates the tag + GitHub Release, which fires `.github/workflows/build-release-assets.yml`. That workflow, in order: (1) `build.sh` → uploads zips as Release assets, (2) **fast-forwards `latest` to the tag** (App token; creates the branch on the first release).
+The install paths published on [skills.make.com](https://skills.make.com/) are a public contract — keep them working: marketplace `integromat/make-skills` with plugin `make-skills@make-marketplace` (Claude Code, Claude.ai/Desktop), `copilot plugin install integromat/make-skills:plugins/make-skills-copilot`, the Cursor Marketplace listing, the ChatGPT/Codex plugin, `npx skills add integromat/make-skills` (root `skills/`), the `raw.githubusercontent.com/integromat/make-skills/main/dist/*.zip` links, and MCP Registry `com.make/mcp-server`.
 
-The version-bump targets beyond `package.json` live in `actions-toolkit.config.mjs` (`releasePlease.extraFiles`). Stable-alias zips (`dist/<name>.zip`) are committed so raw download links work before the first release; versioned zips are built ad-hoc in CI and attached to the Release. Download links resolve via `https://github.com/integromat/make-skills/releases/latest/download/<name>.zip` (a GitHub Release API alias, unrelated to the `latest` git branch).
+**One version** covers the repo: `package.json` is the source, and `scripts/version.mjs` writes it into `package-lock.json`, `server.json`, `.claude-plugin/marketplace.json`, and every plugin manifest that has a version field (Devin's has none). Skills carry no version: `npx skills add` detects updates from a content hash, so a version line would mark every skill as changed on each release. CI fails on drift (`npm run check:version`). To cut a version:
 
-Which skills ship, and where, is controlled by `skills.json` (single source of truth). Each skill sets two flags: `publish` (shipped through the plugins, release zips and `npx skills add`; `false` holds it back) and `mcp` (needs the Make MCP server, which also serves it to MCP clients; requires `publish`). `build.sh` (zips + bundle) and `actions-toolkit.config.mjs` (SKILL.md bump targets) take the published skills from it; the MCP Server Host build takes the `mcp` ones. `scripts/check-skill-manifests.mjs` (run in CI via `manifest-check.yml`) fails if a skill folder is not listed, a flag is missing, or `package.json` `agents.skills[]` drifts from the published skills.
+1. `npm version <major|minor|patch|x.y.z>` — `.npmrc` disables the git commit/tag; the `version` hook syncs every target and rebuilds `dist/`.
+2. Update `CHANGELOG.md`, open a `chore: release x.y.z` PR, squash-merge.
+3. A maintainer creates the GitHub Release `vx.y.z` on that commit.
+
+Merging the bump already ships to clients that compare manifest versions (Claude, Codex, Cursor); clients that follow `main` HEAD (Copilot, `npx skills add`, raw zips) pick up every merged commit — an accepted gap.
+
+**Publishing outside GitHub is manual:**
+
+- **OpenClaw** ships through [ClawHub](https://clawhub.ai/make/plugins/openclaw-make) as `clawhub:@make/openclaw-make`, uploaded via ClawHub's web UI from `plugins/make-skills-openclaw`. It is not published to npm; the `@make` namespace is Make's ClawHub namespace.
+- **MCP Registry:** `server.json` (`com.make/mcp-server`) is published with `mcp-publisher` under the DNS-verified `com.make` namespace. Registry versions are immutable, so each publish needs a version not yet published.
+- **Claude, OpenAI and Cursor directories** review their listings separately.
+
+Which skills ship, and where, is controlled by `skills.json` (single source of truth). Each skill sets two flags: `publish` (shipped through the plugins, release zips and `npx skills add`; `false` holds it back) and `mcp` (needs the Make MCP server, which also serves it to MCP clients; requires `publish`). `build.sh` (zips + bundle) takes the published skills from it; Make's MCP server bundles the `mcp` ones and serves them to MCP clients. `scripts/check-skill-manifests.mjs` (run in CI via `manifest-check.yml`) fails if a skill folder is not listed, a flag is missing, or `package.json` `agents.skills[]` drifts from the published skills.
 
 ## Key Conventions
 

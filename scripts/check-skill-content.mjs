@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // Content guard: fails if a skill outgrows the budget the repo's "less is more"
 // rule sets, or ships links, frontmatter or text that would break or leak once
-// installed. Runs on the source of truth (plugins/make-skills-codex/skills);
-// sync-plugins.mjs --check already guarantees every copy matches it.
+// installed. Runs on the source of truth (skills/); sync-plugins.mjs --check
+// already guarantees every plugin copy matches it.
 //
 // Errors block the PR. Warnings are reported (as PR annotations on GitHub) but
 // pass, for things that are sometimes deliberate — a pinned package version in an
@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve } from 'node:path';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const SKILLS = join(ROOT, 'plugins/make-skills-codex/skills');
+const SKILLS = join(ROOT, 'skills');
 
 const LIMITS = {
   skillMdChars: 10_000, // SKILL.md, frontmatter included — it is loaded whole on every trigger
@@ -90,8 +90,6 @@ for (const skill of skills) {
     if (!fm.description) report(errors, skillMd, 3, 'frontmatter has no description');
     else if (fm.description.length > LIMITS.descriptionChars)
       report(errors, skillMd, 3, `description is ${fm.description.length} chars (limit ${LIMITS.descriptionChars})`);
-    if (!/version:.*# x-release-please-version/.test(fm.raw))
-      report(errors, skillMd, 1, 'metadata.version lacks the "# x-release-please-version" annotation');
   }
 
   // 3. relative links resolve, and every reference is reachable from SKILL.md
