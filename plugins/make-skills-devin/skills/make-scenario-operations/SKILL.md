@@ -59,6 +59,12 @@ not money); it has no per-module breakdown, so it answers "did it finish", not "
 (`ReturnData`, `WebhookRespond`, a throw) always reports an empty output here even when correct; the scenario's
 own output lives in `scenario_execution_get`'s `outputs`.
 
+An HTTP module failing with `This URL is outside the service origins allowed by the connection` was stopped
+before sending anything: the connection's **Allowed service origins** (exact `https://host[:port]`; a subdomain
+is another origin) does not list the URL's origin. Fix the URL, or use a connection that lists that origin — it
+is not an IP-allowlisting problem. `…the redirect destination is not allowed by this connection` is the same
+check on a redirect target.
+
 ## A webhook that "isn't receiving data"
 
 - **`scenario_trigger_inspect`** first: it reports **`queued`** deliveries — requests stored and waiting because
