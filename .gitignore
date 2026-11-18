@@ -2,7 +2,6 @@
 .claude/settings.local.json
 node_modules/
 
-# Stable-alias zips are committed so raw.githubusercontent download links work
-# until the first GitHub Release exists; versioned zips are built ad-hoc in CI
-# and attached to the Release only.
+# Stable-alias zips are committed for the raw.githubusercontent download links;
+# versioned zips are built by release.yml and attached to the GitHub Release only.
 dist/*-v[0-9]*.[0-9]*.[0-9]*.zip

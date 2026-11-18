@@ -1,8 +1,9 @@
 {
-  "name": "make-skills",
+  "name": "@makehq/make-skills",
   "version": "2.0.0",
   "description": "Expert skills for Make automation scenarios, Functions v2 and direct app Endpoint workflows — for Claude Code, Cursor, GitHub Copilot, and other AI agents",
   "license": "MIT",
+  "type": "module",
   "author": {
     "name": "Make",
     "email": "support@make.com",
@@ -12,7 +13,21 @@
     "type": "git",
     "url": "git+https://github.com/integromat/make-skills.git"
   },
-  "homepage": "https://www.make.com",
+  "homepage": "https://github.com/integromat/make-skills#readme",
+  "exports": {
+    "./server": "./lib/opencode.js",
+    "./skills.json": "./skills.json",
+    "./skills/*": "./skills/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/",
+    "skills/",
+    "skills.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "agent-skills",
     "skills",
@@ -27,6 +42,7 @@
     "no-code",
     "claude-code",
     "cursor",
+    "opencode",
     "github-copilot",
     "ai-agents"
   ],

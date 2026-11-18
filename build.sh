@@ -5,8 +5,8 @@
 # Artifact strategy:
 #   dist/<name>.zip          — stable alias, committed; the raw.githubusercontent
 #                              download links on skills.make.com point at it
-#   dist/<name>-v<ver>.zip   — versioned, gitignored, for attaching to a
-#                              GitHub Release
+#   dist/<name>-v<ver>.zip   — versioned, gitignored; release.yml attaches both
+#                              to the GitHub Release
 #
 # The skills packaged into individual zips AND into the bundle are those with
 # "publish": true in skills.json, the single source of truth. Every skills/

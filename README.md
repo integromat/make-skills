@@ -1,7 +1,10 @@
-# Make Skills for AI Coding Agents
+# Make Skills for AI Agents
 
-Give your AI coding agent deep Make expertise — for building, explaining, running and debugging Make scenarios and authoring and operating Functions v2 through Make's MCP server, calling app Endpoints through the standalone Endpoints SDK or CLI, and securely requesting credentials for Endpoints and custom-app testing. Works with agents that read skill folders and can use the relevant interface — Claude Code, Codex, Cursor, GitHub Copilot, Windsurf, Cline, and others.
-For Make app development, use [Make Apps Skill](https://github.com/integromat/make-apps-skill).
+Give your AI agent deep Make expertise — for building, explaining, running and debugging Make scenarios and authoring and operating Functions v2 through Make's MCP server, calling app Endpoints through the standalone Endpoints SDK or CLI, and securely requesting credentials for Endpoints and custom-app testing. Works with Claude, ChatGPT and Codex, Cursor, GitHub Copilot, OpenClaw, OpenCode, and any agent that reads skill folders.
+
+[GitHub repository](https://github.com/integromat/make-skills) · [Install guide](https://skills.make.com/) · [npm package](https://www.npmjs.com/package/@makehq/make-skills)
+
+This repository ships the skills as a plugin for each client, as zip downloads, and as the `@makehq/make-skills` npm package, which is also an OpenCode plugin. For Make app development, use [Make Apps Skill](https://github.com/integromat/make-apps-skill).
 
 ## Skills
 
@@ -21,25 +24,34 @@ Creating a connection in the scenario editor remains the standard manual path. C
 
 - A [Make](https://www.make.com) account
 - For scenario skills and `make-functions-v2`: access to the Make MCP server. Functions v2 also requires the curated Functions tools and team rollout access; installing the skill does not enable either.
-- For `make-endpoints`: an approved Node.js/terminal environment, the Endpoints package, and organization access to the Endpoints beta. See [setup and interfaces](skills/make-endpoints/references/setup-and-interfaces.md). Installing this skill does not install the SDK or enable the beta.
+- For `make-endpoints`: an approved Node.js/terminal environment, the Endpoints package, and organization access to the Endpoints beta. See [setup and interfaces](https://github.com/integromat/make-skills/blob/main/skills/make-endpoints/references/setup-and-interfaces.md). Installing this skill does not install the SDK or enable the beta.
 - For `make-credential-requests`: access to a chosen, authorized credential-request interface, with the required Make permissions and organization/team access. Verify that interface's current contract before making a request; installing a skill or plugin does not grant access. SDK/REST requests follow their own permission contracts, not the scenario MCP server's all-or-nothing OAuth bundle.
 
-## Installation
+## Install
 
-Install the **skills** and configure the interface they use. Scenario skills and `make-functions-v2` use the same **MCP server**; `make-endpoints` uses `@makehq/endpoints-sdk`, which includes both the SDK and `make-endpoints-cli`. `make-credential-requests` uses the chosen authorized request interface to provision credentials, not execute app actions. Neither Endpoints execution nor credential provisioning requires building a scenario. Endpoints-only use does not require the scenario MCP server. The plugins below register that server for both scenario and Functions v2 skills; the standalone skill download can be used independently.
+Scenario skills and `make-functions-v2` use Make's **MCP server**; every plugin below registers it and signs you in with your Make account on first use. `make-endpoints` uses `@makehq/endpoints-sdk` (SDK and `make-endpoints-cli`) instead, and `make-credential-requests` uses the chosen authorized request interface. Neither needs a scenario, and Endpoints-only use does not need the MCP server.
 
-### Option A: Plugin (recommended)
-
-**Claude Code**
+### Claude Code
 
 ```bash
-/plugin marketplace add integromat/make-skills
-/plugin install make-skills@make-marketplace
+claude plugin marketplace add integromat/make-skills
+claude plugin install make-skills@make-marketplace
 ```
 
-**Cursor** — Team Marketplace: import `integromat/make-skills` and install `make`. The plugin registers the MCP server (`/cursor`).
+### Claude.ai and Claude Desktop
 
-**Codex**
+Requires a paid Claude plan; on the Free plan, follow [Other agents](#other-agents) and upload the zips.
+
+1. Open **Customize** → **Plugins** (in Claude Cowork, open the Cowork tab first).
+2. Select **Add** → **Add marketplace** and enter `integromat/make-skills`.
+3. Open **Discover**, select **Make** and add it.
+4. In the plugin's **Connectors** tab, connect Make and sign in with your Make account.
+
+### ChatGPT and Codex
+
+ChatGPT: request early access on [skills.make.com](https://skills.make.com/), then select **Install plugin** and sign in with your Make account.
+
+Codex:
 
 ```bash
 codex plugin marketplace add integromat/make-skills
@@ -52,9 +64,75 @@ codex mcp add make --url https://mcp.make.com/openai
 codex mcp login make
 ```
 
-### Option B: Download the skills
+### Cursor
 
-Upload the zips to your agent (Claude Cowork, Claude Chat, and similar) or unzip them into its skills directory:
+Install Make from the [Cursor Marketplace](https://cursor.com/marketplace/make). For a Team Marketplace, import `integromat/make-skills` and install `make`.
+
+### GitHub Copilot CLI
+
+```bash
+copilot plugin install integromat/make-skills:plugins/make-skills-copilot
+```
+
+### OpenClaw
+
+Install from [ClawHub](https://clawhub.ai/make/plugins/openclaw-make):
+
+```bash
+openclaw plugins install clawhub:@make/openclaw-make
+```
+
+### OpenCode
+
+The [`@makehq/make-skills`](https://www.npmjs.com/package/@makehq/make-skills) npm package is an OpenCode plugin. Add it to `opencode.json`:
+
+```json
+{
+  "plugins": ["@makehq/make-skills"]
+}
+```
+
+or install it globally with `opencode plugin add @makehq/make-skills`. The plugin registers the `make` MCP server (`https://mcp.make.com/v2`; run `opencode mcp auth make` or sign in on first use) and every skill. An MCP server you already named `make` is kept as configured. It uses the OpenCode 2 plugin API.
+
+The package can also be read from code. `@makehq/make-skills/skills.json` lists each skill with its `publish` and `mcp` flags, and each skill lives in `@makehq/make-skills/skills/<name>/` with its `SKILL.md`, `references/` and `examples/`:
+
+```js
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
+
+const require = createRequire(import.meta.url);
+const manifest = require.resolve('@makehq/make-skills/skills.json');
+const { skills } = require(manifest);
+const dirs = Object.keys(skills).map((name) => join(dirname(manifest), 'skills', name));
+```
+
+### Other agents
+
+**1. Add the MCP server** (scenario and Functions v2 skills). It is a remote Streamable HTTP server; no API key, the agent opens Make's sign-in page on first connect:
+
+```json
+{
+  "mcpServers": {
+    "make": { "url": "https://mcp.make.com/v2" }
+  }
+}
+```
+
+Check your agent's MCP docs for the exact file and field names. The server is also listed in the [MCP Registry](https://registry.modelcontextprotocol.io/?q=com.make) as `com.make/mcp-server`. For Claude Code without the plugin:
+
+```bash
+claude mcp add --transport http make https://mcp.make.com/claude
+```
+
+On first use, authenticate through Make's OAuth consent screen and follow the tool's authorization challenge to grant its required access area. Tool availability and team rollout access are separate from OAuth consent.
+
+**2. Add the skills.** For agents that read skills from a folder:
+
+```bash
+npx skills add integromat/make-skills
+```
+
+Or download the zips and upload them to your agent (Claude.ai, Claude Desktop and similar take one zip per skill), or unzip them into its skills directory so each skill folder directly contains `SKILL.md`, `references/` and `examples/`:
 
 | Skill                    | Download                                                                                                  |
 | ------------------------ | --------------------------------------------------------------------------------------------------------- |
@@ -67,8 +145,6 @@ Upload the zips to your agent (Claude Cowork, Claude Chat, and similar) or unzip
 | Functions v2             | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-functions-v2.zip)         |
 | Make Credential Requests | [Download](https://raw.githubusercontent.com/integromat/make-skills/main/dist/make-credential-requests.zip) |
 
-Skills directories, for agents that read skills from disk:
-
 | Agent           | Skills directory    |
 | --------------- | ------------------- |
 | Codex (project) | `.agents/skills/`   |
@@ -79,30 +155,9 @@ Skills directories, for agents that read skills from disk:
 | Cline           | `.cline/skills/`    |
 | Generic         | `.agents/skills/`   |
 
-ChatGPT does not use a local skills directory. Install the Make plugin or use the skill-upload flow supported
-by the selected ChatGPT experience; configure and authenticate its Make connection separately.
-Unzip each downloaded skill so its folder directly contains `SKILL.md`, `references/` and `examples/`.
+ChatGPT does not use a local skills directory; install the Make plugin instead.
 
-### Add the MCP server manually for scenario and Functions v2 skills
-
-Skip this if a plugin registered it. Each platform has its own endpoint, over HTTP:
-
-| Platform     | MCP URL                       |
-| ------------ | ----------------------------- |
-| Claude Code  | `https://mcp.make.com/claude` |
-| Cursor       | `https://mcp.make.com/cursor` |
-| OpenAI Codex | `https://mcp.make.com/openai` |
-
-```bash
-claude mcp add --transport http make https://mcp.make.com/claude
-claude mcp list
-```
-
-For any other agent, add the matching URL to its JSON MCP config.
-
-On first use, authenticate through Make's OAuth consent screen. Follow the tool's authorization challenge to grant its required access area. Functions v2 uses Build & Run; tool availability and team rollout access are separate from OAuth consent.
-
-### Verify the skill and connection
+## Verify the skill and connection
 
 After installation and sign-in, refresh the client's available skills and tools (restart the client if needed).
 Use this read-only check before creating anything:
@@ -119,7 +174,7 @@ Functions that call Endpoints also need organization access to Endpoint executio
 Endpoint types. Discover the selected team's Endpoints, then retrieve their types before authoring calls.
 If no compatible Connection exists, create one in Make or use an available, authorized Credential Requests
 workflow. Complete authorization in Make, then repeat Endpoint discovery; never paste provider secrets into
-an agent conversation. See [Functions access and discovery](skills/make-functions-v2/references/access-and-discovery.md).
+an agent conversation. See [Functions access and discovery](https://github.com/integromat/make-skills/blob/main/skills/make-functions-v2/references/access-and-discovery.md).
 
 ## Troubleshooting
 
@@ -137,7 +192,7 @@ an agent conversation. See [Functions access and discovery](skills/make-function
 
 ## Contributing
 
-Open pull requests against **`main`** and squash-merge with Conventional Commit PR titles (`feat:`, `fix:`, `docs:`, …). Edit skills only in the root `skills/` folder, then run `node scripts/sync-plugins.mjs` to refresh the copies under `plugins/`. One version covers every plugin, package and skill: bump it with `npm version <x.y.z>`. See [CLAUDE.md](CLAUDE.md) for the release steps and publishing channels.
+Open pull requests against `main`. See [CLAUDE.md](https://github.com/integromat/make-skills/blob/main/CLAUDE.md) for the repository layout, the skill-writing rules and the release steps.
 
 ## License
 

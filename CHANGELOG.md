@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file. See [commit
 
 One version now covers every plugin, package and the MCP Registry entry (`server.json`), set from `package.json` with `npm version`.
 
+### Features
+
+* publish the skills as the `@makehq/make-skills` npm package, which is also an OpenCode plugin registering the Make MCP server and every skill
+* release workflow: a GitHub Release publishes the npm package and attaches the skill zips
+
 ### Chores
 
 * make the root `skills/` the single source edited by hand; every `plugins/*` copy is generated
