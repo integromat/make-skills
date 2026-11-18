@@ -25,7 +25,10 @@ CRM record) reaches it **only through a tool**; without one it guesses or refuse
 
 - `message` (required) — the per-run input, usually mapped from upstream (`{{1.text}}`).
 - `systemPrompt` — role, goals, rules, steps. The single most important field.
-- `defaultModel` — dynamic: resolve with `module_field_resolve` rather than typing a model id.
+- `defaultModel` — dynamic: resolve with `module_field_resolve` rather than typing a model id. Unless the
+  user names a model, pick a mid-tier one (`medium` on a Make AI Provider connection) and leave
+  `reasoningEffort` unset or `low`. A provider's flagship model or `high` effort multiplies the cost of every
+  run: one test run on a flagship has cost hundreds of dollars in credits.
 - `threadId` — a stable conversation id (a chat thread id, a ticket id) gives the agent memory across runs;
   leave it empty for stateless runs.
 - `files`, `modelConfig` (`recursionLimit` steps per call, `tokenLimit`), `timeout`, `outputType`
