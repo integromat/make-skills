@@ -30,7 +30,7 @@ Routers and directives themselves cannot carry a handler. `scenario_get` reports
 |---|---|---|---|
 | `builtin:Ignore` | Drop it, keep processing the rest | none | Non-critical step; losing the item is acceptable |
 | `builtin:Resume` | Continue after the failed module as if it produced substitute values | `mapper`: the substitute output, keyed by the failed module's output fields | A safe default exists |
-| `builtin:Break` | Store the run as an incomplete execution and retry later | `mapper: {retry: true, count, interval}` (interval in minutes) | Transient failures — rate limits, outages |
+| `builtin:Break` | Store the run as an incomplete run and retry later | `mapper: {retry: true, count, interval}` (interval in minutes) | Transient failures — rate limits, outages |
 | `builtin:Commit` | Stop the run, keep everything done so far | none | Partial progress is valid |
 | `builtin:Rollback` | Stop and revert transactional (ACID) modules | none | All-or-nothing; only reverts modules that support it |
 
@@ -48,13 +48,13 @@ whose AI step returned nothing reports success.
 ## Scenario-level settings
 
 `scenario_patch`'s `settings_set` writes the execution settings that interact with errors: `maxErrors`
-(consecutive errors before Make deactivates the scenario), `dlq` (store incomplete executions), `sequential`
+(consecutive errors before Make deactivates the scenario), `dlq` (store incomplete runs), `sequential`
 (process one run at a time — a stored failed run then blocks the queue until it is resolved), `autoCommit`,
 `dataloss`, `confidential`. Change them only on request; the defaults are what most scenarios should keep.
 
 ## Things to say to the user
 
-- `Break` and `dlq` create **incomplete executions** that someone has to retry or discard in Make — this
+- `Break` and `dlq` create **incomplete runs** that someone has to retry or discard in Make — this
   surface cannot do that (`make-scenario-reference`, refusal contract). A sequential scenario with stored
   failures stops processing new data until they are handled (`isWaitingOnIncompleteExecutions` in
   `scenario_get`).
