@@ -61,5 +61,8 @@ whose AI step returned nothing reports success.
   Make — this surface cannot do that (`make-scenario-reference`, refusal contract). A sequential scenario with stored
   failures stops processing new data until they are handled (`isWaitingOnIncompleteExecutions` in
   `scenario_get`).
-- A webhook-triggered scenario with `maxErrors` set deactivates on the first error, not after N.
+- A webhook-triggered scenario with `maxErrors` set deactivates on the first error, not after N. The exception
+  is a scenario that answers its caller (a `gateway:WebhookRespond` anywhere in the flow): only configuration or
+  blueprint errors deactivate it; every other error goes back to the caller and never counts toward `maxErrors`,
+  so a failing one keeps running and using credits.
 - `Rollback` only reverts modules marked transactional; a non-transactional write earlier in the run stays.
