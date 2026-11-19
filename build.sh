@@ -2,11 +2,9 @@
 # Build script for make-skills distribution packages
 # Creates zip files for Claude Desktop/Claude.ai (individual skills) and Claude Code (bundle)
 #
-# Artifact strategy:
-#   dist/<name>.zip          — stable alias, committed; the raw.githubusercontent
-#                              download links on skills.make.com point at it
-#   dist/<name>-v<ver>.zip   — versioned, gitignored; release.yml attaches both
-#                              to the GitHub Release
+# Output: dist/<name>.zip, committed for the raw.githubusercontent download links
+# and attached to each GitHub Release by release.yml. The file names carry no
+# version so /releases/latest/download/<name>.zip resolves in every release.
 #
 # The skills packaged into individual zips AND into the bundle are those with
 # "publish": true in skills.json, the single source of truth. Every skills/
@@ -58,9 +56,7 @@ for skill in "${SKILLS[@]}"; do
     TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/make-skills.XXXXXX")
     _CLEANUP_DIRS+=("$TMPDIR")
     cp -r "$REPO_ROOT/skills/$skill" "$TMPDIR/$skill"
-    (cd "$TMPDIR" && zip -rq "$DIST_DIR/${skill}-v${VERSION}.zip" "$skill/" -x "*.DS_Store")
-    # Stable alias (version-free) so docs don't 404 after a bump
-    cp "$DIST_DIR/${skill}-v${VERSION}.zip" "$DIST_DIR/${skill}.zip"
+    (cd "$TMPDIR" && zip -rq "$DIST_DIR/${skill}.zip" "$skill/" -x "*.DS_Store")
 done
 
 # Build complete bundle (for Claude Code) — only published skills
@@ -78,9 +74,7 @@ done
 cp "$REPO_ROOT/plugins/make-skills-claude/.mcp.json" "$BUNDLE/.mcp.json"
 cp "$REPO_ROOT/README.md" "$BUNDLE/README.md"
 cp "$REPO_ROOT/LICENSE" "$BUNDLE/LICENSE"
-(cd "$TMPDIR" && zip -rq "$DIST_DIR/make-skills-v${VERSION}.zip" "make-skills/" -x "*.DS_Store")
-# Stable alias
-cp "$DIST_DIR/make-skills-v${VERSION}.zip" "$DIST_DIR/make-skills.zip"
+(cd "$TMPDIR" && zip -rq "$DIST_DIR/make-skills.zip" "make-skills/" -x "*.DS_Store")
 
 # Results
 echo ""
@@ -88,12 +82,10 @@ echo "Build complete! Files in dist/:"
 echo ""
 echo "Individual skills (Claude Desktop / Claude.ai):"
 for skill in "${SKILLS[@]}"; do
-    SIZE=$(du -h "$DIST_DIR/${skill}-v${VERSION}.zip" | cut -f1)
-    echo "  ${skill}-v${VERSION}.zip  ${SIZE}"
-    echo "  ${skill}.zip  (stable alias)"
+    SIZE=$(du -h "$DIST_DIR/${skill}.zip" | cut -f1)
+    echo "  ${skill}.zip  ${SIZE}"
 done
 echo ""
 echo "Complete bundle (Claude Code):"
-SIZE=$(du -h "$DIST_DIR/make-skills-v${VERSION}.zip" | cut -f1)
-echo "  make-skills-v${VERSION}.zip  ${SIZE}"
-echo "  make-skills.zip  (stable alias)"
+SIZE=$(du -h "$DIST_DIR/make-skills.zip" | cut -f1)
+echo "  make-skills.zip  ${SIZE}"
