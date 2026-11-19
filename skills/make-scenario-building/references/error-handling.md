@@ -1,6 +1,6 @@
 ---
 name: error-handling
-description: Error-handler arms and the five directives (Break, Resume, Ignore, Commit, Rollback), the throw modules, and the scenario settings that govern failures. Load only when the user asks for fault tolerance or the scenario is mission-critical.
+description: Error-handler arms and the five directives (Retry, Skip, Resume, Commit, Rollback), the throw modules, and the scenario settings that govern failures. Load only when the user asks for fault tolerance or the scenario is mission-critical.
 ---
 
 # Error handling
@@ -8,7 +8,9 @@ description: Error-handler arms and the five directives (Break, Resume, Ignore, 
 **Default to none.** Make stops a run on the first error, records it, and deactivates the scenario after
 repeated failures — that is the right behavior for most automations, and it keeps failures visible. Add
 handlers when the user asks for retries, fallbacks or "never lose a record", or when a failed run has a real
-cost (payments, data sync, customer-facing replies). Do not propose them for a notification scenario.
+cost (payments, data sync, customer-facing replies). Do not propose them for a notification scenario. Any
+handler, even an arm that only notifies, also turns off Make's in-run retry of a temporary connection error on
+that module: the first error goes straight to the arm.
 
 ## Shape: an error handler is an arm
 
@@ -28,14 +30,15 @@ Routers and directives themselves cannot carry a handler. `scenario_get` reports
 
 | Directive | Effect on the failed item | `config` | Use when |
 |---|---|---|---|
-| `builtin:Ignore` | Drop it, keep processing the rest | none | Non-critical step; losing the item is acceptable |
+| `builtin:Ignore` (**Skip**) | Drop it, keep processing the rest | none | Non-critical step; losing the item is acceptable |
 | `builtin:Resume` | Continue after the failed module as if it produced substitute values | `mapper`: the substitute output, keyed by the failed module's output fields | A safe default exists |
-| `builtin:Break` | Store the run as an incomplete execution and retry later | `mapper: {retry: true, count, interval}` (interval in minutes) | Transient failures — rate limits, outages |
+| `builtin:Break` (**Retry**) | Store the run as an incomplete execution and retry later | `mapper: {retry: true, count, interval}` (interval in minutes) | Transient failures — rate limits, outages |
 | `builtin:Commit` | Stop the run, keep everything done so far | none | Partial progress is valid |
 | `builtin:Rollback` | Stop and revert transactional (ACID) modules | none | All-or-nothing; only reverts modules that support it |
 
-Match the directive to the failure kind: connection and rate-limit errors → `Break`; bad data → `Resume` or
-`Ignore`; a misconfigured module → fix the config, no handler helps.
+The editor names `builtin:Ignore` **Skip** and `builtin:Break` **Retry**; use those names with the user. Match
+the directive to the failure kind: connection and rate-limit errors → Retry; bad data → Resume or Skip; a
+misconfigured module → fix the config, no handler helps.
 
 ## Raising errors deliberately
 
@@ -54,9 +57,12 @@ whose AI step returned nothing reports success.
 
 ## Things to say to the user
 
-- `Break` and `dlq` create **incomplete executions** that someone has to retry or discard in Make — this
-  surface cannot do that (`make-scenario-reference`, refusal contract). A sequential scenario with stored
+- Retry (`builtin:Break`) and `dlq` create **incomplete executions** that someone has to retry or discard in
+  Make — this surface cannot do that (`make-scenario-reference`, refusal contract). A sequential scenario with stored
   failures stops processing new data until they are handled (`isWaitingOnIncompleteExecutions` in
   `scenario_get`).
-- A webhook-triggered scenario with `maxErrors` set deactivates on the first error, not after N.
+- A webhook-triggered scenario with `maxErrors` set deactivates on the first error, not after N. The exception
+  is a scenario that answers its caller (a `gateway:WebhookRespond` anywhere in the flow): only configuration or
+  blueprint errors deactivate it; every other error goes back to the caller and never counts toward `maxErrors`,
+  so a failing one keeps running and using credits.
 - `Rollback` only reverts modules marked transactional; a non-transactional write earlier in the run stays.
