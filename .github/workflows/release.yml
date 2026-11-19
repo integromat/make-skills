@@ -1,6 +1,6 @@
 name: Release
 
-# Publishes a GitHub Release: attaches the skill zips and publishes @makehq/make-skills to npm.
+# Publishes a GitHub Release: attaches the skill zips and publishes @makehq/skills to npm.
 #
 # Create the release with "Set as a pre-release" ticked. A pre-release never becomes the
 # repository's "latest" release, so /releases/latest/download/<zip> links keep serving the
@@ -29,7 +29,7 @@ concurrency:
 
 env:
   TAG: ${{ github.event.release.tag_name || inputs.tag }}
-  PACKAGE: '@makehq/make-skills'
+  PACKAGE: '@makehq/skills'
 
 jobs:
   check:

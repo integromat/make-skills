@@ -2,9 +2,9 @@
 
 Give your AI agent deep Make expertise — for building, explaining, running and debugging Make scenarios and authoring and operating Functions v2 through Make's MCP server, calling app Endpoints through the standalone Endpoints SDK or CLI, and securely requesting credentials for Endpoints and custom-app testing. Works with Claude, ChatGPT and Codex, Cursor, GitHub Copilot, OpenClaw, OpenCode, and any agent that reads skill folders.
 
-[GitHub repository](https://github.com/integromat/make-skills) · [Install guide](https://skills.make.com/) · [npm package](https://www.npmjs.com/package/@makehq/make-skills)
+[GitHub repository](https://github.com/integromat/make-skills) · [Install guide](https://skills.make.com/) · [npm package](https://www.npmjs.com/package/@makehq/skills)
 
-This repository ships the skills as a plugin for each client, as zip downloads, and as the `@makehq/make-skills` npm package, which is also an OpenCode plugin. For Make app development, use [Make Apps Skill](https://github.com/integromat/make-apps-skill).
+This repository ships the skills as a plugin for each client, as zip downloads, and as the `@makehq/skills` npm package, which is also an OpenCode plugin. For Make app development, use [Make Apps Skill](https://github.com/integromat/make-apps-skill).
 
 ## Skills
 
@@ -84,24 +84,24 @@ openclaw plugins install clawhub:@make/openclaw-make
 
 ### OpenCode
 
-The [`@makehq/make-skills`](https://www.npmjs.com/package/@makehq/make-skills) npm package is an OpenCode plugin. Add it to `opencode.json`:
+The [`@makehq/skills`](https://www.npmjs.com/package/@makehq/skills) npm package is an OpenCode plugin. Add it to `opencode.json`:
 
 ```json
 {
-  "plugins": ["@makehq/make-skills"]
+  "plugins": ["@makehq/skills"]
 }
 ```
 
-or install it globally with `opencode plugin add @makehq/make-skills`. The plugin registers the `make` MCP server (`https://mcp.make.com/v2`; run `opencode mcp auth make` or sign in on first use) and every skill. An MCP server you already named `make` is kept as configured. It uses the OpenCode 2 plugin API.
+or install it globally with `opencode plugin add @makehq/skills`. The plugin registers the `make` MCP server (`https://mcp.make.com/v2`; run `opencode mcp auth make` or sign in on first use) and every skill. An MCP server you already named `make` is kept as configured. It uses the OpenCode 2 plugin API.
 
-The package can also be read from code. `@makehq/make-skills/skills.json` lists each skill with its `publish` and `mcp` flags, and each skill lives in `@makehq/make-skills/skills/<name>/` with its `SKILL.md`, `references/` and `examples/`:
+The package can also be read from code. `@makehq/skills/skills.json` lists each skill with its `publish` and `mcp` flags, and each skill lives in `@makehq/skills/skills/<name>/` with its `SKILL.md`, `references/` and `examples/`:
 
 ```js
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 
 const require = createRequire(import.meta.url);
-const manifest = require.resolve('@makehq/make-skills/skills.json');
+const manifest = require.resolve('@makehq/skills/skills.json');
 const { skills } = require(manifest);
 const dirs = Object.keys(skills).map((name) => join(dirname(manifest), 'skills', name));
 ```

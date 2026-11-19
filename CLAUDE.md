@@ -29,7 +29,7 @@ plugins/                   # one folder per client; skills/ + assets/ in each ar
   make-skills-copilot/     # GitHub Copilot CLI plugin (plugin.json, .mcp.json)
   make-skills-grok/        # Grok Build plugin (.grok-plugin/, .mcp.json)
 assets/                    # SOURCE OF TRUTH for plugin icons
-lib/opencode.js            # OpenCode plugin, the "./server" export of the @makehq/make-skills npm package
+lib/opencode.js            # OpenCode plugin, the "./server" export of the @makehq/skills npm package
 skills/                    # SOURCE OF TRUTH — edit skills here only (npx skills add, build.sh, zips)
   make-scenario-reference/   # Shared conventions — load first
     SKILL.md
@@ -96,13 +96,13 @@ The install paths published on [skills.make.com](https://skills.make.com/) are a
 1. `npm version <major|minor|patch|x.y.z>` — `.npmrc` disables the git commit/tag; the `version` hook syncs every target and rebuilds `dist/`.
 2. Update `CHANGELOG.md`, open a `chore: release x.y.z` PR, squash-merge.
 3. A maintainer creates the GitHub Release `vx.y.z` on that commit with **Set as a pre-release** ticked.
-4. `.github/workflows/release.yml` runs on the published release. It checks that the tag matches `package.json` and that every version and skill copy is consistent, publishes `@makehq/make-skills` to npm, attaches the `dist/` zips, then promotes the release to latest.
+4. `.github/workflows/release.yml` runs on the published release. It checks that the tag matches `package.json` and that every version and skill copy is consistent, publishes `@makehq/skills` to npm, attaches the `dist/` zips, then promotes the release to latest.
 
 A pre-release never becomes the repository's latest release, so `/releases/latest/download/<zip>` keeps serving the previous zips until the new ones are attached; without the tick those links return 404 until the workflow finishes. A version with a pre-release suffix (`2.1.0-beta.1`) stays a pre-release and goes to npm under the `next` dist-tag. To retry a failed run, start the workflow manually with the tag; a version already on npm is skipped.
 
 Merging the bump already ships to clients that compare manifest versions (Claude, Codex, Cursor); clients that follow `main` HEAD (Copilot, `npx skills add`, raw zips) pick up every merged commit — an accepted gap.
 
-**npm:** the repo root is the `@makehq/make-skills` package (`files`: `lib/`, `skills/`, `skills.json`). Its `./server` export is the OpenCode plugin, which registers the `make` MCP server and every published skill; `./skills.json` and `./skills/*` let other consumers read the skills without an OpenCode dependency. The workflow publishes it with npm trusted publishing (OIDC, no token; provenance is automatic), configured on npmjs.com for this repository and `release.yml`. The README doubles as the npm page, so its links are absolute.
+**npm:** the repo root is the `@makehq/skills` package (`files`: `lib/`, `skills/`, `skills.json`). Its `./server` export is the OpenCode plugin, which registers the `make` MCP server and every published skill; `./skills.json` and `./skills/*` let other consumers read the skills without an OpenCode dependency. The workflow publishes it with npm trusted publishing (OIDC, no token; provenance is automatic), configured on npmjs.com for this repository and `release.yml`. The README doubles as the npm page, so its links are absolute.
 
 **Publishing outside GitHub and npm is manual:**
 

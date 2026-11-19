@@ -8,7 +8,7 @@ One version now covers every plugin, package and the MCP Registry entry (`server
 
 ### Features
 
-* publish the skills as the `@makehq/make-skills` npm package, which is also an OpenCode plugin registering the Make MCP server and every skill
+* publish the skills as the `@makehq/skills` npm package, which is also an OpenCode plugin registering the Make MCP server and every skill
 * release workflow: a GitHub Release publishes the npm package and attaches the skill zips
 
 ### Chores
