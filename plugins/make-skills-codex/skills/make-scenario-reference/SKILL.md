@@ -1,8 +1,6 @@
 ---
 name: make-scenario-reference
 description: Load when a Make scenario tool answers 403, refuses a write for a reason you cannot explain, or no tool seems to cover the request — the shared conventions of environment_get, scenario_*, app_find, module_spec, module_field_resolve, connection_*, data_store_* and data_structure_*.
-metadata:
-  version: "0.2.0" # x-release-please-version
 ---
 
 # Make scenario-management tools — reference

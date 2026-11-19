@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 2.0.0 (2026-11-18)
+
+One version now covers every plugin, package and the MCP Registry entry (`server.json`), set from `package.json` with `npm version`.
+
+### Features
+
+* publish the skills as the `@makehq/skills` npm package, which is also an OpenCode plugin registering the Make MCP server and every skill
+* release workflow: a GitHub Release publishes the npm package and attaches the skill zips
+
+### Chores
+
+* make the root `skills/` the single source edited by hand; every `plugins/*` copy is generated
+* drop the release-please configuration and annotations
+* drop `metadata.version` from skill frontmatter; it is not an Agent Skills spec field and changed every skill's content hash on each release
+
 ## 0.1.7 (2026-05-29)
 
 

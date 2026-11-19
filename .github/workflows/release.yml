@@ -1,0 +1,135 @@
+name: Release
+
+# Publishes a GitHub Release: attaches the skill zips and publishes @makehq/skills to npm.
+#
+# Create the release with "Set as a pre-release" ticked. A pre-release never becomes the
+# repository's "latest" release, so /releases/latest/download/<zip> links keep serving the
+# previous release's zips until this workflow has attached the new ones and promoted it.
+# A version with a pre-release suffix (2.1.0-beta.1) stays a pre-release and goes to npm
+# under the `next` dist-tag.
+#
+# Run it manually with an existing tag to retry a failed run; a version already on npm is
+# then skipped instead of failing.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag, e.g. v2.0.1
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+
+env:
+  TAG: ${{ github.event.release.tag_name || inputs.tag }}
+  PACKAGE: '@makehq/skills'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+      on_npm: ${{ steps.npm.outputs.on_npm }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          ref: ${{ env.TAG }}
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 24
+
+      - name: Match the tag to package.json
+        id: version
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "$TAG" != "v$version" ]; then
+            echo "::error::Tag $TAG does not match package.json version $version. Run npm version and release that commit."
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          case "$version" in *-*) prerelease=true ;; *) prerelease=false ;; esac
+          echo "prerelease=$prerelease" >> "$GITHUB_OUTPUT"
+
+      - name: Check versions, manifests and skill copies
+        run: |
+          npm run -s check:version
+          npm run -s check:skills
+          npm run -s check:content
+          node scripts/sync-plugins.mjs --check
+
+      - name: Check whether npm already has this version
+        id: npm
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if out=$(npm view "$PACKAGE@$VERSION" version 2>&1); then
+            if [ "$GITHUB_EVENT_NAME" = release ]; then
+              echo "::error::$PACKAGE@$VERSION is already on npm. Bump the version before releasing."
+              exit 1
+            fi
+            echo "::notice::$PACKAGE@$VERSION is already on npm; skipping the npm publish."
+            echo "on_npm=true" >> "$GITHUB_OUTPUT"
+          elif echo "$out" | grep -q E404; then
+            echo "on_npm=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "$out"
+            exit 1
+          fi
+
+  npm:
+    needs: check
+    if: needs.check.outputs.on_npm == 'false'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for token-less authentication with npm (trusted publishing)
+      contents: read
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          ref: ${{ env.TAG }}
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      # Trusted publishing needs npm 11.5.1 or newer; provenance is attached automatically.
+      - name: Publish to npm
+        env:
+          DIST_TAG: ${{ needs.check.outputs.prerelease == 'true' && 'next' || 'latest' }}
+        run: |
+          npm --version
+          npm publish --tag "$DIST_TAG"
+
+  assets:
+    needs: [check, npm]
+    # Runs after a skipped npm job too (manual retry of a version already on npm).
+    if: ${{ !cancelled() && needs.check.result == 'success' && needs.npm.result != 'failure' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          ref: ${{ env.TAG }}
+
+      - name: Build the skill zips
+        run: bash build.sh
+
+      - name: Attach the zips to the release
+        run: gh release upload "$TAG" dist/*.zip --clobber
+
+      - name: Promote the release to latest
+        if: needs.check.outputs.prerelease == 'false'
+        run: gh release edit "$TAG" --prerelease=false --latest

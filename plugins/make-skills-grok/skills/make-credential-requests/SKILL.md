@@ -1,8 +1,6 @@
 ---
 name: make-credential-requests
 description: Use when an agent needs a Make connection or key, or approved authorization repair, for Endpoints or custom-app testing. Guides owner authorization in Make and hands back managed connection or key IDs, never raw secrets. No scenario required.
-metadata:
-  version: "0.2.0" # x-release-please-version
 ---
 
 # Make Credential Requests

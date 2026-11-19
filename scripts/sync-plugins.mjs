@@ -1,24 +1,16 @@
-// Source of truth: plugins/make-skills-codex/{skills,assets}. Copies them as real files
-// (directory submissions skip symlinks) into every other consumer:
-//   skills/ + assets/ (repo root: npx skills add, build.sh, check-skill-manifests),
-//   plugins/make-skills-claude/, plugins/make-skills-cursor/, plugins/make-skills-devin/, plugins/make-skills-copilot/, plugins/make-skills-grok/,
-//   plugins/make-skills-openclaw/.
+// Source of truth: the repo-root skills/ and assets/. Copies them as real files into every
+// plugins/<name>/ folder, because Codex drops symlinks when it installs a plugin and every
+// client rejects skill paths outside the plugin folder.
 // Run: node scripts/sync-plugins.mjs
 // `--check` exits 1 if any copy is stale instead of writing.
 import { cpSync, rmSync, readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 const root = new URL('..', import.meta.url).pathname;
-const source = join(root, 'plugins/make-skills-codex');
-const targets = [
-  ['', root],
-  ['plugins/make-skills-claude/', join(root, 'plugins/make-skills-claude')],
-  ['plugins/make-skills-cursor/', join(root, 'plugins/make-skills-cursor')],
-  ['plugins/make-skills-openclaw/', join(root, 'plugins/make-skills-openclaw')],
-  ['plugins/make-skills-devin/', join(root, 'plugins/make-skills-devin')],
-  ['plugins/make-skills-copilot/', join(root, 'plugins/make-skills-copilot')],
-  ['plugins/make-skills-grok/', join(root, 'plugins/make-skills-grok')],
-];
+const plugins = readdirSync(join(root, 'plugins'), { withFileTypes: true })
+  .filter((d) => d.isDirectory())
+  .map((d) => d.name)
+  .sort();
 const check = process.argv.includes('--check');
 
 const walk = (dir, base = dir) =>
@@ -29,13 +21,13 @@ const walk = (dir, base = dir) =>
 
 let stale = false;
 for (const d of ['skills', 'assets']) {
-  const src = join(source, d);
-  for (const [label, base] of targets) {
-    const dst = join(base, d);
+  const src = join(root, d);
+  for (const plugin of plugins) {
+    const dst = join(root, 'plugins', plugin, d);
     if (check) {
       let same = false;
       try { same = JSON.stringify(walk(src)) === JSON.stringify(walk(dst)); } catch {}
-      if (!same) { console.error(`✗ ${label}${d} is stale — run node scripts/sync-plugins.mjs`); stale = true; }
+      if (!same) { console.error(`✗ plugins/${plugin}/${d} is stale — run node scripts/sync-plugins.mjs`); stale = true; }
     } else {
       if (existsSync(dst)) rmSync(dst, { recursive: true, force: true });
       cpSync(src, dst, { recursive: true, filter: (s) => !s.endsWith('.DS_Store') });
@@ -43,4 +35,4 @@ for (const d of ['skills', 'assets']) {
   }
 }
 if (check) process.exit(stale ? 1 : 0);
-console.log('✓ Synced plugins/make-skills-codex/{skills,assets} to root, Claude, Cursor, Devin, Copilot, Grok and OpenClaw');
+console.log(`✓ Synced skills/ and assets/ to ${plugins.map((p) => `plugins/${p}`).join(', ')}`);

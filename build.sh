@@ -3,14 +3,10 @@
 # Creates zip files for Claude Desktop/Claude.ai (individual skills) and Claude Code (bundle)
 #
 # Artifact strategy:
-#   dist/<name>.zip          — stable alias, committed (download links point at
-#                              raw.githubusercontent until the first GitHub
-#                              Release exists) and uploaded as a Release asset
-#   dist/<name>-v<ver>.zip   — versioned, gitignored, uploaded as a Release
-#                              asset only
-#
-# Both are produced here and attached to the release by CI
-# (.github/workflows/build-release-assets.yml).
+#   dist/<name>.zip          — stable alias, committed; the raw.githubusercontent
+#                              download links on skills.make.com point at it
+#   dist/<name>-v<ver>.zip   — versioned, gitignored; release.yml attaches both
+#                              to the GitHub Release
 #
 # The skills packaged into individual zips AND into the bundle are those with
 # "publish": true in skills.json, the single source of truth. Every skills/
@@ -30,9 +26,9 @@ command -v jq >/dev/null 2>&1 || {
 node "$REPO_ROOT/scripts/sync-plugins.mjs"
 
 DIST_DIR="$REPO_ROOT/dist"
-VERSION=$(jq -r '.version' "$REPO_ROOT/plugins/make-skills-claude/.claude-plugin/plugin.json")
+VERSION=$(jq -r '.version' "$REPO_ROOT/package.json")
 
-# Skills to publish — single source of truth
+# Skills to publish
 # (read loop rather than mapfile for portability with macOS bash 3.2)
 SKILLS=()
 while IFS= read -r _skill; do
@@ -82,7 +78,6 @@ done
 cp "$REPO_ROOT/plugins/make-skills-claude/.mcp.json" "$BUNDLE/.mcp.json"
 cp "$REPO_ROOT/README.md" "$BUNDLE/README.md"
 cp "$REPO_ROOT/LICENSE" "$BUNDLE/LICENSE"
-cp "$REPO_ROOT/CLAUDE.md" "$BUNDLE/CLAUDE.md"
 (cd "$TMPDIR" && zip -rq "$DIST_DIR/make-skills-v${VERSION}.zip" "make-skills/" -x "*.DS_Store")
 # Stable alias
 cp "$DIST_DIR/make-skills-v${VERSION}.zip" "$DIST_DIR/make-skills.zip"

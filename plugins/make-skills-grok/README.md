@@ -11,7 +11,7 @@ No hooks, scripts or local binaries.
 
 ## Source
 
-Skills are generated from `plugins/make-skills-codex/skills` in [integromat/make-skills](https://github.com/integromat/make-skills) by `node scripts/sync-plugins.mjs`.
+Skills are generated from the root `skills/` folder in [integromat/make-skills](https://github.com/integromat/make-skills) by `node scripts/sync-plugins.mjs`.
 
 ## License
 
