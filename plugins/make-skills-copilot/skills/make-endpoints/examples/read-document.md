@@ -14,8 +14,8 @@ Use an approved project, then install the pinned example dependencies:
 npm install --save-exact @makehq/endpoints-sdk@0.3.0 @makehq/sdk@1.6.20
 ```
 
-Replace `YOUR_API_KEY` in the script with a Make API key supplied through the approved secret mechanism, and
-never commit the edited file. Load the other values from the project's existing environment or private,
+Replace `YOUR_MAKE_API_KEY` in the script with a Make API key supplied through the approved secret mechanism,
+and never commit the edited file. Load the other values from the project's existing environment or private,
 ignored `.env.local`:
 
 | Variable | Meaning |
@@ -48,10 +48,10 @@ function positiveId(name) {
   return id;
 }
 
-const apiKey = 'YOUR_API_KEY';
+const apiKey = 'YOUR_MAKE_API_KEY';
 const zone = process.env.MAKE_ZONE;
 const documentId = process.env.GOOGLE_DOC_ID;
-if (apiKey === 'YOUR_API_KEY') throw new Error('Replace YOUR_API_KEY with a Make API key.');
+if (apiKey === 'YOUR_MAKE_API_KEY') throw new Error('Replace YOUR_MAKE_API_KEY with a Make API key.');
 if (!zone || !documentId) {
   throw new Error('Set MAKE_ZONE and GOOGLE_DOC_ID.');
 }
