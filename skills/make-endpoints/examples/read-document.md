@@ -14,11 +14,12 @@ Use an approved project, then install the pinned example dependencies:
 npm install --save-exact @makehq/endpoints-sdk@0.3.0 @makehq/sdk@1.6.20
 ```
 
-Load these values from the project's existing environment or private, ignored `.env.local`:
+Replace `YOUR_API_KEY` in the script with a Make API key supplied through the approved secret mechanism, and
+never commit the edited file. Load the other values from the project's existing environment or private,
+ignored `.env.local`:
 
 | Variable | Meaning |
 | --- | --- |
-| `MAKE_API_KEY` | Make API key supplied through the approved secret mechanism. |
 | `MAKE_ZONE` | Selected Make hostname; examples use `us1.make.com`. |
 | `MAKE_TEAM_ID` | Authorized team ID. |
 | `MAKE_CONNECTION_ID` | Verified compatible Google Docs connection ID. |
@@ -47,11 +48,12 @@ function positiveId(name) {
   return id;
 }
 
-const apiKey = process.env.MAKE_API_KEY;
+const apiKey = 'YOUR_API_KEY';
 const zone = process.env.MAKE_ZONE;
 const documentId = process.env.GOOGLE_DOC_ID;
-if (!apiKey || !zone || !documentId) {
-  throw new Error('Set MAKE_API_KEY, MAKE_ZONE, and GOOGLE_DOC_ID.');
+if (apiKey === 'YOUR_API_KEY') throw new Error('Replace YOUR_API_KEY with a Make API key.');
+if (!zone || !documentId) {
+  throw new Error('Set MAKE_ZONE and GOOGLE_DOC_ID.');
 }
 if (!/^[a-z0-9][a-z0-9-]*\.make\.com$/.test(zone)) {
   throw new Error('MAKE_ZONE must be the approved Make hostname, without a URL path.');
