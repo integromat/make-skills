@@ -22,6 +22,7 @@
     "blueprint",
     "no-code"
   ],
+  "icon": "./assets/directory-icon.png",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "privacyPolicyUrl": "https://www.make.com/en/privacy-notice",

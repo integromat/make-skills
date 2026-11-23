@@ -14,7 +14,10 @@ Use an approved project, then install the pinned example dependencies:
 npm install --save-exact @makehq/endpoints-sdk@0.3.0 @makehq/sdk@1.6.20
 ```
 
-Load these values from the project's existing environment or private, ignored `.env.local`:
+The user sets these environment variables in their preferred secure way — a secrets manager, their shell, or
+a private `.env.local` listed in `.gitignore`. None of them belong in git. The agent may hand the user a
+template with placeholders, prefilling non-secret values such as `MAKE_ZONE` or `MAKE_TEAM_ID` when they are
+known from context; it never fills in, asks for, or reads the API key.
 
 | Variable | Meaning |
 | --- | --- |
@@ -47,7 +50,7 @@ function positiveId(name) {
   return id;
 }
 
-const apiKey = process.env.MAKE_API_KEY;
+const apiKey = process.env.MAKE_API_KEY; // YOUR_MAKE_API_KEY, set by the user outside this file
 const zone = process.env.MAKE_ZONE;
 const documentId = process.env.GOOGLE_DOC_ID;
 if (!apiKey || !zone || !documentId) {
