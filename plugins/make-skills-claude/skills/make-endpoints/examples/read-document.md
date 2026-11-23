@@ -14,12 +14,14 @@ Use an approved project, then install the pinned example dependencies:
 npm install --save-exact @makehq/endpoints-sdk@0.3.0 @makehq/sdk@1.6.20
 ```
 
-Replace `YOUR_MAKE_API_KEY` in the script with a Make API key supplied through the approved secret mechanism,
-and never commit the edited file. Load the other values from the project's existing environment or private,
-ignored `.env.local`:
+The user sets these environment variables in their preferred secure way — a secrets manager, their shell, or
+a private `.env.local` listed in `.gitignore`. None of them belong in git. The agent may hand the user a
+template with placeholders, prefilling non-secret values such as `MAKE_ZONE` or `MAKE_TEAM_ID` when they are
+known from context; it never fills in, asks for, or reads the API key.
 
 | Variable | Meaning |
 | --- | --- |
+| `MAKE_API_KEY` | Make API key supplied through the approved secret mechanism. |
 | `MAKE_ZONE` | Selected Make hostname; examples use `us1.make.com`. |
 | `MAKE_TEAM_ID` | Authorized team ID. |
 | `MAKE_CONNECTION_ID` | Verified compatible Google Docs connection ID. |
@@ -48,12 +50,11 @@ function positiveId(name) {
   return id;
 }
 
-const apiKey = 'YOUR_MAKE_API_KEY';
+const apiKey = process.env.MAKE_API_KEY; // YOUR_MAKE_API_KEY, set by the user outside this file
 const zone = process.env.MAKE_ZONE;
 const documentId = process.env.GOOGLE_DOC_ID;
-if (apiKey === 'YOUR_MAKE_API_KEY') throw new Error('Replace YOUR_MAKE_API_KEY with a Make API key.');
-if (!zone || !documentId) {
-  throw new Error('Set MAKE_ZONE and GOOGLE_DOC_ID.');
+if (!apiKey || !zone || !documentId) {
+  throw new Error('Set MAKE_API_KEY, MAKE_ZONE, and GOOGLE_DOC_ID.');
 }
 if (!/^[a-z0-9][a-z0-9-]*\.make\.com$/.test(zone)) {
   throw new Error('MAKE_ZONE must be the approved Make hostname, without a URL path.');
