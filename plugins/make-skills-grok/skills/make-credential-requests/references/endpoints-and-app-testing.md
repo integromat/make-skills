@@ -26,7 +26,7 @@ without an established consumer contract.
 
 1. Discover the app, numeric major version, and **exact Endpoint name**. The Endpoints CLI's `describe`
    exposes bundled definitions, including accepted connection types and required provider scopes; `list --team-id`
-   and `connections list --app --endpoint` give live team availability and compatible authorized connections.[16] Preserve discovered case and
+   and `connections list --team-id --app --endpoint` give live team availability and compatible authorized connections.[16] Preserve discovered case and
    namespaces; do not substitute a module name or infer the identifier from a generated method spelling.
 2. Establish current team access and compatible managed connections using the authorized live interfaces
    available to the workflow. Fix the zone/team/app/version/Endpoint tuple and intended provider account.
