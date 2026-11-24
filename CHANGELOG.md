@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file. See [commit
 * make-credential-requests: describe the skill as provisioning third-party app connections and keys stored in Make, not signing in to Make or connecting an AI client to it
 * name error handlers Skip and Retry, add the in-run retry and HTTP service-origins facts ([#88](https://github.com/integromat/make-skills/issues/88))
 * treat result remarks as information and add a directory icon ([#90](https://github.com/integromat/make-skills/issues/90))
+* make-endpoints: sync with the `make-endpoints-cli` skill from make-endpoints-sdk, now a single SKILL.md ([#92](https://github.com/integromat/make-skills/issues/92))
 
 ### Chores
 
