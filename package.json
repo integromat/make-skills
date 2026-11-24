@@ -1,6 +1,6 @@
 {
   "name": "@makehq/skills",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Expert skills for Make automation scenarios, Functions v2 and direct app Endpoint workflows — for Claude Code, Cursor, GitHub Copilot, and other AI agents",
   "license": "MIT",
   "type": "module",

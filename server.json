@@ -3,7 +3,7 @@
   "name": "com.make/mcp-server",
   "title": "Make",
   "description": "Build, run and debug Make automation scenarios.",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "repository": {
     "url": "https://github.com/integromat/make-skills",
     "source": "github"

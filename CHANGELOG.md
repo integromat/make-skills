@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 2.0.1 (2026-11-24)
+
+### Bug Fixes
+
+* make-credential-requests: describe the skill as provisioning third-party app connections and keys stored in Make, not signing in to Make or connecting an AI client to it
+* name error handlers Skip and Retry, add the in-run retry and HTTP service-origins facts ([#88](https://github.com/integromat/make-skills/issues/88))
+* treat result remarks as information and add a directory icon ([#90](https://github.com/integromat/make-skills/issues/90))
+
+### Chores
+
+* Claude plugin: remove the `/docs` command
+* build one zip per skill, without a versioned copy ([#89](https://github.com/integromat/make-skills/issues/89))
+
 ## 2.0.0 (2026-11-18)
 
 One version now covers every plugin, package and the MCP Registry entry (`server.json`), set from `package.json` with `npm version`.
