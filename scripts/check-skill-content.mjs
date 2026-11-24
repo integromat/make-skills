@@ -18,7 +18,7 @@ const SKILLS = join(ROOT, 'skills');
 
 const LIMITS = {
   skillMdChars: 10_000, // SKILL.md, frontmatter included — it is loaded whole on every trigger
-  skillMdWords: 1_200,
+  skillMdWords: 1_400,
   descriptionChars: 1_024, // Agent Skills spec maximum
   referenceWords: 2_000, // any other .md file — loaded one at a time
   skillWords: 10_000, // every text file of one skill together

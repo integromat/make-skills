@@ -45,9 +45,8 @@ skills/                    # SOURCE OF TRUTH — edit skills here only (npx skil
   make-functions-v2/         # Curated MCP authoring, execution and recovery
     SKILL.md
     references/ examples/
-  make-endpoints/            # Direct app actions through the standalone SDK/CLI
-    SKILL.md
-    references/ examples/   # Setup, discovery, reliable reads/writes, complete starters
+  make-endpoints/            # make-endpoints-cli skill mirrored from make-endpoints-sdk
+    SKILL.md                 # SKILL.md only
 ```
 
 ## Skills
@@ -58,7 +57,7 @@ Four scenario skills, one Functions v2 skill and one standalone Endpoints skill,
 - **make-scenario-explore** — `environment_get` → `scenario_list` → `scenario_get` → `scenario_module_get`, and how to read the structural fields for a non-technical user.
 - **make-scenario-building** — the build and edit workflows (`app_find` → `module_spec` → connections → `module_field_resolve` → `scenario_create` / `scenario_patch`), the decisions the tools leave to the model, and on-demand references for everything past a straight line.
 - **make-scenario-operations** — `scenario_run` by trigger kind, activation, the execution list → get → inspect → module-get chain, webhook learning and inspection.
-- **make-endpoints** — app-action discovery, compatible managed connections, SDK/CLI execution, complete pagination, approval-bound writes and readback. Not scenario building or custom-app Endpoint authoring.
+- **make-endpoints** — direct app actions through `make-endpoints-cli`: `whoami` → `list --team-id` → `describe` → `connections list` → call. Not scenario building or custom-app Endpoint authoring. Copied verbatim from `integromat/make-endpoints-sdk` `skills/make-endpoints-cli/SKILL.md`; only `name:` differs. Change it there first, then re-copy; don't edit here alone.
 
 - **make-functions-v2** — Functions v2 authoring, Endpoint discovery, inline testing, publication, execution and recovery through curated `function_*` tools on the same connection. Separate from legacy IML custom functions; no scenario-reference dependency.
 
@@ -68,7 +67,7 @@ Four scenario skills, one Functions v2 skill and one standalone Endpoints skill,
 - **SKILL.md is workflows.** Numbered steps and the decisions the tools cannot make. Concepts go in `references/`, complete calls in `examples/`.
 - **Say when to load a reference.** Each reference link states the trigger that makes it worth reading, so an agent does not load error-handling guidance for a notification scenario.
 - **Only what the selected surface can do.** Scenario guidance must match the current MCP tool contracts; unsupported custom IML functions or DLQ retry are not implied by related reads. Endpoints guidance must match the published SDK/CLI and distinguish bundled metadata from live team availability. Do not promise future interface centralisation or discovery features.
-- Skill descriptions use third person; the body avoids second person. Size budget, enforced in CI by `scripts/check-skill-content.mjs` (`npm run check:content`): SKILL.md ≤ 10,000 chars and ≤ 1,200 words, each other `.md` ≤ 2,000 words, a whole skill ≤ 10,000 words and ≤ 40 files. The same check fails on broken relative links, references SKILL.md never links, frontmatter `name` ≠ folder, and credentials or internal Make hosts; it warns on pinned package versions.
+- Skill descriptions use third person; the body avoids second person. Size budget, enforced in CI by `scripts/check-skill-content.mjs` (`npm run check:content`): SKILL.md ≤ 10,000 chars and ≤ 1,400 words, each other `.md` ≤ 2,000 words, a whole skill ≤ 10,000 words and ≤ 40 files. The same check fails on broken relative links, references SKILL.md never links, frontmatter `name` ≠ folder, and credentials or internal Make hosts; it warns on pinned package versions.
 
 ## Working with This Repository
 

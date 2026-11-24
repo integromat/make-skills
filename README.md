@@ -14,7 +14,7 @@ This repository ships the skills as a plugin for each client, as zip downloads, 
 | **make-scenario-explore**    | Orienting in an account — organizations, teams, listing scenarios, explaining what one does, connection health, account-wide checks                                                                                   |
 | **make-scenario-building**   | Creating and editing scenarios — app and module discovery, connections, resolving account-dependent values, flow control, error handling, subscenarios, AI agents; with references and complete examples              |
 | **make-scenario-operations** | Running, activating and deactivating, reviewing and debugging executions, investigating a webhook                                                                                                                     |
-| **make-endpoints**           | Direct app actions through `@makehq/endpoints-sdk` or its CLI — discovery, managed connections, typed calls, complete retrieval, and approval-bound writes with readback. Endpoints are in closed beta.                 |
+| **make-endpoints**           | Direct app actions through `make-endpoints-cli` — finding the team, discovering the endpoints it can run, picking a managed connection, and calling an endpoint. Endpoints are in closed beta.                          |
 | **make-functions-v2**        | Authoring, testing, publishing and operating TypeScript Functions through the existing Make MCP connection, including Endpoint discovery and execution recovery. Requires Functions v2 rollout access. |
 | **make-credential-requests** | Credential provisioning for agents using Endpoints or testing custom apps — the owner receives an authorization link and supplies secrets in Make; the agent resumes with managed connection/key IDs, not raw credentials. No scenario required. |
 
@@ -24,7 +24,7 @@ Creating a connection in the scenario editor remains the standard manual path. C
 
 - A [Make](https://www.make.com) account
 - For scenario skills and `make-functions-v2`: access to the Make MCP server. Functions v2 also requires the curated Functions tools and team rollout access; installing the skill does not enable either.
-- For `make-endpoints`: an approved Node.js/terminal environment, the Endpoints package, and organization access to the Endpoints beta. See [setup and interfaces](https://github.com/integromat/make-skills/blob/main/skills/make-endpoints/references/setup-and-interfaces.md). Installing this skill does not install the SDK or enable the beta.
+- For `make-endpoints`: Node.js 20+, `make-endpoints-cli` from `@makehq/endpoints-sdk` ([make-endpoints-sdk](https://github.com/integromat/make-endpoints-sdk)), a Make API key, and organization access to the Endpoints beta. Installing this skill does not install the SDK or enable the beta.
 - For `make-credential-requests`: access to a chosen, authorized credential-request interface, with the required Make permissions and organization/team access. Verify that interface's current contract before making a request; installing a skill or plugin does not grant access. SDK/REST requests follow their own permission contracts, not the scenario MCP server's all-or-nothing OAuth bundle.
 
 ## Install
