@@ -27,7 +27,8 @@ The complete source is also available as [http-endpoint.ts](http-endpoint.ts). I
 rejects null, non-object and array responses, and requires a string title before returning its bounded
 output. Keep these checks: the Endpoint's generated output allows optional fields and arbitrary JSON.
 
-After checking STS, host restrictions and schemas, submit the following when the read is authorized:
+The Input and Output types generate the contract; the field comment supplies the title description.
+After checking STS and host restrictions, submit the following when the read is authorized:
 
 ```json
 {
@@ -35,24 +36,7 @@ After checking STS, host restrictions and schemas, submit the following when the
   "arguments": {
     "teamId": 7,
     "content": {
-      "source": "export default async function main(input: {}) {\n  const response = await make.endpoints.http.v4.makeRequest({\n    input: { url: 'https://jsonplaceholder.typicode.com/posts/1', method: 'GET' },\n    connection: 'publicApi'\n  });\n  if (response.statusCode !== 200) { // @label Reject unsuccessful response\n    throw new Error('Expected HTTP 200');\n  }\n  const data = response.data;\n  if (data === null) { // @label Reject null response\n    throw new Error('Expected a JSON object');\n  }\n  if (typeof data !== 'object') { // @label Reject non-object response\n    throw new Error('Expected a JSON object');\n  }\n  const isArray = Array.isArray(data);\n  if (isArray) { // @label Reject array response\n    throw new Error('Expected a JSON object');\n  }\n  const post = data as { title?: unknown };\n  if (typeof post.title !== 'string') { // @label Reject missing title\n    throw new Error('Expected a string title');\n  }\n  return { title: post.title };\n}\n",
-      "inputSchema": {
-        "type": "object",
-        "properties": {},
-        "additionalProperties": false
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "title"
-        ],
-        "additionalProperties": false
-      },
+      "source": "interface Input {}\ninterface Output {\n  /** Title of the retrieved post. */\n  title: string;\n}\n\nexport default async function main(input: Input): Promise<Output> {\n  const response = await make.endpoints.http.v4.makeRequest({\n    input: { url: 'https://jsonplaceholder.typicode.com/posts/1', method: 'GET' },\n    connection: 'publicApi'\n  });\n  if (response.statusCode !== 200) { // @label Reject unsuccessful response\n    throw new Error('Expected HTTP 200');\n  }\n  const data = response.data;\n  if (data === null) { // @label Reject null response\n    throw new Error('Expected a JSON object');\n  }\n  if (typeof data !== 'object') { // @label Reject non-object response\n    throw new Error('Expected a JSON object');\n  }\n  const isArray = Array.isArray(data);\n  if (isArray) { // @label Reject array response\n    throw new Error('Expected a JSON object');\n  }\n  const post = data as { title?: unknown };\n  if (typeof post.title !== 'string') { // @label Reject missing title\n    throw new Error('Expected a string title');\n  }\n  return { title: post.title };\n}\n",
       "connections": {
         "publicApi": 123
       },
