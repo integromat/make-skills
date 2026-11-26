@@ -39,15 +39,16 @@ or a capped list needs narrowing. The skill does not require loading scenario-re
 2. Retrieve the selected declarations with `function_endpoint_types`, using the catalog identifier when
    available. Check each availability status. An unavailable declaration is not permission to guess a call
    signature or silently substitute another app action.
-3. Prepare complete TypeScript source and input/output contracts. Declare only the Endpoints and Connections
-   that code needs. Derive calls from the returned declarations and tool schemas; do not repeat the full
+3. Define local `Input` and `Output` types and use `main(input: Input): Promise<Output>`. Add leading
+   `/** description */` field comments for help text. Schemas are generated from this source; omit separate
+   `inputSchema` and `outputSchema` request fields. Declare only the Endpoints and Connections that code needs. Derive calls from the returned declarations and tool schemas; do not repeat the full
    catalog in the Function or embed credentials in source.
 4. Check source against [STS authoring](references/sts-authoring.md) and contracts against the
-   [supported schema subset](references/schema-contracts.md) before submission. Use a suitable local
+   [source-defined contract rules](references/schema-contracts.md) before submission. Use a suitable local
    validator when available, then check Functions host restrictions separately.
 5. Create the Function with `function_create` when creation is within the requested scope. Creation already
    publishes version 1 and leaves it inactive. For existing Functions, metadata edits use `function_update`;
-   code or contract edits require a new version.
+   type, comment or code edits require a new version.
 
 Load [source and Endpoint contracts](references/source-and-endpoints.md) for app calls, connection labels,
 or edits to an existing version. For a complete starting workflow, use the

@@ -18,13 +18,13 @@ example below needs no Endpoints or Connections.
 2. Create the initial Function. It returns `function.id`, version 1 and an ETag, and stays inactive.
 
 ```json
-{"tool":"function_create","arguments":{"teamId":7,"name":"Double a value","content":{"source":"export default async function main(input: { value: number }) { return input.value * 2; }","inputSchema":{"type":"object","properties":{"value":{"type":"number"}},"required":["value"],"additionalProperties":false},"outputSchema":{"type":"number"}}}}
+{"tool":"function_create","arguments":{"teamId":7,"name":"Double a value","content":{"source":"interface Input {\n  /** Number to double. */\n  value: number;\n}\ntype Output = number;\nexport default async function main(input: Input): Promise<Output> { return input.value * 2; }"}}}
 ```
 
 3. Test a candidate that returns a named output. This executes real code but does not publish the candidate.
 
 ```json
-{"tool":"function_run_create_inline","arguments":{"teamId":7,"functionId":42,"content":{"source":"export default async function main(input: { value: number }) { return { doubled: input.value * 2 }; }","inputSchema":{"type":"object","properties":{"value":{"type":"number"}},"required":["value"],"additionalProperties":false},"outputSchema":{"type":"object","properties":{"doubled":{"type":"number"}},"required":["doubled"],"additionalProperties":false}},"data":{"value":3}}}
+{"tool":"function_run_create_inline","arguments":{"teamId":7,"functionId":42,"content":{"source":"interface Input {\n  /** Number to double. */\n  value: number;\n}\ntype Output = { doubled: number };\nexport default async function main(input: Input): Promise<Output> { return { doubled: input.value * 2 }; }"},"data":{"value":3}}}
 ```
 
 4. Retrieve the returned `run.id` until terminal; success should contain `run.output: {"doubled":6}`.
@@ -37,7 +37,7 @@ example below needs no Endpoints or Connections.
    only if version 1 is still the expected base:
 
 ```json
-{"tool":"function_version_publish","arguments":{"functionId":42,"expectedLatestVersion":1,"content":{"source":"export default async function main(input: { value: number }) { return { doubled: input.value * 2 }; }","inputSchema":{"type":"object","properties":{"value":{"type":"number"}},"required":["value"],"additionalProperties":false},"outputSchema":{"type":"object","properties":{"doubled":{"type":"number"}},"required":["doubled"],"additionalProperties":false}}}}
+{"tool":"function_version_publish","arguments":{"functionId":42,"expectedLatestVersion":1,"content":{"source":"interface Input {\n  /** Number to double. */\n  value: number;\n}\ntype Output = { doubled: number };\nexport default async function main(input: Input): Promise<Output> { return { doubled: input.value * 2 }; }"}}}
 ```
 
 6. Read `function_get` again for the current ETag; publication may have changed it. If activation is requested:

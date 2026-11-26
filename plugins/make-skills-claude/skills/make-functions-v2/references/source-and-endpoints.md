@@ -1,20 +1,27 @@
 # Source and Endpoint contracts
 
 A Function's metadata and its executable content have different update paths. `function_update` changes
-name/description. `function_version_publish` creates immutable content from source, input/output schemas,
+name/description. `function_version_publish` creates immutable content from source, generated input/output schemas,
 Connection references, Endpoint declarations and any runtime retry policy. Retrieve a version before editing
 it and preserve declarations that the intended change still needs.
 
 Source exports the Function entry point, for example:
 
 ```typescript
-export default async function main(input: { value: number }) {
+interface Input {
+  /** Number to double. */
+  value: number;
+}
+interface Output { doubled: number }
+
+export default async function main(input: Input): Promise<Output> {
   return { doubled: input.value * 2 };
 }
 ```
 
-The input and output contracts are JSON Schema documents. Match the actual source behavior; permissive
-contracts should be intentional. Runtime retry policy concerns backend attempts and does not make repeating
+Input and Output types are the contract source. The server generates the JSON Schema preview and
+runtime validation from these types, including field descriptions from documentation comments. Use
+`Promise<void>` only for a Function with no output. Do not define a second schema or hidden metadata. Runtime retry policy concerns backend attempts and does not make repeating
 a Run-submission request safe.
 
 For app calls, discover the exact app name, version and Endpoint name. Use the declaration returned by

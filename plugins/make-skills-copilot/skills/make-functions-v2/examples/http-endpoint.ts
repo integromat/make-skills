@@ -1,4 +1,10 @@
-export default async function main(input: {}) {
+interface Input {}
+interface Output {
+  /** Title of the retrieved post. */
+  title: string;
+}
+
+export default async function main(input: Input): Promise<Output> {
   const response = await make.endpoints.http.v4.makeRequest({
     input: { url: 'https://jsonplaceholder.typicode.com/posts/1', method: 'GET' },
     connection: 'publicApi'

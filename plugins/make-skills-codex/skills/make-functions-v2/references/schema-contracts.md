@@ -1,8 +1,47 @@
-# Functions schema contracts
+# Source-defined input and output contracts
 
-Functions supports a bounded subset of JSON Schema Draft 2020-12. A valid general JSON Schema document
-can still be rejected by this host. Use object schemas (including `{}`); boolean schemas are unsupported
-except as the value of `additionalProperties`.
+Define local types and annotate `main(input: Input): Promise<Output>`. The server derives
+both schemas from those types. The frontend shows a generated preview with **Edit in code**;
+the web Run values form and native Scenario module consume the same published contract.
+
+```typescript
+interface Input {
+  /** Customer-facing name. */
+  name: string;
+  /** Omit to use the runtime fallback; null explicitly means no note. */
+  note?: string | null;
+  items: { label: string; quantity: number }[];
+}
+interface Output {
+  /** Name and note returned to the caller. */
+  customer: { name: string; note: string | null };
+  items: { label: string; quantity: number }[];
+}
+export default async function main(input: Input): Promise<Output> {
+  return { customer: { name: input.name, note: input.note ?? null }, items: input.items };
+}
+```
+
+Use primitives, arrays, local interfaces/type aliases and supported unions. Nullable unions
+retain `null`; `?` permits omission. `false`, zero, empty strings, omitted fields and null
+are different values. Unresolvable, imported, `any` or `unknown` contract types are rejected.
+A leading `/** ... */` comment above a property supplies its description, including nested
+and inherited fields. Regular code comments and JSDoc tags do not define schema defaults.
+
+Omit `inputSchema` and `outputSchema` on create, publish and inline-run requests. An older
+cached tool may expose them as required: derive the exact generated schemas using a compatible
+STS analyzer, or refresh the tool metadata. Never invent permissive `{}` schemas to satisfy the
+cache. Supplied schemas are consistency assertions and cannot override the types or comments.
+
+Put runtime defaults and extra business validation in code. Run values are invocation data;
+they do not edit types or create defaults. Publishing changed types/comments creates a new
+immutable contract. Historical versions and admitted Runs retain their original schemas.
+
+## Generated schema limits
+
+The host validates generated schemas against a bounded JSON Schema Draft 2020-12 subset.
+The list below describes stored/generated schema capabilities; it is not an independent
+schema-authoring interface. Use source validation for constraints types cannot express.
 
 Supported keywords:
 
@@ -29,5 +68,4 @@ the complete document is bounded to depth 128 and 20,000 nodes. Avoid copying la
 without reducing them to the actual input/output contract. These are contract limits, not Run payload limits.
 
 Match contracts to actual behavior, including explicit nulls and error handling. If the server reports an
-unsupported keyword, implement its validation in STS-compatible source and retain the expressible shape
-and bounds in the schema. Revalidate both source and contracts before a new execution attempt.
+unsupported keyword, implement its validation in STS-compatible source and preserve the generated shape. Revalidate the source before a new execution attempt.
